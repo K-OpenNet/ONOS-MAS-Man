@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a05fab06-5986-4a8d-9806-c4136bc71639" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/RESTParser.java" afterPath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/RESTParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java" afterPath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java" />
     </list>
     <ignored path="MAS-Man.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,7 +45,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RESTParser.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RESTParser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/RESTParser.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1227">
@@ -57,12 +57,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SSHParser.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SSHParser.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
-              <folding />
+            <state relative-caret-position="969">
+              <caret line="51" column="5" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -191,6 +193,7 @@
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/utils/RESTConnectionUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/monitor/GettingCPTraffic.java" />
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/RESTParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java" />
       </list>
     </option>
   </component>
@@ -1199,12 +1202,12 @@
       <workItem from="1480305431446" duration="400000" />
       <workItem from="1492253217038" duration="253000" />
       <workItem from="1492764697133" duration="9000" />
-      <workItem from="1495083438419" duration="3475000" />
+      <workItem from="1495083438419" duration="3510000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5377000" />
+    <option name="totallyTimeSpent" value="5412000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="62" y="-8" width="2506" height="1456" extended-state="6" />
@@ -1644,18 +1647,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/RESTParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1227">
           <caret line="210" column="5" selection-start-line="210" selection-start-column="5" selection-end-line="210" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/parser/SSHParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="969">
+          <caret line="51" column="5" selection-start-line="51" selection-start-column="5" selection-end-line="51" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
