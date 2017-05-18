@@ -3,7 +3,13 @@ package kr.postech.monet.core.parser;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import kr.postech.monet.config.bean.SWBean;
+import kr.postech.monet.core.database.bean.CPULoadBean;
+import kr.postech.monet.core.database.bean.ControlTrafficBean;
+import kr.postech.monet.core.database.bean.NumSwitchesBean;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -100,4 +106,107 @@ public class RESTParser {
         return sourceSWes;
     }
 
+    public List<ControlTrafficBean> parseDBControlTraffic(String jsonRaw) {
+        List<ControlTrafficBean> resultList = new CopyOnWriteArrayList<ControlTrafficBean>();
+        if (jsonRaw == null) {
+            return new CopyOnWriteArrayList<ControlTrafficBean>();
+        }
+
+        StringReader sr = new StringReader(jsonRaw);
+        BufferedReader br = new BufferedReader(sr);
+
+        try {
+            jsonRaw = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JsonObject parser = JsonObject.readFrom(jsonRaw);
+        JsonArray rawCPTrafficInDB = parser.get("results").asArray();
+        JsonObject tableCPTrafficInDBObjs = rawCPTrafficInDB.get(0).asObject();
+        JsonArray tableCPTrafficInDB = tableCPTrafficInDBObjs.get("series").asArray();
+        JsonObject contentsCPTrafficInDBObjs = tableCPTrafficInDB.get(0).asObject();
+        JsonArray contentsCPTrafficInDB = contentsCPTrafficInDBObjs.get("values").asArray();
+        for (int index = 0; index < contentsCPTrafficInDB.size(); index++) {
+            JsonArray elementCPTrafficInDB = contentsCPTrafficInDB.get(index).asArray();
+            ControlTrafficBean tmpResultControlTrafficBean = new ControlTrafficBean(elementCPTrafficInDB.get(0).asString(),
+                    Integer.valueOf(elementCPTrafficInDB.get(1).asString()),
+                    Integer.valueOf(elementCPTrafficInDB.get(2).asString()),
+                    Integer.valueOf(elementCPTrafficInDB.get(3).asString()),
+                    Integer.valueOf(elementCPTrafficInDB.get(4).asString()),
+                    Integer.valueOf(elementCPTrafficInDB.get(5).asString()),
+                    Integer.valueOf(elementCPTrafficInDB.get(6).asString()),
+                    elementCPTrafficInDB.get(7).asInt());
+            resultList.add(tmpResultControlTrafficBean);
+        }
+
+
+        return resultList;
+    }
+
+    public List<CPULoadBean> parseDBCPULoad(String jsonRaw) {
+        List<CPULoadBean> resultList = new CopyOnWriteArrayList<CPULoadBean>();
+
+        if (jsonRaw == null) {
+            return resultList;
+        }
+
+        StringReader sr = new StringReader(jsonRaw);
+        BufferedReader br = new BufferedReader(sr);
+
+        try {
+            jsonRaw = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JsonObject parser = JsonObject.readFrom(jsonRaw);
+        JsonArray rawCPULoadInDB = parser.get("results").asArray();
+        JsonObject tableCPULoadInDBObjs = rawCPULoadInDB.get(0).asObject();
+        JsonArray tableCPULoadInDB = tableCPULoadInDBObjs.get("series").asArray();
+        JsonObject contentsCPULoadInDBObjs = tableCPULoadInDB.get(0).asObject();
+        JsonArray contentsCPULoadInDB = contentsCPULoadInDBObjs.get("values").asArray();
+        for (int index = 0; index < contentsCPULoadInDB.size(); index++) {
+            JsonArray elementCPULoadInDB = contentsCPULoadInDB.get(index).asArray();
+
+            CPULoadBean tmpCPULoadBean = new CPULoadBean(elementCPULoadInDB.get(0).asString(), elementCPULoadInDB.get(1).asFloat());
+            resultList.add(tmpCPULoadBean);
+        }
+
+
+        return resultList;
+    }
+
+    public List<NumSwitchesBean> parseDBNumSwitches(String jsonRaw) {
+        List<NumSwitchesBean> resultList = new CopyOnWriteArrayList<NumSwitchesBean>();
+
+        if (jsonRaw == null) {
+            return resultList;
+        }
+
+        StringReader sr = new StringReader(jsonRaw);
+        BufferedReader br = new BufferedReader(sr);
+
+        try {
+            jsonRaw = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JsonObject parser = JsonObject.readFrom(jsonRaw);
+        JsonArray rawNumSwitchesInDB = parser.get("results").asArray();
+        JsonObject tableNumSwitchesInDBObjs = rawNumSwitchesInDB.get(0).asObject();
+        JsonArray tableNumSwitchesInDB = tableNumSwitchesInDBObjs.get("series").asArray();
+        JsonObject contentsNumSwitchesInDBObjs = tableNumSwitchesInDB.get(0).asObject();
+        JsonArray contentsNumSwitchesInDB = contentsNumSwitchesInDBObjs.get("values").asArray();
+        for (int index = 0; index < contentsNumSwitchesInDB.size(); index++) {
+            JsonArray elementNumSwitches = contentsNumSwitchesInDB.get(index).asArray();
+
+            NumSwitchesBean tmpNumSwitchesBean = new NumSwitchesBean(elementNumSwitches.get(0).asString(),
+                    elementNumSwitches.get(1).asInt());
+            resultList.add(tmpNumSwitchesBean);
+        }
+
+        return resultList;
+    }
 }
