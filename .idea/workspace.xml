@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a05fab06-5986-4a8d-9806-c4136bc71639" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/MastershipCore.java" afterPath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/MastershipCore.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java" afterPath="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java" />
     </list>
     <ignored path="MAS-Man.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -105,20 +105,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MastershipAndScaling.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MastershipAndScaling.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="7" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="1653">
+              <caret line="91" column="1" selection-start-line="91" selection-start-column="1" selection-end-line="91" selection-end-column="1" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MastershipCore.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MastershipCore.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/MastershipCore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3762">
+            <state relative-caret-position="3420">
               <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -190,8 +192,8 @@
         <option value="$PROJECT_DIR$/src/main/webapp/monitor.jsp" />
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/utils/SSHConnectionUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/HeartbeatCheckThread.java" />
-        <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java" />
         <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/MastershipCore.java" />
+        <option value="$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java" />
       </list>
     </option>
   </component>
@@ -426,6 +428,10 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="thread" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MastershipAndScaling.java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -1272,12 +1278,12 @@
       <workItem from="1480305431446" duration="400000" />
       <workItem from="1492253217038" duration="253000" />
       <workItem from="1492764697133" duration="9000" />
-      <workItem from="1495083438419" duration="4461000" />
+      <workItem from="1495083438419" duration="4488000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6363000" />
+    <option name="totallyTimeSpent" value="6390000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="62" y="-8" width="2506" height="1456" extended-state="6" />
@@ -1777,14 +1783,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/PeriodMastershipCore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1795,8 +1793,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/mastership/MastershipCore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3762">
+        <state relative-caret-position="3420">
           <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/kr/postech/monet/core/thread/MastershipAndScaling.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1653">
+          <caret line="91" column="1" selection-start-line="91" selection-start-column="1" selection-end-line="91" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
