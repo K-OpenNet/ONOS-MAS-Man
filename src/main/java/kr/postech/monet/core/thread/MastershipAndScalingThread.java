@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by woojoong on 2017-05-18.
  */
-public class MastershipAndScaling {
+public class MastershipAndScalingThread {
 
     public static ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
 
