@@ -4,8 +4,11 @@ import kr.postech.monet.config.bean.PMBean;
 import kr.postech.monet.config.bean.SiteBean;
 import kr.postech.monet.config.bean.VMBean;
 import kr.postech.monet.config.pool.SiteConfPool;
+import kr.postech.monet.core.thread.HeartbeatCheckThread;
+import kr.postech.monet.core.thread.MastershipAndScalingThread;
 import kr.postech.monet.utils.SSHConnectionUtil;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -162,5 +165,29 @@ public class GeneralConf {
         sshConn.sendCmdToSingleVM(dbBean, makeCmd, 4096);
 
     }
+    // Run at the start of web server
+    @PostConstruct
+    public void init() {
 
+        // heartbeat check
+        SSHConnectionUtil sshConn = new SSHConnectionUtil();
+        sshConn.checkHeartBeatAllMachines();
+        HeartbeatCheckThread.funcCheckHeartBeatAllMachinesThread();
+
+        // initialize Database
+        initDatabase();
+
+        //PutNumSwitches putsw = new PutNumSwitches();
+        //putsw.putNumSwitchesInDBForAllSites();
+        //PutControlTraffic putcp = new PutControlTraffic();
+        //putcp.putControlTrafficInfoInDBForAllSites();
+        //PutCPULoad cpuload = new PutCPULoad();
+        //cpuload.putCPULoadInDBForAllSites();
+
+
+        // periodically run mastership and autoscaling as a thread
+        MastershipAndScalingThread.funcMastershipAndScalingThread();
+
+
+    }
 }
