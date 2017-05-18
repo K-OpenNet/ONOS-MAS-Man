@@ -4,11 +4,14 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import kr.postech.monet.config.GeneralConf;
 import kr.postech.monet.config.bean.PMBean;
+import kr.postech.monet.config.bean.SiteBean;
 import kr.postech.monet.config.bean.VMBean;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -149,6 +152,92 @@ public class SSHConnectionUtil {
         }
 
         return resultCommand;
+    }
+    /**
+     * To check heartbeat of single PM
+     * @param targetPM
+     * @return
+     */
+    public boolean checkHeartBeatToSinglePM (PMBean targetPM) {
+
+        String resultCommand = null;
+        StringBuffer sb = new StringBuffer();
+
+        Session session = null;
+
+        // Establish SSH connection
+        try {
+            session = new JSch().getSession(targetPM.getID(),
+                    targetPM.getAccessIPAddress(),
+                    Integer.parseInt(targetPM.getAccessSSHPort()));
+            session.setTimeout(SSH_TIMEOUT);
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.setPassword(targetPM.getPW());
+            session.connect();
+        } catch (JSchException e) {
+            System.out.println("SSH connection error (session): targetPM - " + targetPM.getAccessIPAddress() + " Port - " + targetPM.getAccessSSHPort());
+            return false;
+        }
+
+        if (session != null) {
+            session.disconnect();
+        }
+
+        return true;
+    }
+
+    /**
+     * To check heartbeat of single VM
+     * @param targetVM
+     * @return
+     */
+    public boolean checkHeartBeatToSingleVM (VMBean targetVM) {
+        String resultCommand = null;
+        StringBuffer sb = new StringBuffer();
+
+        Session session = null;
+
+        // Establish SSH connection
+        try {
+            session = new JSch().getSession(targetVM.getID(),
+                    targetVM.getAccessIPAddress(),
+                    Integer.parseInt(targetVM.getAccessSSHPort()));
+            session.setTimeout(SSH_TIMEOUT);
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.setPassword(targetVM.getPW());
+            session.connect();
+        } catch (JSchException e) {
+            e.printStackTrace();
+            System.out.println("SSH connection error (session): targetPM - " + targetVM.getAccessIPAddress() + " Port - " + targetVM.getAccessSSHPort());
+            return false;
+        }
+
+        if (session != null) {
+            session.disconnect();
+        }
+
+        return true;
+    }
+
+    public void checkHeartBeatAllMachines () {
+        List<SiteBean> siteBeanList = GeneralConf.siteConfPoolList.getSiteBeans();
+        for (int index1 = 0; index1 < siteBeanList.size(); index1++) {
+            SiteBean tmpSite = siteBeanList.get(index1);
+            List<PMBean> pmBeanList = tmpSite.getPmConfPool().getPmBeans();
+            for (int index2 = 0; index2 < pmBeanList.size(); index2++) {
+                PMBean tmpPM = pmBeanList.get(index2);
+                tmpPM.setAlive(checkHeartBeatToSinglePM(tmpPM));
+                List<VMBean> vmBeanList = tmpPM.getVmConfPool().getVmBeans();
+                for (int index3 = 0; index3 < vmBeanList.size(); index3++) {
+                    VMBean tmpVM = vmBeanList.get(index3);
+                    tmpVM.setAlive(checkHeartBeatToSingleVM(tmpVM));
+                }
+            }
+        }
     }
 
 }
