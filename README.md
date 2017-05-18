@@ -13,4 +13,4 @@ After that, clone this projects and import in Intellij.
 Run and enjoy!
 
 
-Before run and compile, customizing the configuration file following comments.
+Before run and compile, customizing the configuration file comments in GeneralConf.java file.
