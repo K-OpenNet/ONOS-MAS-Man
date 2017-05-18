@@ -4,6 +4,7 @@ import kr.postech.monet.config.bean.PMBean;
 import kr.postech.monet.config.bean.SiteBean;
 import kr.postech.monet.config.bean.VMBean;
 import kr.postech.monet.config.pool.SiteConfPool;
+import kr.postech.monet.utils.SSHConnectionUtil;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -149,6 +150,17 @@ public class GeneralConf {
         //siteList.add(site_POSTECH1);
         //siteList.add(site_POSTECH2);
         siteConfPoolList.setSiteBeans(siteList);
+    }
+
+
+    public void initDatabase() {
+        String dropCmd = "curl -i -XPOST http://localhost:8086/query --data-urlencode \"q=DROP DATABASE kict\"";
+        String makeCmd = "curl -i -XPOST http://localhost:8086/query --data-urlencode \"q=CREATE DATABASE kict\"";
+
+        SSHConnectionUtil sshConn = new SSHConnectionUtil();
+        sshConn.sendCmdToSingleVM(dbBean, dropCmd, 4096);
+        sshConn.sendCmdToSingleVM(dbBean, makeCmd, 4096);
+
     }
 
 }
