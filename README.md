@@ -7,7 +7,10 @@ Preliminaries
  2. IntelliJ
 
 Install both preliminaries and set up Tomcat to use in IntelliJ.
+
 After that, clone this projects and import in Intellij.
+
 Run and enjoy!
+
 
 Before run and compile, customizing the configuration file following comments.
