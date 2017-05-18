@@ -14,3 +14,5 @@ Run and enjoy!
 
 
 Before run and compile, customizing the configuration file comments in GeneralConf.java file.
+
+If you want to see in detail, you can access source codes or K-ONE technical document 23.
