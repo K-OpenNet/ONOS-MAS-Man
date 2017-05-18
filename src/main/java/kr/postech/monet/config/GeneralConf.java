@@ -143,11 +143,12 @@ public class GeneralConf {
         List<PMBean> pmList_POSTECH2 = new CopyOnWriteArrayList<PMBean>();
         pmList_POSTECH2.add(pm_POSTECH2);
         SiteBean site_POSTECH2 = new SiteBean("POSTECH-2", pmList_POSTECH2);
-
+*/
         //make site pool -- add more site
         List<SiteBean> siteList = new CopyOnWriteArrayList<SiteBean>();
         //siteList.add(site_POSTECH1);
         //siteList.add(site_POSTECH2);
         siteConfPoolList.setSiteBeans(siteList);
     }
+
 }
