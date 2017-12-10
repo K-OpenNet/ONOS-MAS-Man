@@ -9,4 +9,8 @@ public class Controller {
 
     private Controller() {
     }
+
+    public static void main (String[] args) {
+        System.out.println("compile test");
+    }
 }
