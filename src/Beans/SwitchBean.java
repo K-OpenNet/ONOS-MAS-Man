@@ -1,4 +1,4 @@
 package Beans;
 
-public class SwitchBean {
+public class SwitchBean extends AbstractBean implements Bean {
 }

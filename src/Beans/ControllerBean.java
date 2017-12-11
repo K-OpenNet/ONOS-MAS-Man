@@ -1,4 +1,5 @@
 package Beans;
 
-public class ControllerBean {
+public class ControllerBean extends AbstractBean implements Bean {
+
 }
