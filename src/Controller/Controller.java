@@ -1,5 +1,7 @@
 package Controller;
 
+import org.projectfloodlight.openflow.protocol.OFType;
+
 public class Controller {
     private static Controller ourInstance = new Controller();
 
@@ -11,6 +13,6 @@ public class Controller {
     }
 
     public static void main (String[] args) {
-        System.out.println("compile test");
+        System.out.println(OFType.FLOW_MOD);
     }
 }

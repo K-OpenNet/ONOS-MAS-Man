@@ -1,1 +1,1 @@
-javac -cp $(pwd)/src -d out $(find . -name *.java)
+javac -cp $(pwd)/lib/*;$(pwd)/src -d out $(find . -name *.java)
