@@ -1,3 +1,3 @@
 pushd $(pwd)/out
-java Controller.Controller
+java -cp .:../lib/* Controller.Controller
 popd
