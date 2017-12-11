@@ -1,4 +1,4 @@
 package Monitor;
 
-public class ComputingResourceMonitor {
+public class ComputingResourceMonitor extends AbstractMonitor implements Monitor {
 }

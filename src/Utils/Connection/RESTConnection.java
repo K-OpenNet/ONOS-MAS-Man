@@ -1,4 +1,4 @@
 package Utils.Connection;
 
-public class RESTConnection {
+public class RESTConnection extends AbstractConnection implements Connection {
 }

@@ -1,4 +1,4 @@
 package DecisionMaker;
 
-public class DCORALAlgorithm {
+public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
 }

@@ -1,4 +1,4 @@
 package Database.Tuples;
 
-public class ControlPlaneTuple {
+public class ControlPlaneTuple extends AbstractTuple implements Tuple {
 }

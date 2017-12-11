@@ -1,4 +1,4 @@
 package Monitor;
 
-public class MastershipMonitor {
+public class MastershipMonitor extends AbstractMonitor implements Monitor {
 }

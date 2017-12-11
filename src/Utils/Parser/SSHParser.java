@@ -1,4 +1,4 @@
 package Utils.Parser;
 
-public class SSHParser {
+public class SSHParser extends AbstractParser implements Parser {
 }

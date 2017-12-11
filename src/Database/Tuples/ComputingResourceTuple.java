@@ -1,4 +1,4 @@
 package Database.Tuples;
 
-public class ComputingResourceTuple {
+public class ComputingResourceTuple extends AbstractTuple implements Tuple {
 }

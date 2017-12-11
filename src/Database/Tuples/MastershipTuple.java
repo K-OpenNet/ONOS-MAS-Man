@@ -1,4 +1,4 @@
 package Database.Tuples;
 
-public class MastershipTuple {
+public class MastershipTuple extends AbstractTuple implements Tuple {
 }

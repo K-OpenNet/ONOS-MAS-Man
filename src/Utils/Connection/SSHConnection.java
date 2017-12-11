@@ -1,4 +1,4 @@
 package Utils.Connection;
 
-public class SSHConnection {
+public class SSHConnection extends AbstractConnection implements Connection {
 }

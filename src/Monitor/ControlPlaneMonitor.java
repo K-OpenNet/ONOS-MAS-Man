@@ -1,4 +1,4 @@
 package Monitor;
 
-public class ControlPlaneMonitor {
+public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
 }

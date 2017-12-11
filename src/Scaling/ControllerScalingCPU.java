@@ -1,4 +1,4 @@
 package Scaling;
 
-public class ControllerScalingCPU {
+public class ControllerScalingCPU extends AbstractScaling implements Scaling {
 }

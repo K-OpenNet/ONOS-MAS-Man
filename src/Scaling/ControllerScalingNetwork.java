@@ -1,4 +1,4 @@
 package Scaling;
 
-public class ControllerScalingNetwork {
+public class ControllerScalingNetwork extends AbstractScaling implements Scaling {
 }
