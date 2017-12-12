@@ -1,5 +1,6 @@
 package Controller;
 
+import UserInterface.CLI.CommandLine;
 import org.projectfloodlight.openflow.protocol.OFType;
 
 public class Controller {
@@ -13,6 +14,7 @@ public class Controller {
     }
 
     public static void main (String[] args) {
-        System.out.println(OFType.FLOW_MOD);
+        CommandLine cli = new CommandLine();
+        cli.startCLI();
     }
 }
