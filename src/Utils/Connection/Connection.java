@@ -8,4 +8,5 @@ public interface Connection {
     }
 
     String sendCommand(Bean targetMachine);
+    connectionType getConnectionName();
 }
