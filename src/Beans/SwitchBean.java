@@ -8,4 +8,12 @@ public class SwitchBean extends AbstractBean implements Bean {
         this.beanKey = dpid;
         this.beanName = beanType.SWITCH;
     }
+
+    public String getDpid() {
+        return dpid;
+    }
+
+    public void setDpid(String dpid) {
+        this.dpid = dpid;
+    }
 }

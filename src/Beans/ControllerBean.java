@@ -33,4 +33,156 @@ public class ControllerBean extends AbstractBean implements Bean {
         this.cpuBitmap = new int[18];
         this.isActive = false;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getControllerId() {
+        return controllerId;
+    }
+
+    public void setControllerId(String controllerId) {
+        this.controllerId = controllerId;
+    }
+
+    public String getIpAddr() {
+        return ipAddr;
+    }
+
+    public void setIpAddr(String ipAddr) {
+        this.ipAddr = ipAddr;
+    }
+
+    public String getRestPort() {
+        return restPort;
+    }
+
+    public void setRestPort(String restPort) {
+        this.restPort = restPort;
+    }
+
+    public String getSshPort() {
+        return sshPort;
+    }
+
+    public void setSshPort(String sshPort) {
+        this.sshPort = sshPort;
+    }
+
+    public String getControllerGuiId() {
+        return controllerGuiId;
+    }
+
+    public void setControllerGuiId(String controllerGuiId) {
+        this.controllerGuiId = controllerGuiId;
+    }
+
+    public String getControllerGuiPw() {
+        return controllerGuiPw;
+    }
+
+    public void setControllerGuiPw(String controllerGuiPw) {
+        this.controllerGuiPw = controllerGuiPw;
+    }
+
+    public String getSshId() {
+        return sshId;
+    }
+
+    public void setSshId(String sshId) {
+        this.sshId = sshId;
+    }
+
+    public String getSshPw() {
+        return sshPw;
+    }
+
+    public void setSshPw(String sshPw) {
+        this.sshPw = sshPw;
+    }
+
+    public String getSshRootId() {
+        return sshRootId;
+    }
+
+    public void setSshRootId(String sshRootId) {
+        this.sshRootId = sshRootId;
+    }
+
+    public String getSshRootPw() {
+        return sshRootPw;
+    }
+
+    public void setSshRootPw(String sshRootPw) {
+        this.sshRootPw = sshRootPw;
+    }
+
+    public Session getUserSession() {
+        return userSession;
+    }
+
+    public void setUserSession(Session userSession) {
+        this.userSession = userSession;
+    }
+
+    public Session getRootSession() {
+        return rootSession;
+    }
+
+    public void setRootSession(Session rootSession) {
+        this.rootSession = rootSession;
+    }
+
+    public int getLastTimeIndexChangeCPU() {
+        return lastTimeIndexChangeCPU;
+    }
+
+    public void setLastTimeIndexChangeCPU(int lastTimeIndexChangeCPU) {
+        this.lastTimeIndexChangeCPU = lastTimeIndexChangeCPU;
+    }
+
+    public int getNumCPUs() {
+        return numCPUs;
+    }
+
+    public void setNumCPUs(int numCPUs) {
+        this.numCPUs = numCPUs;
+    }
+
+    public int getMaxCPUs() {
+        return maxCPUs;
+    }
+
+    public void setMaxCPUs(int maxCPUs) {
+        this.maxCPUs = maxCPUs;
+    }
+
+    public int getMinCPUs() {
+        return minCPUs;
+    }
+
+    public void setMinCPUs(int minCPUs) {
+        this.minCPUs = minCPUs;
+    }
+
+    public int[] getCpuBitmap() {
+        return cpuBitmap;
+    }
+
+    public void setCpuBitmap(int[] cpuBitmap) {
+        this.cpuBitmap = cpuBitmap;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }
