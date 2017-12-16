@@ -1,4 +1,5 @@
 package Utils.Connection;
 
-abstract class AbstractConnection {
+abstract class AbstractConnection implements Connection {
+    protected connectionType connectionName;
 }
