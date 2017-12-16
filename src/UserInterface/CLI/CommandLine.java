@@ -37,7 +37,8 @@ public class CommandLine {
                     // Reserve
                     break;
                 case 5:
-                    // Reserve
+                    // test
+                    testFuncForDev();
                     break;
                 case 99:
                     // Print results
@@ -56,5 +57,9 @@ public class CommandLine {
 
     public void printConfigMessage () {
         // scaling method, mastership, scaling level, initial # controllers [1, 3], initial # cores/controller [1, 3], Emulation time
+    }
+
+    public void testFuncForDev () {
+
     }
 }
