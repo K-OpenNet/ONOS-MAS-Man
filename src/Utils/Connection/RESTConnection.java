@@ -7,7 +7,12 @@ public class RESTConnection extends AbstractConnection implements Connection {
     }
 
     @Override
-    public String sendCommand(Bean targetMachine) {
+    public String sendCommandToUser(Bean targetMachine, String cmd) {
         return null;
+    }
+
+    @Override
+    public String sendCommandToRoot(Bean targetMachine, String cmd) {
+        return sendCommandToUser(targetMachine, cmd);
     }
 }

@@ -7,6 +7,7 @@ public interface Connection {
         SSH, REST;
     }
 
-    String sendCommand(Bean targetMachine);
+    String sendCommandToUser(Bean targetMachine, String cmd);
+    String sendCommandToRoot(Bean targetMachine, String cmd);
     connectionType getConnectionName();
 }
