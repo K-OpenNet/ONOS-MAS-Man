@@ -32,7 +32,6 @@ public class FileIOUtil {
             System.out.println("Cannot close the file and its buffer/reader: " + path);
             e.printStackTrace();
         }
-
         return results;
     }
 }
