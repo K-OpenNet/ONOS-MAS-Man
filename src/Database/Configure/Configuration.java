@@ -19,6 +19,10 @@ public class Configuration {
         relationships = new HashMap<>();
     }
 
+    // CMDs
+
+    // URLs for REST API
+
     private ArrayList<ControllerBean> controllers;
     private ArrayList<PMBean> pms;
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;

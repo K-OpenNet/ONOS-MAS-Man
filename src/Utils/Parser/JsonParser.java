@@ -40,6 +40,10 @@ public class JsonParser extends AbstractParser implements Parser {
             tmpControllerBean.setSshPw(tmpObj.get("sshPw").asString());
             tmpControllerBean.setSshRootId(tmpObj.get("sshRootId").asString());
             tmpControllerBean.setSshRootPw(tmpObj.get("sshRootPw").asString());
+            tmpControllerBean.setMaxCPUs(Integer.valueOf(tmpObj.get("numMaxCPU").asString()));
+            tmpControllerBean.setMinCPUs(Integer.valueOf(tmpObj.get("numMinCPU").asString()));
+            tmpControllerBean.setNumCPUs(Integer.valueOf(tmpObj.get("numMaxCPU").asString()));
+            tmpControllerBean.setCpuBitmap(new int[tmpControllerBean.getMaxCPUs()]);
 
             config.getControllers().add(tmpControllerBean);
         }

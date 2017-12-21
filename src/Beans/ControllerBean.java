@@ -26,12 +26,10 @@ public class ControllerBean extends AbstractBean implements Bean {
 
     public ControllerBean(String controllerId) {
         this.controllerId = controllerId;
-        this.minCPUs = 1;
-        this.maxCPUs = 18;
         this.beanKey = controllerId;
         this.beanName = beanType.CONTROLLER;
         this.cpuBitmap = new int[maxCPUs];
-        this.isActive = false;
+        this.isActive = true;
     }
 
     public String getName() {
