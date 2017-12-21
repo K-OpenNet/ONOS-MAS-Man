@@ -19,6 +19,7 @@ public class Controller {
         init();
     }
 
+    // Initialization function
     public static void init() {
         System.out.println("** Initialization now...");
 
