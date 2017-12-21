@@ -28,7 +28,6 @@ public class ControllerBean extends AbstractBean implements Bean {
         this.controllerId = controllerId;
         this.beanKey = controllerId;
         this.beanName = beanType.CONTROLLER;
-        this.cpuBitmap = new int[maxCPUs];
         this.isActive = true;
     }
 
