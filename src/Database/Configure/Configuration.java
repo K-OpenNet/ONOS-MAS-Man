@@ -20,6 +20,7 @@ public class Configuration {
     }
 
     // CMDs
+    public static final String CMD_CPU_BITMAP_TEMPLATE = "/sys/devices/system/cpu/cpu<index>/online";
 
     // URLs for REST API
 

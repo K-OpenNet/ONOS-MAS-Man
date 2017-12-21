@@ -3,6 +3,7 @@ package Controller;
 import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
+import Monitor.ComputingResourceMonitor;
 import UserInterface.CLI.CommandLine;
 import Utils.Connection.SSHConnection;
 import Utils.FileIO.FileIOUtil;
@@ -44,16 +45,15 @@ public class Controller {
             System.out.println("The SSH sessions for the PM, " + pm.getBeanKey() + ", has been set");
 
         }
-
-        // assign SSH session for each Controller
+        ComputingResourceMonitor mon = new ComputingResourceMonitor();
+        // assign SSH session for each Controller as well as assign CPUBitMap for each Controller
         for (ControllerBean controller : config.getControllers()) {
             conn.assignUserSession(controller);
             conn.assignRootSession(controller);
 
             System.out.println("The SSH sessions for the Controller, " + controller.getBeanKey() + ", has been set");
+            mon.monitorCPUBitMap(controller);
         }
-
-        // ToDo: make CPU bitmap for controller
 
         System.out.println("** Initialization has been finished.");
     }
