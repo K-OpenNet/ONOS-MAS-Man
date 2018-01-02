@@ -39,7 +39,7 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
             // ToDo: it will be defined as a thread -- too long getting time
             String tmpRawResult = restConn.sendCommandToUser(controller, RESTURL_GETMASTERSHIPINFO);
 
-            results.put(controller.getBeanKey(), parser.parseMastershipMonitoringResults(tmpRawResult, controller));
+            results.put(controller.getBeanKey(), parser.parseMastershipMonitoringResults(tmpRawResult));
         }
 
         return results;

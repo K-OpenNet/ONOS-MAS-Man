@@ -84,8 +84,14 @@ public class JsonParser extends AbstractParser implements Parser {
         }
     }
 
-    public MastershipTuple parseMastershipMonitoringResults(String rawResults, ControllerBean controller) {
+    public MastershipTuple parseMastershipMonitoringResults(String rawResults) {
         MastershipTuple result = new MastershipTuple();
+
+        JsonObject parser = JsonObject.readFrom(rawResults);
+        JsonArray switches = parser.get("deviceIds").asArray();
+        for (int index = 0; index < switches.size(); index++) {
+            result.addSwitch(switches.get(index).asString());
+        }
 
         return result;
     }
