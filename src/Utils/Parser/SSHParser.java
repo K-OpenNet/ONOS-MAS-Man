@@ -16,14 +16,14 @@ public class SSHParser extends AbstractParser implements Parser {
 
         String[] splittedResults = rawResults.split("\n");
 
-        for (int index = 6; index < splittedResults.length; index++) {
+        for (int index = 5; index < splittedResults.length; index++) {
             String[] splittedResultsForEachLine = splittedResults[index].split("\\s+");
 
             if (!result.containsKey(splittedResultsForEachLine[0])) {
                 throw new ComputingResourceSanityException();
             }
 
-            // ToDo: implement parsing functon
+            ComputingResourceTuple tmpTuple = result.get(splittedResultsForEachLine[0]);
 
         }
 
