@@ -6,6 +6,7 @@ import Database.Tuples.MastershipTuple;
 import Utils.Connection.RESTConnection;
 import Utils.Parser.JsonParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static Database.Configure.Configuration.RESTURL_GETMASTERSHIPINFO;
@@ -25,8 +26,9 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
     public HashMap<String, MastershipTuple> monitorMastership() {
 
         JsonParser parser = new JsonParser();
-        RESTConnection restConn = new RESTConnection();
         HashMap<String, MastershipTuple> results = new HashMap<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<ThreadGetMonitoringResultForMastership> rawResults = new ArrayList<>();
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
@@ -36,13 +38,57 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
             }
 
             // Get switches which are serviced by this controller as raw data
-            // ToDo: it will be defined as a thread -- too long getting time
-            String tmpRawResult = restConn.sendCommandToUser(controller, RESTURL_GETMASTERSHIPINFO);
+            ThreadGetMonitoringResultForMastership tmpRunnableObj = new ThreadGetMonitoringResultForMastership(controller);
+            Thread tmpThread = new Thread(tmpRunnableObj);
+            rawResults.add(tmpRunnableObj);
+            threads.add(tmpThread);
+            tmpThread.start();
+        }
 
-            results.put(controller.getBeanKey(), parser.parseMastershipMonitoringResults(tmpRawResult));
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (ThreadGetMonitoringResultForMastership runnableObj : rawResults) {
+            results.put(runnableObj.getController().getBeanKey(), parser.parseMastershipMonitoringResults(runnableObj.getResult()));
         }
 
         return results;
+    }
+
+    private class ThreadGetMonitoringResultForMastership implements Runnable {
+
+        private ControllerBean controller;
+        private String result;
+
+        public ThreadGetMonitoringResultForMastership(ControllerBean controller) {
+            this.controller = controller;
+        }
+
+        @Override
+        public void run() {
+            this.result = monitorRawMastership(controller);
+        }
+
+        public ControllerBean getController() {
+            return controller;
+        }
+
+        public void setController(ControllerBean controller) {
+            this.controller = controller;
+        }
+
+        public String getResult() {
+            return result;
+        }
+
+        public void setResult(String result) {
+            this.result = result;
+        }
     }
 }
 
@@ -55,3 +101,4 @@ class MastershipSanityException extends RuntimeException {
         super(message);
     }
 }
+
