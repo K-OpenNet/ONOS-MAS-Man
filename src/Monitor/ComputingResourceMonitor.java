@@ -71,22 +71,20 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     public HashMap<String, ComputingResourceTuple> monitorComputingResource () {
 
+        SSHParser parser = new SSHParser();
+
         HashMap<String, ComputingResourceTuple> results = new HashMap<>();
 
-        SSHParser parser = new SSHParser();
+        // Initialize
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            ComputingResourceTuple tmpTuple = new ComputingResourceTuple();
+            results.put(controller.getBeanKey(), tmpTuple);
+        }
 
         for (PMBean pm : Configuration.getInstance().getPms()) {
             String tmpRawResults = monitorRawComputingResource(pm);
 
-            for (ControllerBean controller : Configuration.getInstance().getRelationships().get(pm.getBeanKey())) {
-                ComputingResourceTuple tmpComputingResourceTuple = parser.parseComputingResourceMonitoringResults(tmpRawResults, controller);
-
-                if (results.containsKey(controller.getBeanKey())) {
-                    throw new ComputingResourceSanityException();
-                }
-
-                results.put(controller.getBeanKey(), tmpComputingResourceTuple);
-            }
+            parser.parseComputingResourceMonitoringResults(tmpRawResults, pm, results);
         }
 
         return results;
@@ -100,16 +98,6 @@ class CPUBitMapSanityException extends RuntimeException {
     }
 
     public CPUBitMapSanityException(String message) {
-        super(message);
-    }
-}
-
-class ComputingResourceSanityException extends RuntimeException {
-    public ComputingResourceSanityException() {
-        super();
-    }
-
-    public ComputingResourceSanityException(String message) {
         super(message);
     }
 }
