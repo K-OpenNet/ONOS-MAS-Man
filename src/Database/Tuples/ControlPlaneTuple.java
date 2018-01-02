@@ -15,7 +15,9 @@ public class ControlPlaneTuple extends AbstractTuple implements Tuple {
     private HashMap<OFType, Long> outdatedControlTrafficResults;
     private HashMap<OFType, Long> outdatedControlTrafficBytesResults;
 
-    public ControlPlaneTuple() {
+    private String masterControllerID;
+
+    public ControlPlaneTuple(String masterControllerID) {
         tupleName = tupleType.CONTROLPLANETUPLE;
 
         initHashMaps(controlTrafficResults);
@@ -25,6 +27,7 @@ public class ControlPlaneTuple extends AbstractTuple implements Tuple {
         initHashMaps(outdatedControlTrafficResults);
         initHashMaps(outdatedControlTrafficBytesResults);
 
+        this.masterControllerID = masterControllerID;
     }
 
     public void initHashMaps(HashMap<OFType, Long> maps) {
@@ -81,5 +84,13 @@ public class ControlPlaneTuple extends AbstractTuple implements Tuple {
 
     public void setOutdatedControlTrafficBytesResults(HashMap<OFType, Long> outdatedControlTrafficBytesResults) {
         this.outdatedControlTrafficBytesResults = outdatedControlTrafficBytesResults;
+    }
+
+    public String getMasterControllerID() {
+        return masterControllerID;
+    }
+
+    public void setMasterControllerID(String masterControllerID) {
+        this.masterControllerID = masterControllerID;
     }
 }
