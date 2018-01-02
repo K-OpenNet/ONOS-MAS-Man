@@ -76,7 +76,7 @@ public class JsonParser extends AbstractParser implements Parser {
                 String tmpControllerName = tmpControllerObj.get("name").asString();
                 String tmpControllerId = tmpControllerObj.get("controllerId").asString();
 
-                ControllerBean tmpControllerBean = config.getControllerBean(tmpControllerId, tmpControllerName);
+                ControllerBean tmpControllerBean = config.getControllerBean(tmpControllerName);
                 config.getRelationships().get(tmpPMBean).add(tmpControllerBean);
             }
         }

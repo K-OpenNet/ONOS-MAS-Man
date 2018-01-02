@@ -36,10 +36,9 @@ public class Configuration {
     private ArrayList<PMBean> pms;
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;
 
-    public ControllerBean getControllerBean (String controllerId, String name) {
+    public ControllerBean getControllerBean (String name) {
         for (int index = 0; index < controllers.size(); index++) {
-            if (controllers.get(index).getControllerId().equals(controllerId) &&
-                    controllers.get(index).getName().equals(name)) {
+            if (controllers.get(index).getName().equals(name)) {
                 return controllers.get(index);
             }
         }
