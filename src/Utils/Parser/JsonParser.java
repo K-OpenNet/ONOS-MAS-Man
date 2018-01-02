@@ -3,10 +3,12 @@ package Utils.Parser;
 import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
+import Database.Tuples.MastershipTuple;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class JsonParser extends AbstractParser implements Parser {
     public JsonParser() {
@@ -80,6 +82,11 @@ public class JsonParser extends AbstractParser implements Parser {
                 config.getRelationships().get(tmpPMBean).add(tmpControllerBean);
             }
         }
+    }
 
+    public MastershipTuple parseMastershipMonitoringResults(String rawResults, ControllerBean controller) {
+        MastershipTuple result = new MastershipTuple();
+
+        return result;
     }
 }
