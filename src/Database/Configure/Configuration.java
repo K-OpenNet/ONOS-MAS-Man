@@ -21,6 +21,7 @@ public class Configuration {
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "/sys/devices/system/cpu/cpu<index>/online";
+    public static final String CMD_COMPUTING_RESOURCE_QUERY = "CPU/Load/User,CPU/Load/User:avg,RAM/Usage/Used,RAM/Usage/Used:avg,Net/Rate/Rx,Net/Rate/Rx:avg,Net/Rate/Tx,Net/Rate/Tx:avg";
 
     // URLs for REST API
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";

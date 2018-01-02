@@ -1,20 +1,28 @@
 package Monitor;
 
 import Beans.ControllerBean;
+import Beans.PMBean;
+import Database.Configure.Configuration;
+import Database.Tuples.ComputingResourceTuple;
 import Utils.Connection.SSHConnection;
+import Utils.Parser.SSHParser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static Database.Configure.Configuration.CMD_COMPUTING_RESOURCE_QUERY;
 import static Database.Configure.Configuration.CMD_CPU_BITMAP_TEMPLATE;
 
 public class ComputingResourceMonitor extends AbstractMonitor implements Monitor {
 
-    private SSHConnection sshConn;
 
     public ComputingResourceMonitor() {
         monitorName = monitorType.COMPUTINGRESOURCEMONITOR;
-        sshConn = new SSHConnection();
     }
 
     public int[] monitorCPUBitMap (ControllerBean controllerBean) {
+        SSHConnection sshConn = new SSHConnection();
+
         if (controllerBean.getRootSession() == null) {
             System.out.println(controllerBean.getBeanKey() + ": SSH Root session is not set up. Please set up it first");
             throw new NullPointerException();
@@ -52,6 +60,38 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         return controllerBean.getCpuBitmap();
     }
+
+    public String monitorRawComputingResource (PMBean pm) {
+
+        SSHConnection sshConn = new SSHConnection();
+
+        return sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
+
+    }
+
+    public HashMap<String, ComputingResourceTuple> monitorComputingResource () {
+
+        HashMap<String, ComputingResourceTuple> results = new HashMap<>();
+
+        SSHParser parser = new SSHParser();
+
+        for (PMBean pm : Configuration.getInstance().getPms()) {
+            String tmpRawResults = monitorRawComputingResource(pm);
+
+            for (ControllerBean controller : Configuration.getInstance().getRelationships().get(pm.getBeanKey())) {
+                ComputingResourceTuple tmpComputingResourceTuple = parser.parseComputingResourceMonitoringResults(tmpRawResults, controller);
+
+                if (results.containsKey(controller.getBeanKey())) {
+                    throw new ComputingResourceSanityException();
+                }
+
+                results.put(controller.getBeanKey(), tmpComputingResourceTuple);
+            }
+        }
+
+        return results;
+
+    }
 }
 
 class CPUBitMapSanityException extends RuntimeException {
@@ -60,6 +100,16 @@ class CPUBitMapSanityException extends RuntimeException {
     }
 
     public CPUBitMapSanityException(String message) {
+        super(message);
+    }
+}
+
+class ComputingResourceSanityException extends RuntimeException {
+    public ComputingResourceSanityException() {
+        super();
+    }
+
+    public ComputingResourceSanityException(String message) {
         super(message);
     }
 }
