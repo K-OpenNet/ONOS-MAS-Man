@@ -1,7 +1,10 @@
 package UserInterface.CLI;
 
 import Controller.Controller;
+import Database.Tables.Database;
+import Database.Tables.State;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CommandLine {
@@ -34,7 +37,8 @@ public class CommandLine {
                     // Run
                     break;
                 case 4:
-                    // Reserve
+                    // Monitoring only
+                    runMonitoringOnly();
                     break;
                 case 5:
                     // test
@@ -61,5 +65,9 @@ public class CommandLine {
 
     public void testFuncForDev () {
 
+    }
+
+    public void runMonitoringOnly() {
+        Controller.runMonitoring();
     }
 }

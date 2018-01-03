@@ -3,15 +3,30 @@ package Controller;
 import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
+import Database.Tables.Database;
+import Database.Tables.State;
+import Database.Tuples.ComputingResourceTuple;
+import Database.Tuples.ControlPlaneTuple;
+import Database.Tuples.MastershipTuple;
 import Monitor.ComputingResourceMonitor;
+import Monitor.ControlPlaneMonitor;
+import Monitor.MastershipMonitor;
 import UserInterface.CLI.CommandLine;
 import Utils.Connection.SSHConnection;
 import Utils.FileIO.FileIOUtil;
 import Utils.Parser.JsonParser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
+import static Database.Configure.Configuration.MONITORING_PERIOD;
 
 public class Controller {
+
+    private static int timeIndex;
+
     private static Controller ourInstance = new Controller();
 
     public static Controller getInstance() {
@@ -25,6 +40,8 @@ public class Controller {
     // Initialization function
     public static void init() {
         System.out.println("** Initialization now...");
+
+        timeIndex = 0;
 
         ArrayList<Thread> threads = new ArrayList<>();
 
@@ -67,11 +84,31 @@ public class Controller {
         System.out.println("** Initialization has been finished.");
     }
 
+    // run Monitoring
+    public static void runMonitoring() {
+        timeIndex = 0;
+
+        ComputingResourceMonitor crMon = new ComputingResourceMonitor();
+        MastershipMonitor masMon = new MastershipMonitor();
+        ControlPlaneMonitor cpMon = new ControlPlaneMonitor();
+
+        ThreadMonitoring monitoringThread = new ThreadMonitoring(crMon, masMon, cpMon);
+        Thread thr = new Thread(monitoringThread);
+        thr.start();
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
     }
 
+    public static int getTimeIndex() {
+        return timeIndex;
+    }
+
+    public static void setTimeIndex(int timeIndex) {
+        Controller.timeIndex = timeIndex;
+    }
 }
 
 class ThreadPMSSHSessionAssignment implements Runnable {
@@ -90,6 +127,149 @@ class ThreadPMSSHSessionAssignment implements Runnable {
 
         System.out.println("The SSH sessions for the PM, " + pm.getBeanKey() + ", has been set");
 
+    }
+}
+
+class ThreadMonitoring implements Runnable {
+
+    private ComputingResourceMonitor crMon;
+    private MastershipMonitor masMon;
+    private ControlPlaneMonitor cpMon;
+    private ArrayList<Thread> threads;
+
+    public ThreadMonitoring(ComputingResourceMonitor crMon, MastershipMonitor masMon, ControlPlaneMonitor cpMon) {
+        this.threads = new ArrayList<>();
+        this.crMon = crMon;
+        this.masMon = masMon;
+        this.cpMon = cpMon;
+    }
+
+    @Override
+    public void run() {
+
+        while (true) {
+
+            System.out.println("Time: " + Controller.getTimeIndex());
+            Date dt = new Date();
+            System.out.println(dt.toString());
+            long tmpPrevTime = dt.getTime();
+
+            ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
+            ThreadMastershipMonitoring masMonThread = new ThreadMastershipMonitoring(masMon);
+            ThreadControlPlaneMonitoring cpMonThread = new ThreadControlPlaneMonitoring(cpMon);
+
+            Thread thrCrMon = new Thread(crMonThread);
+            Thread thrMasMon = new Thread(masMonThread);
+            Thread thrCpMon = new Thread(cpMonThread);
+
+            threads.add(thrCrMon);
+            threads.add(thrMasMon);
+            threads.add(thrCpMon);
+
+            for (Thread thr : threads) {
+                thr.start();
+            }
+
+            for (Thread thr : threads) {
+                try {
+                    thr.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            threads.clear();
+            threads = new ArrayList<>();
+
+            State tmpState = new State();
+            tmpState.setComputingResourceTuples(crMonThread.getComputingResourceTuples());
+            tmpState.setMastershipTuples(masMonThread.getMastershipTuples());
+            tmpState.setControlPlaneTuples(cpMonThread.getControlPlaneTuples());
+            Database.getDatabase().add(Controller.getTimeIndex(), tmpState);
+
+
+            dt = new Date();
+
+            long elapseTime = dt.getTime() - tmpPrevTime;
+            long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
+
+            try {
+                Thread.sleep(remainTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Controller.setTimeIndex(Controller.getTimeIndex() + 1);
+        }
+    }
+}
+
+class ThreadComputingResourceMonitoring implements Runnable {
+
+    private ComputingResourceMonitor crMon;
+    private HashMap<String, ComputingResourceTuple> computingResourceTuples;
+
+    public ThreadComputingResourceMonitoring(ComputingResourceMonitor crMon) {
+        this.crMon = crMon;
+    }
+
+    @Override
+    public void run() {
+        computingResourceTuples = crMon.monitorComputingResource();
+    }
+
+    public HashMap<String, ComputingResourceTuple> getComputingResourceTuples() {
+        return computingResourceTuples;
+    }
+
+    public void setComputingResourceTuples(HashMap<String, ComputingResourceTuple> computingResourceTuples) {
+        this.computingResourceTuples = computingResourceTuples;
+    }
+}
+
+class ThreadMastershipMonitoring implements Runnable {
+
+    private MastershipMonitor masMon;
+    private HashMap<String, MastershipTuple> mastershipTuples;
+
+    public ThreadMastershipMonitoring(MastershipMonitor masMon) {
+        this.masMon = masMon;
+    }
+
+    @Override
+    public void run() {
+        mastershipTuples = masMon.monitorMastership();
+    }
+
+    public HashMap<String, MastershipTuple> getMastershipTuples() {
+        return mastershipTuples;
+    }
+
+    public void setMastershipTuples(HashMap<String, MastershipTuple> mastershipTuples) {
+        this.mastershipTuples = mastershipTuples;
+    }
+}
+
+class ThreadControlPlaneMonitoring implements Runnable {
+
+    private ControlPlaneMonitor cpMon;
+    private HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples;
+
+    public ThreadControlPlaneMonitoring(ControlPlaneMonitor cpMon) {
+        this.cpMon = cpMon;
+    }
+
+    @Override
+    public void run() {
+        controlPlaneTuples = cpMon.monitorControlPlane();
+    }
+
+    public HashMap<String, HashMap<String, ControlPlaneTuple>> getControlPlaneTuples() {
+        return controlPlaneTuples;
+    }
+
+    public void setControlPlaneTuples(HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples) {
+        this.controlPlaneTuples = controlPlaneTuples;
     }
 }
 

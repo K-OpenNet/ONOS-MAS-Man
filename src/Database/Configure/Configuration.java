@@ -19,6 +19,9 @@ public class Configuration {
         relationships = new HashMap<>();
     }
 
+    // Experimental variables
+    public static final int MONITORING_PERIOD = 3;
+
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "/sys/devices/system/cpu/cpu<index>/online";
     public static final String CMD_COMPUTING_RESOURCE_QUERY = "vboxmanage metrics query '*' CPU/Load/User,CPU/Load/Kernel,RAM/Usage/Used,Net/Rate/Rx,Net/Rate/Tx";
