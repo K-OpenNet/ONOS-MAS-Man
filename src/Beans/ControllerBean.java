@@ -22,13 +22,17 @@ public class ControllerBean extends AbstractBean implements Bean {
     private int maxCPUs;
     private int minCPUs;
     private int[] cpuBitmap;
-    private boolean isActive;
+    private boolean active;
+    private boolean onosAlive;
+    private boolean vmAlive;
 
     public ControllerBean(String controllerId) {
         this.controllerId = controllerId;
         this.beanKey = controllerId;
         this.beanName = beanType.CONTROLLER;
-        this.isActive = true;
+        this.active = true;
+        this.onosAlive = true;
+        this.vmAlive = true;
     }
 
     public String getName() {
@@ -176,10 +180,26 @@ public class ControllerBean extends AbstractBean implements Bean {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
+    }
+
+    public boolean isOnosAlive() {
+        return onosAlive;
+    }
+
+    public void setOnosAlive(boolean onosAlive) {
+        this.onosAlive = onosAlive;
+    }
+
+    public boolean isVmAlive() {
+        return vmAlive;
+    }
+
+    public void setVmAlive(boolean vmAlive) {
+        this.vmAlive = vmAlive;
     }
 }
