@@ -1,7 +1,6 @@
 package Database.Tables;
 
 import Beans.ControllerBean;
-import Beans.SwitchBean;
 import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
@@ -23,16 +22,16 @@ public class State {
         controlPlaneTuples = new HashMap<>();
     }
 
-    public void addMastershipTuple(ControllerBean controller, SwitchBean sw) {
+    public void addMastershipTuple(ControllerBean controller, String switchId) {
         if(!mastershipTuples.containsKey(controller.getBeanKey())) {
             mastershipTuples.put(controller.getBeanKey(), new MastershipTuple());
         }
 
-        if(mastershipTuples.get(controller.getBeanKey()).hasSwitch(sw.getBeanKey())) {
+        if(mastershipTuples.get(controller.getBeanKey()).hasSwitch(switchId)) {
             throw new MastershipTupleSanityException();
         }
 
-        mastershipTuples.get(controller.getBeanKey()).addSwitch(sw.getBeanKey());
+        mastershipTuples.get(controller.getBeanKey()).addSwitch(switchId);
     }
 
     public void addComputingResourceTuple(ControllerBean controller, ComputingResourceTuple computingResourceTuple) {
@@ -43,12 +42,12 @@ public class State {
         computingResourceTuples.put(controller.getBeanKey(), computingResourceTuple);
     }
 
-    public void addControlPlaneTuple(SwitchBean sw, ControlPlaneTuple controlPlaneTuple) {
-        if(controlPlaneTuples.containsKey(sw.getBeanKey())) {
+    public void addControlPlaneTuple(String switchId, ControlPlaneTuple controlPlaneTuple) {
+        if(controlPlaneTuples.containsKey(switchId)) {
             throw new ControlPlaneTupleSanityException();
         }
 
-        controlPlaneTuples.put(sw.getBeanKey(), controlPlaneTuple);
+        controlPlaneTuples.put(switchId, controlPlaneTuple);
     }
 
     public HashMap<String, MastershipTuple> getMastershipTuples() {
