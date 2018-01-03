@@ -25,6 +25,11 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
         HashMap<String, HashMap<String, ControlPlaneTuple>> results = new HashMap<>();
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (results.containsKey(controller.getBeanKey())) {
+                throw new ControlPlaneMonitoringSanityException();
+            }
+
             results.put(controller.getBeanKey(), monitorControlPlaneForEachController(controller));
         }
 
@@ -39,4 +44,14 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
         return parser.parseControlPlaneMonitoringResult(controller, tmpRawResults);
     }
 
+}
+
+class ControlPlaneMonitoringSanityException extends RuntimeException {
+    public ControlPlaneMonitoringSanityException() {
+        super();
+    }
+
+    public ControlPlaneMonitoringSanityException(String message) {
+        super(message);
+    }
 }

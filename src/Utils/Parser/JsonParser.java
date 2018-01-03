@@ -112,7 +112,11 @@ public class JsonParser extends AbstractParser implements Parser {
             JsonObject elemSwitch = switches.get(index).asObject();
             String tmpDpid = elemSwitch.get("id").asString();
 
-            results.putIfAbsent(tmpDpid, new ControlPlaneTuple());
+            if (results.containsKey(tmpDpid)) {
+                throw new ControlPlaneMonitoringSanityException();
+            }
+
+            results.put(tmpDpid, new ControlPlaneTuple());
             ControlPlaneTuple resultTuple = results.get(tmpDpid);
 
             for (OFType type : OFType.values()) {
@@ -122,5 +126,15 @@ public class JsonParser extends AbstractParser implements Parser {
         }
 
         return results;
+    }
+}
+
+class ControlPlaneMonitoringSanityException extends RuntimeException {
+    public ControlPlaneMonitoringSanityException() {
+        super();
+    }
+
+    public ControlPlaneMonitoringSanityException(String message) {
+        super(message);
     }
 }
