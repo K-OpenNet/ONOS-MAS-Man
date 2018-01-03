@@ -1,7 +1,11 @@
 package Monitor;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
+import Database.Tuples.ControlPlaneTuple;
 import Utils.Connection.RESTConnection;
+
+import java.util.HashMap;
 
 import static Database.Configure.Configuration.RESTURL_CPMESSAGES;
 
@@ -14,6 +18,24 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
         RESTConnection restConn = new RESTConnection();
 
         return restConn.sendCommandToUser(controller, RESTURL_CPMESSAGES);
+    }
+
+    public HashMap<String, HashMap<String, ControlPlaneTuple>> monitorControlPlane() {
+        HashMap<String, HashMap<String, ControlPlaneTuple>> results = new HashMap<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            results.put(controller.getBeanKey(), monitorControlPlaneForEachController(controller));
+        }
+
+        return results;
+    }
+
+    public HashMap<String, ControlPlaneTuple> monitorControlPlaneForEachController(ControllerBean controller) {
+        HashMap<String, ControlPlaneTuple> results = new HashMap<>();
+
+        String tmpRawResults = monitorRawControlPlane(controller);
+
+        return results;
     }
 
 }
