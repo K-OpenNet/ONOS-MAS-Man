@@ -13,8 +13,9 @@ public class State {
     private HashMap<String, MastershipTuple> mastershipTuples;
     // Key: controllerKey, value: ComputingResourceTuple
     private HashMap<String, ComputingResourceTuple> computingResourceTuples;
-    // key: switchKey, value: ControlPlaneTuple
-    private HashMap<String, ControlPlaneTuple> controlPlaneTuples;
+    // Outter - key: controllerKey, value: inner
+    // Inner - key: switchKey, value: ControlPlaneTuple
+    private HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples;
 
     public State() {
         mastershipTuples = new HashMap<>();
@@ -42,12 +43,12 @@ public class State {
         computingResourceTuples.put(controller.getBeanKey(), computingResourceTuple);
     }
 
-    public void addControlPlaneTuple(String switchId, ControlPlaneTuple controlPlaneTuple) {
+    public void addControlPlaneTuple(String controllerId, String switchId, ControlPlaneTuple controlPlaneTuple) {
         if(controlPlaneTuples.containsKey(switchId)) {
             throw new ControlPlaneTupleSanityException();
         }
 
-        controlPlaneTuples.put(switchId, controlPlaneTuple);
+        controlPlaneTuples.get(controllerId).put(switchId, controlPlaneTuple);
     }
 
     public HashMap<String, MastershipTuple> getMastershipTuples() {
@@ -66,11 +67,11 @@ public class State {
         this.computingResourceTuples = computingResourceTuples;
     }
 
-    public HashMap<String, ControlPlaneTuple> getControlPlaneTuples() {
+    public HashMap<String, HashMap<String, ControlPlaneTuple>> getControlPlaneTuples() {
         return controlPlaneTuples;
     }
 
-    public void setControlPlaneTuples(HashMap<String, ControlPlaneTuple> controlPlaneTuples) {
+    public void setControlPlaneTuples(HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples) {
         this.controlPlaneTuples = controlPlaneTuples;
     }
 }
