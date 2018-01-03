@@ -97,8 +97,8 @@ public class JsonParser extends AbstractParser implements Parser {
         return result;
     }
 
-    public ControlPlaneTuple parseControlPlaneMonitoringResult(ControllerBean controller, String rawResult) {
-        ControlPlaneTuple result = new ControlPlaneTuple();
+    public HashMap<String, ControlPlaneTuple> parseControlPlaneMonitoringResult(ControllerBean controller, String rawResult) {
+        HashMap<String, ControlPlaneTuple> result = new HashMap<>();
 
         return result;
     }

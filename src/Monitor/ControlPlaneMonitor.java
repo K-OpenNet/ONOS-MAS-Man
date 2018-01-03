@@ -4,6 +4,7 @@ import Beans.ControllerBean;
 import Database.Configure.Configuration;
 import Database.Tuples.ControlPlaneTuple;
 import Utils.Connection.RESTConnection;
+import Utils.Parser.JsonParser;
 
 import java.util.HashMap;
 
@@ -31,11 +32,11 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
     }
 
     public HashMap<String, ControlPlaneTuple> monitorControlPlaneForEachController(ControllerBean controller) {
-        HashMap<String, ControlPlaneTuple> results = new HashMap<>();
-
         String tmpRawResults = monitorRawControlPlane(controller);
 
-        return results;
+        JsonParser parser = new JsonParser();
+
+        return parser.parseControlPlaneMonitoringResult(controller, tmpRawResults);
     }
 
 }
