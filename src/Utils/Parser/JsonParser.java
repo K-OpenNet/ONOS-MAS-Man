@@ -3,6 +3,7 @@ package Utils.Parser;
 import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
+import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -92,6 +93,12 @@ public class JsonParser extends AbstractParser implements Parser {
         for (int index = 0; index < switches.size(); index++) {
             result.addSwitch(switches.get(index).asString());
         }
+
+        return result;
+    }
+
+    public ControlPlaneTuple parseControlPlaneMonitoringResult(ControllerBean controller, String rawResult) {
+        ControlPlaneTuple result = new ControlPlaneTuple();
 
         return result;
     }

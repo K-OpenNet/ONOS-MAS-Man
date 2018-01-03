@@ -1,6 +1,7 @@
 package Monitor;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import Database.Tables.Database;
 import Database.Tuples.ControlPlaneTuple;
 import Utils.Connection.RESTConnection;
@@ -27,6 +28,22 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
         JsonParser parser = new JsonParser();
         HashMap<String, ControlPlaneTuple> results = new HashMap<>();
 
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            String tmpRawResult = monitorRawControlPlane(controller);
+            ControlPlaneTuple tmpResult = parser.parseControlPlaneMonitoringResult(controller, tmpRawResult);
+
+            if (tmpResult.getDpid() == null || tmpResult.getDpid() == "") {
+                System.out.println("DPID for switch, " + tmpResult.toString() + " is not set");
+                throw new NullPointerException();
+            }
+
+            if (results.containsKey(tmpResult.getDpid())) {
+                combineTwoTuples(tmpResult, results.get(tmpResult.getDpid()));
+            } else {
+                results.put(tmpResult.getDpid(), tmpResult);
+            }
+        }
+
         return results;
     }
 
@@ -48,6 +65,9 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
             if (!prevResults.keySet().contains(dpid)) {
                 continue;
             }
+
+            currentResults.get(dpid).setOutdatedControlTrafficResults((HashMap<OFType, Long>) prevResults.get(dpid).getOutdatedControlTrafficResults().clone());
+            currentResults.get(dpid).setOutdatedControlTrafficBytesResults((HashMap<OFType, Long>) prevResults.get(dpid).getOutdatedControlTrafficBytesResults().clone());
 
             ControlPlaneTuple tmpTuple = currentResults.get(dpid);
             ControlPlaneTuple prevTuple = prevResults.get(dpid);
@@ -75,6 +95,26 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
         }
 
         return currentResults;
+    }
+
+    public ControlPlaneTuple combineTwoTuples(ControlPlaneTuple origTup, ControlPlaneTuple newTup) {
+        for (OFType type : OFType.values()) {
+            long controlTrafficResult = origTup.getControlTrafficResults().get(type)
+                    + newTup.getControlTrafficResults().get(type);
+            long controlTrafficBytesResult = origTup.getControlTrafficByteResults().get(type)
+                    + newTup.getControlTrafficByteResults().get(type);
+            long controlTrafficRawResult = origTup.getControlTrafficRawResults().get(type)
+                    + newTup.getControlTrafficRawResults().get(type);
+            long controlTrafficRawByteResult = origTup.getControlTrafficByteRawResults().get(type)
+                    + newTup.getControlTrafficByteRawResults().get(type);
+
+            origTup.getControlTrafficResults().replace(type, controlTrafficResult);
+            origTup.getControlTrafficByteResults().replace(type, controlTrafficBytesResult);
+            origTup.getControlTrafficRawResults().replace(type, controlTrafficRawResult);
+            origTup.getControlTrafficByteRawResults().replace(type, controlTrafficRawByteResult);
+        }
+
+        return origTup;
     }
 }
 
