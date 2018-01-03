@@ -25,7 +25,7 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
 
     public HashMap<String, MastershipTuple> monitorMastership() {
 
-        JsonParser parser = new JsonParser();
+
         HashMap<String, MastershipTuple> results = new HashMap<>();
         ArrayList<Thread> threads = new ArrayList<>();
         ArrayList<ThreadGetMonitoringResultForMastership> rawResults = new ArrayList<>();
@@ -54,7 +54,7 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
         }
 
         for (ThreadGetMonitoringResultForMastership runnableObj : rawResults) {
-            results.put(runnableObj.getController().getBeanKey(), parser.parseMastershipMonitoringResults(runnableObj.getResult()));
+            results.put(runnableObj.getController().getBeanKey(), runnableObj.result);
         }
 
         return results;
@@ -63,7 +63,7 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
     private class ThreadGetMonitoringResultForMastership implements Runnable {
 
         private ControllerBean controller;
-        private String result;
+        private MastershipTuple result;
 
         public ThreadGetMonitoringResultForMastership(ControllerBean controller) {
             this.controller = controller;
@@ -71,7 +71,8 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
 
         @Override
         public void run() {
-            this.result = monitorRawMastership(controller);
+            JsonParser parser = new JsonParser();
+            this.result = parser.parseMastershipMonitoringResults(monitorRawMastership(controller));
         }
 
         public ControllerBean getController() {
@@ -82,11 +83,11 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
             this.controller = controller;
         }
 
-        public String getResult() {
+        public MastershipTuple getResult() {
             return result;
         }
 
-        public void setResult(String result) {
+        public void setResult(MastershipTuple result) {
             this.result = result;
         }
     }
