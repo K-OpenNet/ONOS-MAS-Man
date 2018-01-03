@@ -7,6 +7,7 @@ import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import org.projectfloodlight.openflow.protocol.OFType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,8 +99,28 @@ public class JsonParser extends AbstractParser implements Parser {
     }
 
     public HashMap<String, ControlPlaneTuple> parseControlPlaneMonitoringResult(ControllerBean controller, String rawResult) {
-        HashMap<String, ControlPlaneTuple> result = new HashMap<>();
+        HashMap<String, ControlPlaneTuple> results = new HashMap<>();
 
-        return result;
+        if(rawResult == null || rawResult == "") {
+            throw new NullPointerException();
+        }
+
+        JsonObject parser = JsonObject.readFrom(rawResult);
+        JsonArray switches = parser.get("devices").asArray();
+
+        for (int index = 0; index < switches.size(); index++) {
+            JsonObject elemSwitch = switches.get(index).asObject();
+            String tmpDpid = elemSwitch.get("id").asString();
+
+            results.putIfAbsent(tmpDpid, new ControlPlaneTuple());
+            ControlPlaneTuple resultTuple = results.get(tmpDpid);
+
+            for (OFType type : OFType.values()) {
+                resultTuple.getControlTrafficResults().put(type, Long.valueOf(elemSwitch.get(type.toString()).asString()));
+                resultTuple.getControlTrafficByteResults().put(type, Long.valueOf(elemSwitch.get(type.toString()+"[bytes]").asString()));
+            }
+        }
+
+        return results;
     }
 }
