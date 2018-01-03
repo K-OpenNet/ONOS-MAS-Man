@@ -30,6 +30,10 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
+            if (!controller.isOnosAlive()) {
+                continue;
+            }
+
             if (results.containsKey(controller.getBeanKey())) {
                 throw new ControlPlaneMonitoringSanityException();
             }

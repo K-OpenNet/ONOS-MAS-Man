@@ -21,6 +21,10 @@ public class SSHParser extends AbstractParser implements Parser {
 
             ControllerBean controller = Configuration.getInstance().getControllerBean(splittedResultsForEachLine[0]);
 
+            if (!controller.isVmAlive()) {
+                continue;
+            }
+
             if (!result.containsKey(controller.getBeanKey())) {
                 throw new ComputingResourceSanityException();
             }
