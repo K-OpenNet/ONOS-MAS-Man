@@ -16,11 +16,14 @@ public class State {
     // Outter - key: controllerKey, value: inner
     // Inner - key: switchKey, value: ControlPlaneTuple
     private HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples;
+    // Key: controllerKey, value # CPUs
+    private HashMap<String, Integer> numCPUsTuples;
 
     public State() {
         mastershipTuples = new HashMap<>();
         computingResourceTuples = new HashMap<>();
         controlPlaneTuples = new HashMap<>();
+        numCPUsTuples = new HashMap<>();
     }
 
     public void addMastershipTuple(ControllerBean controller, String switchId) {
@@ -73,6 +76,14 @@ public class State {
 
     public void setControlPlaneTuples(HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples) {
         this.controlPlaneTuples = controlPlaneTuples;
+    }
+
+    public HashMap<String, Integer> getNumCPUsTuples() {
+        return numCPUsTuples;
+    }
+
+    public void setNumCPUsTuples(HashMap<String, Integer> numCPUsTuples) {
+        this.numCPUsTuples = numCPUsTuples;
     }
 }
 
