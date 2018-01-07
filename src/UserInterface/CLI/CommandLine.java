@@ -41,6 +41,9 @@ public class CommandLine {
                     runMonitoringOnly();
                     break;
                 case 5:
+                    // save results
+                    break;
+                case 6:
                     // test
                     testFuncForDev();
                     break;
