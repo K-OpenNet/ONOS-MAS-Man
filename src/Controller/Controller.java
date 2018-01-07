@@ -157,14 +157,17 @@ class ThreadMonitoring implements Runnable {
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
             ThreadMastershipMonitoring masMonThread = new ThreadMastershipMonitoring(masMon);
             ThreadControlPlaneMonitoring cpMonThread = new ThreadControlPlaneMonitoring(cpMon);
+            ThreadNumCPUsMonitoring cpuMonThread = new ThreadNumCPUsMonitoring(crMon);
 
             Thread thrCrMon = new Thread(crMonThread);
             Thread thrMasMon = new Thread(masMonThread);
             Thread thrCpMon = new Thread(cpMonThread);
+            Thread thrCpuMon = new Thread(cpuMonThread);
 
             threads.add(thrCrMon);
             threads.add(thrMasMon);
             threads.add(thrCpMon);
+            threads.add(thrCpuMon);
 
             for (Thread thr : threads) {
                 thr.start();
@@ -185,6 +188,7 @@ class ThreadMonitoring implements Runnable {
             tmpState.setComputingResourceTuples(crMonThread.getComputingResourceTuples());
             tmpState.setMastershipTuples(masMonThread.getMastershipTuples());
             tmpState.setControlPlaneTuples(cpMonThread.getControlPlaneTuples());
+            tmpState.setNumCPUsTuples(cpuMonThread.getNumCPUsTuples());
             Database.getDatabase().add(Controller.getTimeIndex(), tmpState);
 
 
@@ -270,6 +274,29 @@ class ThreadControlPlaneMonitoring implements Runnable {
 
     public void setControlPlaneTuples(HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples) {
         this.controlPlaneTuples = controlPlaneTuples;
+    }
+}
+
+class ThreadNumCPUsMonitoring implements Runnable {
+
+    private ComputingResourceMonitor crMon;
+    private HashMap<String, Integer> numCPUsTuples;
+
+    public ThreadNumCPUsMonitoring(ComputingResourceMonitor crMon) {
+        this.crMon = crMon;
+    }
+
+    @Override
+    public void run() {
+        numCPUsTuples = crMon.monitorNumCPUs();
+    }
+
+    public HashMap<String, Integer> getNumCPUsTuples() {
+        return numCPUsTuples;
+    }
+
+    public void setNumCPUsTuples(HashMap<String, Integer> numCPUsTuples) {
+        this.numCPUsTuples = numCPUsTuples;
     }
 }
 

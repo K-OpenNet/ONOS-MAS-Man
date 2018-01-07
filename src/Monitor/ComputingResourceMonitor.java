@@ -61,6 +61,59 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         return controllerBean.getCpuBitmap();
     }
 
+    public HashMap<String, Integer> monitorNumCPUs() {
+
+        HashMap<String, Integer> results = new HashMap<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<ThreadGetNumCPUs> rawResults = new ArrayList<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (!controller.isVmAlive()) {
+                continue;
+            }
+
+            if (results.containsKey(controller.getBeanKey())) {
+                System.out.println(controller.getBeanKey() + " is duplicated in results");
+                throw new CPUBitMapSanityException();
+            }
+
+            ThreadGetNumCPUs tmpRunnableObj = new ThreadGetNumCPUs(controller);
+            Thread tmpThread = new Thread(tmpRunnableObj);
+            rawResults.add(tmpRunnableObj);
+            threads.add(tmpThread);
+            tmpThread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (ThreadGetNumCPUs runnableObj : rawResults) {
+            results.put(runnableObj.getController().getBeanKey(), getNumActiveBit(runnableObj.getResults()));
+        }
+
+        return results;
+    }
+
+    public int getNumActiveBit(int[] rawResults) {
+
+        int result = 0;
+
+        for (int index = 0; index < rawResults.length; index++) {
+            if (rawResults[index] == 1) {
+                result++;
+            }
+        }
+
+        return result;
+
+    }
+
     public String monitorRawComputingResource (PMBean pm) {
 
         SSHConnection sshConn = new SSHConnection();
@@ -94,6 +147,29 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         return results;
 
+    }
+
+    private class ThreadGetNumCPUs implements Runnable {
+
+        private ControllerBean controller;
+        private int[] results;
+
+        public ThreadGetNumCPUs(ControllerBean controller) {
+            this.controller = controller;
+        }
+
+        @Override
+        public void run() {
+            results = monitorCPUBitMap(controller);
+        }
+
+        public int[] getResults() {
+            return results;
+        }
+
+        public ControllerBean getController() {
+            return controller;
+        }
     }
 }
 
