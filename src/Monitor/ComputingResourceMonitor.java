@@ -127,6 +127,8 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         SSHParser parser = new SSHParser();
 
         HashMap<String, ComputingResourceTuple> results = new HashMap<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<ThreadGetMonitoringResultForComputingResource> rawResults = new ArrayList<>();
 
         // Initialize
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
@@ -140,9 +142,25 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         }
 
         for (PMBean pm : Configuration.getInstance().getPms()) {
-            String tmpRawResults = monitorRawComputingResource(pm);
 
-            parser.parseComputingResourceMonitoringResults(tmpRawResults, pm, results);
+            ThreadGetMonitoringResultForComputingResource tmpRunnableObj = new ThreadGetMonitoringResultForComputingResource(pm);
+            Thread tmpThread = new Thread(tmpRunnableObj);
+            rawResults.add(tmpRunnableObj);
+            threads.add(tmpThread);
+            tmpThread.start();
+
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (ThreadGetMonitoringResultForComputingResource runnableObj : rawResults) {
+            parser.parseComputingResourceMonitoringResults(runnableObj.getResults(), runnableObj.getPm(), results);
         }
 
         return results;
@@ -169,6 +187,29 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         public ControllerBean getController() {
             return controller;
+        }
+    }
+
+    private class ThreadGetMonitoringResultForComputingResource implements Runnable {
+
+        private String results;
+        private PMBean pm;
+
+        public ThreadGetMonitoringResultForComputingResource(PMBean pm) {
+            this.pm = pm;
+        }
+
+        @Override
+        public void run() {
+            results = monitorRawComputingResource(pm);
+        }
+
+        public String getResults() {
+            return results;
+        }
+
+        public PMBean getPm() {
+            return pm;
         }
     }
 }
