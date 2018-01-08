@@ -176,7 +176,7 @@ class ThreadGetNumCPUs implements Runnable {
 
         int index = 0;
 
-        while (results.equals("") || results == null) {
+        while (results.equals("") || results == null || results.equals(null) || results.equals("null")) {
 
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
@@ -228,7 +228,7 @@ class ThreadGetMonitoringResultForComputingResource implements Runnable {
 
         int index = 0;
 
-        while (results.equals("") || results == null) {
+        while (results.equals("") || results == null || results.equals(null) || results.equals("null")) {
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
                 throw new SSHRetryExceedException();
