@@ -75,6 +75,8 @@ public class SSHConnection extends AbstractConnection implements Connection {
                 sb.append(new String(buf, 0, index));
             }
 
+            results = sb.toString();
+
             System.out.println(targetMachine.getBeanKey() + ": 4");
 
             is.close();
