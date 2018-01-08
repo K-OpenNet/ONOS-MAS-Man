@@ -33,13 +33,15 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
             controllerBean.setCpuBitmap(new int[controllerBean.getMaxCPUs()]);
         }
 
-        String cmd = "cat ";
+        String cmd = "";
 
         // CPU #0 is always online.
         for (int index = 1; index <= controllerBean.getMaxCPUs(); index++) {
-            cmd += CMD_CPU_BITMAP_TEMPLATE.replace("<index>", String.valueOf(index));
+            cmd += "cat " + CMD_CPU_BITMAP_TEMPLATE.replace("<index>", String.valueOf(index));
 
-            cmd += " ";
+            if (index != controllerBean.getMaxCPUs()) {
+                cmd += " && ";
+            }
         }
 
         String[] results = sshConn.sendCommandToRoot(controllerBean, cmd).split("\n");
@@ -48,7 +50,8 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         if (controllerBean.getMaxCPUs() != (results.length + 1)) {
             System.out.println(controllerBean.getBeanKey() + ": MaxCPU is different from Controller VM's CPU information (" +
                                        String.valueOf(controllerBean.getMaxCPUs()) +
-                                       " != " + String.valueOf(results.length + 1));
+                                       " != " + String.valueOf(results.length + 1) + ")");
+            System.out.println();
             throw new CPUBitMapSanityException();
         }
 
