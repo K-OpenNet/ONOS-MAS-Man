@@ -33,35 +33,37 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
             controllerBean.setCpuBitmap(new int[controllerBean.getMaxCPUs()]);
         }
 
-        String cmd = "";
+        String cmd  = CMD_CPU_BITMAP_TEMPLATE;
 
-        // CPU #0 is always online.
-        for (int index = 1; index <= controllerBean.getMaxCPUs(); index++) {
-            cmd += "cat " + CMD_CPU_BITMAP_TEMPLATE.replace("<index>", String.valueOf(index));
+        String results = sshConn.sendCommandToRoot(controllerBean, cmd).split("\\s+")[3];
 
-            if (index != controllerBean.getMaxCPUs()) {
-                cmd += " && ";
-            }
-        }
+        ArrayList<Integer> rawResults = parseCPUBitmapFromVM(results);
 
-        String[] results = sshConn.sendCommandToRoot(controllerBean, cmd).split("\n");
-
-        // Sanity check between MaxCPU in ControllerBean and Controller VM's information
-        if (controllerBean.getMaxCPUs() != (results.length + 1)) {
-            System.out.println(controllerBean.getBeanKey() + ": MaxCPU is different from Controller VM's CPU information (" +
-                                       String.valueOf(controllerBean.getMaxCPUs()) +
-                                       " != " + String.valueOf(results.length + 1) + ")");
-            System.out.println();
-            throw new CPUBitMapSanityException();
-        }
-
-        // CPU #0 is always online.
-        controllerBean.getCpuBitmap()[0] = 1;
-        for (int index = 1; index <= results.length; index++) {
-            controllerBean.getCpuBitmap()[index] = Integer.valueOf(results[index - 1]);
+        for (int elemResult : rawResults) {
+            controllerBean.getCpuBitmap()[elemResult] = 1;
         }
 
         return controllerBean.getCpuBitmap();
+    }
+
+    public ArrayList<Integer> parseCPUBitmapFromVM (String rawResult) {
+
+        ArrayList<Integer> results = new ArrayList<>();
+
+        if (rawResult.contains("-")) {
+            String[] tmpResults = rawResult.split("-");
+            int start = Integer.valueOf(tmpResults[0]);
+            int end = Integer.valueOf(tmpResults[1]);
+
+            for (int index = start; index <= end; index++) {
+                results.add(index);
+            }
+
+        } else {
+            results.add(Integer.valueOf(rawResult));
+        }
+
+        return results;
     }
 
     public HashMap<String, Integer> monitorNumCPUs() {

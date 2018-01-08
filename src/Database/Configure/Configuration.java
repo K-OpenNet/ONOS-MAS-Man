@@ -23,7 +23,7 @@ public class Configuration {
     public static final int MONITORING_PERIOD = 3;
 
     // CMDs
-    public static final String CMD_CPU_BITMAP_TEMPLATE = "/sys/devices/system/cpu/cpu<index>/online";
+    public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
     public static final String CMD_COMPUTING_RESOURCE_QUERY = "vboxmanage metrics query '*' CPU/Load/User,CPU/Load/Kernel,RAM/Usage/Used,Net/Rate/Rx,Net/Rate/Tx";
 
     // URLs for REST API
