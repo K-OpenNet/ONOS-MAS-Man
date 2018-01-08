@@ -179,6 +179,7 @@ class ThreadMonitoring implements Runnable {
                 try {
                     System.out.println(thr.getName());
                     thr.join();
+                    System.out.println(thr.getName() + " finished");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
