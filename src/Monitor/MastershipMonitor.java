@@ -51,7 +51,7 @@ public class MastershipMonitor extends AbstractMonitor implements Monitor {
 
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(Configuration.MONITORING_PERIOD * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

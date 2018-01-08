@@ -74,7 +74,7 @@ public class Controller {
 
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(Configuration.MONITORING_PERIOD * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -174,7 +174,7 @@ class ThreadMonitoring implements Runnable {
 
             for (Thread thr : threads) {
                 try {
-                    thr.join();
+                    thr.join(Configuration.MONITORING_PERIOD * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
