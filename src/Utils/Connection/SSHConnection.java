@@ -33,7 +33,7 @@ public class SSHConnection extends AbstractConnection implements Connection {
             String tmpLine;
             results = br.readLine() + "\n";
             while ((tmpLine = br.readLine()) != null) {
-                results = results + tmpLine;
+                results = results + tmpLine + "\n";
             }
 
             channel.disconnect();
@@ -65,7 +65,7 @@ public class SSHConnection extends AbstractConnection implements Connection {
             String tmpLine;
             results = br.readLine() + "\n";
             while ((tmpLine = br.readLine()) != null) {
-                results = results + tmpLine;
+                results = results + tmpLine + "\n";
             }
 
             channel.disconnect();
