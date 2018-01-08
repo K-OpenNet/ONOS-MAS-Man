@@ -36,10 +36,11 @@ public class SSHConnection extends AbstractConnection implements Connection {
                 results = results + tmpLine + "\n";
             }
 
-            channel.disconnect();
-
             br.close();
             is.close();
+
+            channel.disconnect();
+
         } catch (Exception e) {
             System.out.println("SSH Command does not successfully send toward target machine in user session");
             e.printStackTrace();
@@ -68,10 +69,11 @@ public class SSHConnection extends AbstractConnection implements Connection {
                 results = results + tmpLine + "\n";
             }
 
-            channel.disconnect();
-
             br.close();
             is.close();
+
+            channel.disconnect();
+
         } catch (Exception e) {
             System.out.println("SSH Command does not successfully send toward target machine in Root session");
             e.printStackTrace();
