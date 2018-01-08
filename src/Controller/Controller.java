@@ -196,6 +196,8 @@ class ThreadMonitoring implements Runnable {
             long elapseTime = dt.getTime() - tmpPrevTime;
             long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
 
+            System.out.println(remainTime);
+
             try {
                 Thread.sleep(remainTime);
             } catch (InterruptedException e) {
