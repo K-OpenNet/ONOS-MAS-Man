@@ -71,9 +71,7 @@ public class SSHParser extends AbstractParser implements Parser {
 
     }
     public int[] parseCPUBitmap (String tmpRawResults, int[] results) {
-
-        System.out.println(tmpRawResults);
-
+        
         String rawResults = tmpRawResults.split("\\s+")[3];
 
         ArrayList<Integer> tmpResults = parseCPUBitmapFromVM(rawResults);

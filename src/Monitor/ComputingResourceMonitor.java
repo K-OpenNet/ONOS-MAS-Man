@@ -185,6 +185,8 @@ class ThreadGetNumCPUs implements Runnable {
 
             results = sshConn.sendCommandToRoot(controller, CMD_CPU_BITMAP_TEMPLATE);
 
+            System.out.println(results);
+
             index++;
         }
 
