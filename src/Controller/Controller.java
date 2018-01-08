@@ -150,7 +150,7 @@ class ThreadMonitoring implements Runnable {
 
             System.out.println("Time: " + Controller.getTimeIndex());
             Date dt = new Date();
-            System.out.println(dt.toString());
+            System.out.println("1: " + dt.toString());
             long tmpPrevTime = dt.getTime();
 
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
@@ -172,6 +172,9 @@ class ThreadMonitoring implements Runnable {
                 thr.start();
             }
 
+            dt = new Date();
+            System.out.println("2: " + dt.toString());
+
             for (Thread thr : threads) {
                 try {
                     thr.join(Configuration.MONITORING_PERIOD * 1000);
@@ -179,6 +182,9 @@ class ThreadMonitoring implements Runnable {
                     e.printStackTrace();
                 }
             }
+
+            dt = new Date();
+            System.out.println("3: " + dt.toString());
 
             threads.clear();
             threads = new ArrayList<>();
@@ -190,8 +196,8 @@ class ThreadMonitoring implements Runnable {
             tmpState.setNumCPUsTuples(cpuMonThread.getNumCPUsTuples());
             Database.getDatabase().add(Controller.getTimeIndex(), tmpState);
 
-
             dt = new Date();
+            System.out.println("4: " + dt.toString());
 
             long elapseTime = dt.getTime() - tmpPrevTime;
             long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
@@ -203,6 +209,9 @@ class ThreadMonitoring implements Runnable {
                     e.printStackTrace();
                 }
             }
+
+            dt = new Date();
+            System.out.println("5: " + dt.toString());
 
             Controller.setTimeIndex(Controller.getTimeIndex() + 1);
         }

@@ -22,6 +22,10 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     public int[] monitorCPUBitMap (ControllerBean controllerBean) {
 
+        if (!controllerBean.isVmAlive()) {
+            return null;
+        }
+
         // Initialize CPU bitmap before monitoring
         for (int index = 0; index < controllerBean.getCpuBitmap().length; index++) {
             controllerBean.getCpuBitmap()[index] = 0;
@@ -42,7 +46,12 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         String cmd  = CMD_CPU_BITMAP_TEMPLATE;
 
         String tmpResults = sshConn.sendCommandToRoot(controllerBean, cmd);
-        System.out.println(controllerBean.getBeanKey() + ": " + tmpResults);
+
+        while (tmpResults == null) {
+            tmpResults = sshConn.sendCommandToRoot(controllerBean, cmd);
+            System.out.println(controllerBean.getBeanKey() + ": " + tmpResults);
+        }
+
         String results = tmpResults.split("\\s+")[3];
 
         ArrayList<Integer> rawResults = parseCPUBitmapFromVM(results);
