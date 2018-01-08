@@ -62,6 +62,7 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
             ThreadGetNumCPUs tmpRunnableObj = new ThreadGetNumCPUs(controller);
             Thread tmpThread = new Thread(tmpRunnableObj);
+            tmpThread.setName(tmpRunnableObj.getController().getName());
             rawResults.add(tmpRunnableObj);
             threads.add(tmpThread);
             tmpThread.start();
@@ -69,6 +70,7 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         for (Thread thread : threads) {
             try {
+                System.out.println(thread.getName());
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
