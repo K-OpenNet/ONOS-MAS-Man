@@ -96,14 +96,6 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     }
 
-    public String monitorRawComputingResource (PMBean pm) {
-
-        SSHConnection sshConn = new SSHConnection();
-
-        return sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
-
-    }
-
     public HashMap<String, ComputingResourceTuple> monitorComputingResource () {
 
         SSHParser parser = new SSHParser();
@@ -149,29 +141,6 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     }
 
-
-    private class ThreadGetMonitoringResultForComputingResource implements Runnable {
-
-        private String results;
-        private PMBean pm;
-
-        public ThreadGetMonitoringResultForComputingResource(PMBean pm) {
-            this.pm = pm;
-        }
-
-        @Override
-        public void run() {
-            results = monitorRawComputingResource(pm);
-        }
-
-        public String getResults() {
-            return results;
-        }
-
-        public PMBean getPm() {
-            return pm;
-        }
-    }
 }
 
 class ThreadGetNumCPUs implements Runnable {
@@ -227,6 +196,37 @@ class ThreadGetNumCPUs implements Runnable {
 
     public ControllerBean getController() {
         return controller;
+    }
+}
+
+class ThreadGetMonitoringResultForComputingResource implements Runnable {
+
+    private String results;
+    private PMBean pm;
+
+    public ThreadGetMonitoringResultForComputingResource(PMBean pm) {
+        this.pm = pm;
+    }
+
+    @Override
+    public void run() {
+        results = monitorRawComputingResource(pm);
+    }
+
+    public String monitorRawComputingResource (PMBean pm) {
+
+        SSHConnection sshConn = new SSHConnection();
+
+        return sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
+
+    }
+
+    public String getResults() {
+        return results;
+    }
+
+    public PMBean getPm() {
+        return pm;
     }
 }
 
