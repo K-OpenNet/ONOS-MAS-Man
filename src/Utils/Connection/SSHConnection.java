@@ -66,19 +66,17 @@ public class SSHConnection extends AbstractConnection implements Connection {
             System.out.println(targetMachine.getBeanKey() + ": 2");
 
             InputStream is = channel.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            byte[] buf = new byte[2048];
+            int index;
 
             System.out.println(targetMachine.getBeanKey() + ": 3");
 
-            String tmpLine;
-            results = br.readLine() + "\n";
-            while ((tmpLine = br.readLine()) != null) {
-                results = results + tmpLine + "\n";
+            while((index = is.read(buf)) != -1) {
+                sb.append(new String(buf, 0, index));
             }
 
             System.out.println(targetMachine.getBeanKey() + ": 4");
 
-            br.close();
             is.close();
 
             channel.disconnect();
