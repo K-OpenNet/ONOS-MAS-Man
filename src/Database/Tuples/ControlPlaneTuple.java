@@ -28,6 +28,26 @@ public class ControlPlaneTuple extends AbstractTuple implements Tuple {
         return maps;
     }
 
+    public long totalControlTrafficMessages() {
+        long results = 0;
+
+        for (OFType type : OFType.values()) {
+            results += controlTrafficResults.get(type);
+        }
+
+        return results;
+    }
+
+    public long totalControlTrafficBytes() {
+        long results = 0;
+
+        for (OFType type : OFType.values()) {
+            results += controlTrafficByteResults.get(type);
+        }
+
+        return results;
+    }
+
     public HashMap<OFType, Long> getControlTrafficResults() {
         return controlTrafficResults;
     }

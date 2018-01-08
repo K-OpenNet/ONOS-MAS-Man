@@ -17,6 +17,18 @@ public class Database {
         return database.get(timeIndex);
     }
 
+    // DB print functions
+    // Overall
+    // CPU sequentially (per sec, per timeslot)
+    // Mem sequentially (per sec, per timeslot)
+    // Net-RX sequentially (per sec, per timeslot)
+    // Net-TX sequentially (per sec, per timeslot)
+    // numSwitches sequentially (per sec, per timeslot)
+    // numCPU sequentially (per sec, per timeslot)
+    // numOFMsgs (per timeslot)
+    // Bandwidth of OF msgs (per timeslot)
+
+
     public static Database getOurInstance() {
         return ourInstance;
     }
