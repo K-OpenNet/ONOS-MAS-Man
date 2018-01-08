@@ -50,17 +50,22 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         ArrayList<Integer> results = new ArrayList<>();
 
-        if (rawResult.contains("-")) {
-            String[] tmpResults = rawResult.split("-");
-            int start = Integer.valueOf(tmpResults[0]);
-            int end = Integer.valueOf(tmpResults[1]);
+        String[] arrayResults = rawResult.split(",");
 
-            for (int index = start; index <= end; index++) {
-                results.add(index);
+        for (String elemResult : arrayResults) {
+            if (elemResult.contains("-")) {
+                String[] tmpResults = elemResult.split("-");
+                int start = Integer.valueOf(tmpResults[0]);
+                int end = Integer.valueOf(tmpResults[1]);
+
+                for (int index = start; index <= end; index++) {
+                    results.add(index);
+                }
+
+            } else {
+                results.add(Integer.valueOf(rawResult));
             }
 
-        } else {
-            results.add(Integer.valueOf(rawResult));
         }
 
         return results;
