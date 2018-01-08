@@ -150,7 +150,6 @@ class ThreadMonitoring implements Runnable {
 
             System.out.println("Time: " + Controller.getTimeIndex());
             Date dt = new Date();
-            System.out.println("1: " + dt.toString());
             long tmpPrevTime = dt.getTime();
 
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
@@ -159,9 +158,13 @@ class ThreadMonitoring implements Runnable {
             ThreadNumCPUsMonitoring cpuMonThread = new ThreadNumCPUsMonitoring(crMon);
 
             Thread thrCrMon = new Thread(crMonThread);
+            thrCrMon.setName("CRMonThread");
             Thread thrMasMon = new Thread(masMonThread);
+            thrMasMon.setName("MasMonThread");
             Thread thrCpMon = new Thread(cpMonThread);
+            thrCpMon.setName("CPMonThread");
             Thread thrCpuMon = new Thread(cpuMonThread);
+            thrCpuMon.setName("CPUMonThread");
 
             threads.add(thrCrMon);
             threads.add(thrMasMon);
@@ -172,19 +175,14 @@ class ThreadMonitoring implements Runnable {
                 thr.start();
             }
 
-            dt = new Date();
-            System.out.println("2: " + dt.toString());
-
             for (Thread thr : threads) {
                 try {
+                    System.out.println(thr.getName());
                     thr.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
-            dt = new Date();
-            System.out.println("3: " + dt.toString());
 
             threads.clear();
             threads = new ArrayList<>();
@@ -197,7 +195,6 @@ class ThreadMonitoring implements Runnable {
             Database.getDatabase().add(Controller.getTimeIndex(), tmpState);
 
             dt = new Date();
-            System.out.println("4: " + dt.toString());
 
             long elapseTime = dt.getTime() - tmpPrevTime;
             long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
@@ -209,9 +206,6 @@ class ThreadMonitoring implements Runnable {
                     e.printStackTrace();
                 }
             }
-
-            dt = new Date();
-            System.out.println("5: " + dt.toString());
 
             Controller.setTimeIndex(Controller.getTimeIndex() + 1);
         }
