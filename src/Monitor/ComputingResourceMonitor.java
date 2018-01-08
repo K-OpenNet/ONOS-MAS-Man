@@ -21,6 +21,12 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
     }
 
     public int[] monitorCPUBitMap (ControllerBean controllerBean) {
+
+        // Initialize CPU bitmap before monitoring
+        for (int index = 0; index < controllerBean.getCpuBitmap().length; index++) {
+            controllerBean.getCpuBitmap()[index] = 0;
+        }
+
         SSHConnection sshConn = new SSHConnection();
 
         if (controllerBean.getRootSession() == null) {
