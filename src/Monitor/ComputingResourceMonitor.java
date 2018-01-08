@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import static Database.Configure.Configuration.CMD_COMPUTING_RESOURCE_QUERY;
 import static Database.Configure.Configuration.CMD_CPU_BITMAP_TEMPLATE;
+import static Database.Configure.Configuration.SSH_COMMAND_RETRIES;
 
 public class ComputingResourceMonitor extends AbstractMonitor implements Monitor {
 
@@ -20,74 +21,27 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         monitorName = monitorType.COMPUTINGRESOURCEMONITOR;
     }
 
+
     public int[] monitorCPUBitMap (ControllerBean controllerBean) {
 
         if (!controllerBean.isVmAlive()) {
             return null;
         }
 
-        // Initialize CPU bitmap before monitoring
-        for (int index = 0; index < controllerBean.getCpuBitmap().length; index++) {
-            controllerBean.getCpuBitmap()[index] = 0;
+        ThreadGetNumCPUs runnableObj = new ThreadGetNumCPUs(controllerBean);
+        Thread thread = new Thread(runnableObj);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        SSHConnection sshConn = new SSHConnection();
-
-        if (controllerBean.getRootSession() == null) {
-            System.out.println(controllerBean.getBeanKey() + ": SSH Root session is not set up. Please set up it first");
-            throw new NullPointerException();
-        } else if (controllerBean.getMaxCPUs() == 0) {
-            System.out.println(controllerBean.getBeanKey() + ": Wrong configuration of maxCPUs");
-            throw new NullPointerException();
-        } else if (controllerBean.getCpuBitmap() == null) {
-            controllerBean.setCpuBitmap(new int[controllerBean.getMaxCPUs()]);
-        }
-
-        String cmd  = CMD_CPU_BITMAP_TEMPLATE;
-
-        String tmpResults = sshConn.sendCommandToRoot(controllerBean, cmd);
-        System.out.println(controllerBean.getBeanKey() + ": " + tmpResults);
-
-        while (tmpResults == null ) {
-            tmpResults = sshConn.sendCommandToRoot(controllerBean, cmd);
-        }
-
-        System.out.println(controllerBean.getBeanKey() + ": " + tmpResults);
-        String results = tmpResults.split("\\s+")[3];
-
-        ArrayList<Integer> rawResults = parseCPUBitmapFromVM(results);
-
-        for (int elemResult : rawResults) {
-            controllerBean.getCpuBitmap()[elemResult] = 1;
-        }
+        controllerBean.setCpuBitmap(runnableObj.getResults());
 
         return controllerBean.getCpuBitmap();
     }
 
-    public ArrayList<Integer> parseCPUBitmapFromVM (String rawResult) {
-
-        ArrayList<Integer> results = new ArrayList<>();
-
-        String[] arrayResults = rawResult.split(",");
-
-        for (String elemResult : arrayResults) {
-            if (elemResult.contains("-")) {
-                String[] tmpResults = elemResult.split("-");
-                int start = Integer.valueOf(tmpResults[0]);
-                int end = Integer.valueOf(tmpResults[1]);
-
-                for (int index = start; index <= end; index++) {
-                    results.add(index);
-                }
-
-            } else {
-                results.add(Integer.valueOf(elemResult));
-            }
-
-        }
-
-        return results;
-    }
 
     public HashMap<String, Integer> monitorNumCPUs() {
 
@@ -195,28 +149,6 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     }
 
-    private class ThreadGetNumCPUs implements Runnable {
-
-        private ControllerBean controller;
-        private int[] results;
-
-        public ThreadGetNumCPUs(ControllerBean controller) {
-            this.controller = controller;
-        }
-
-        @Override
-        public void run() {
-            results = monitorCPUBitMap(controller);
-        }
-
-        public int[] getResults() {
-            return results;
-        }
-
-        public ControllerBean getController() {
-            return controller;
-        }
-    }
 
     private class ThreadGetMonitoringResultForComputingResource implements Runnable {
 
@@ -239,6 +171,62 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         public PMBean getPm() {
             return pm;
         }
+    }
+}
+
+class ThreadGetNumCPUs implements Runnable {
+
+    private ControllerBean controller;
+    private int[] results;
+
+    public ThreadGetNumCPUs(ControllerBean controller) {
+        this.controller = controller;
+        // Initialize CPU bitmap before monitoring
+        for (int index = 0; index < controller.getCpuBitmap().length; index++) {
+            controller.getCpuBitmap()[index] = 0;
+        }
+        this.results = controller.getCpuBitmap();
+    }
+
+    @Override
+    public void run() {
+
+        SSHParser parser = new SSHParser();
+
+        String rawResults = getCPUBitmapRawMonitoringResult(controller);
+        results = parser.parseCPUBitmap(rawResults, results);
+    }
+
+    public String getCPUBitmapRawMonitoringResult (ControllerBean controller) {
+
+        SSHConnection sshConn = new SSHConnection();
+
+        String results = "";
+
+        int index = 0;
+
+        while (results.equals("") || results == null) {
+
+            if (index > SSH_COMMAND_RETRIES) {
+                System.out.println("SSH Retry exception occurs");
+                throw new SSHRetryExceedException();
+            }
+
+            results = sshConn.sendCommandToRoot(controller, CMD_CPU_BITMAP_TEMPLATE);
+
+            index++;
+        }
+
+        return results;
+
+    }
+
+    public int[] getResults() {
+        return results;
+    }
+
+    public ControllerBean getController() {
+        return controller;
     }
 }
 

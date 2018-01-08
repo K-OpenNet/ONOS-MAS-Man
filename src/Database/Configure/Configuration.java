@@ -21,6 +21,7 @@ public class Configuration {
 
     // Experimental variables
     public static final int MONITORING_PERIOD = 3;
+    public static final int SSH_COMMAND_RETRIES = 5;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";

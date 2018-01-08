@@ -5,6 +5,7 @@ import Beans.PMBean;
 import Database.Configure.Configuration;
 import Database.Tuples.ComputingResourceTuple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SSHParser extends AbstractParser implements Parser {
@@ -68,6 +69,43 @@ public class SSHParser extends AbstractParser implements Parser {
 
         }
 
+    }
+    public int[] parseCPUBitmap (String tmpRawResults, int[] results) {
+
+        String rawResults = tmpRawResults.split("\\s+")[3];
+
+        ArrayList<Integer> tmpResults = parseCPUBitmapFromVM(rawResults);
+
+        for (int elemResult : tmpResults) {
+            results[elemResult] = 1;
+        }
+
+        return results;
+    }
+
+    public ArrayList<Integer> parseCPUBitmapFromVM (String rawResult) {
+
+        ArrayList<Integer> results = new ArrayList<>();
+
+        String[] arrayResults = rawResult.split(",");
+
+        for (String elemResult : arrayResults) {
+            if (elemResult.contains("-")) {
+                String[] tmpResults = elemResult.split("-");
+                int start = Integer.valueOf(tmpResults[0]);
+                int end = Integer.valueOf(tmpResults[1]);
+
+                for (int index = start; index <= end; index++) {
+                    results.add(index);
+                }
+
+            } else {
+                results.add(Integer.valueOf(elemResult));
+            }
+
+        }
+
+        return results;
     }
 }
 

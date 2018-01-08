@@ -11,3 +11,13 @@ abstract class AbstractMonitor implements Monitor {
         this.monitorName = monitorName;
     }
 }
+
+class SSHRetryExceedException extends RuntimeException {
+    public SSHRetryExceedException() {
+        super();
+    }
+
+    public SSHRetryExceedException(String message) {
+        super(message);
+    }
+}
