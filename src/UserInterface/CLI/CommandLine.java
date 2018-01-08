@@ -41,14 +41,14 @@ public class CommandLine {
                     runMonitoringOnly();
                     break;
                 case 5:
-                    // save results
+                    // Save monitoring results to file
                     break;
                 case 6:
                     // test
                     testFuncForDev();
                     break;
-                case 99:
-                    // Print results
+                case 7:
+                    System.out.println(Database.getInstance().getOverallTuples());
                     break;
                 default:
                     flag_end = true;
