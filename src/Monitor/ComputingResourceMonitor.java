@@ -63,7 +63,7 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
                 }
 
             } else {
-                results.add(Integer.valueOf(rawResult));
+                results.add(Integer.valueOf(elemResult));
             }
 
         }
