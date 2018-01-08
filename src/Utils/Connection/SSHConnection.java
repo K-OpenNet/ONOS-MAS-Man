@@ -56,12 +56,19 @@ public class SSHConnection extends AbstractConnection implements Connection {
 
         ChannelExec channel = null;
         try {
+
+            System.out.println(targetMachine.getBeanKey() + ": 1");
+
             channel = (ChannelExec) targetMachine.getRootSession().openChannel("exec");
             channel.setCommand(cmd);
             channel.connect();
 
+            System.out.println(targetMachine.getBeanKey() + ": 2");
+
             InputStream is = channel.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+            System.out.println(targetMachine.getBeanKey() + ": 3");
 
             String tmpLine;
             results = br.readLine() + "\n";
@@ -69,10 +76,14 @@ public class SSHConnection extends AbstractConnection implements Connection {
                 results = results + tmpLine + "\n";
             }
 
+            System.out.println(targetMachine.getBeanKey() + ": 4");
+
             br.close();
             is.close();
 
             channel.disconnect();
+
+            System.out.println(targetMachine.getBeanKey() + ": 5");
 
         } catch (Exception e) {
             System.out.println("SSH Command does not successfully send toward target machine in Root session");

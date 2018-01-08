@@ -177,9 +177,7 @@ class ThreadGetNumCPUs implements Runnable {
         int index = 0;
 
         while (results.equals("") || results == null || results.equals(null) || results.equals("null")) {
-
-            System.out.println(controller.getBeanKey() + ": start to get results for CPU bitmap");
-
+            
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
                 throw new SSHRetryExceedException();
