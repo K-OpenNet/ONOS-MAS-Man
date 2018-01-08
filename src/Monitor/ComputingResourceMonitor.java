@@ -181,6 +181,9 @@ class ThreadGetNumCPUs implements Runnable {
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
                 throw new SSHRetryExceedException();
+            } else if (index > 1) {
+                sshConn.assignUserSession(controller);
+                sshConn.assignRootSession(controller);
             }
 
             results = sshConn.sendCommandToRoot(controller, CMD_CPU_BITMAP_TEMPLATE);
@@ -229,6 +232,9 @@ class ThreadGetMonitoringResultForComputingResource implements Runnable {
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
                 throw new SSHRetryExceedException();
+            } else if (index > 1) {
+                sshConn.assignRootSession(pm);
+                sshConn.assignUserSession(pm);
             }
 
             results = sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
