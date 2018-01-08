@@ -217,7 +217,22 @@ class ThreadGetMonitoringResultForComputingResource implements Runnable {
 
         SSHConnection sshConn = new SSHConnection();
 
-        return sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
+        String results = "";
+
+        int index = 0;
+
+        while (results.equals("") || results == null) {
+            if (index > SSH_COMMAND_RETRIES) {
+                System.out.println("SSH Retry exception occurs");
+                throw new SSHRetryExceedException();
+            }
+
+            results = sshConn.sendCommandToUser(pm, CMD_COMPUTING_RESOURCE_QUERY);
+
+            index++;
+        }
+
+        return results;
 
     }
 
