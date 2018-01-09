@@ -67,12 +67,23 @@ public class SSHConnection extends AbstractConnection implements Connection {
 
             InputStream is = channel.getInputStream();
             byte[] buf = new byte[2048];
-            int index;
 
             System.out.println(targetMachine.getBeanKey() + ": 3");
 
-            while((index = is.read(buf)) != -1) {
-                sb.append(new String(buf, 0, index));
+            while (channel.getExitStatus() == -1) {
+                while (is.available() > 0) {
+                    int index = is.read(buf, 0, 2048);
+                    if (index < 0) {
+                        break;
+                    }
+                    sb.append(new String(buf, 0, index));
+=
+                }
+
+                if (channel.isClosed()) {
+                    break;
+                }
+
             }
 
             results = sb.toString();
