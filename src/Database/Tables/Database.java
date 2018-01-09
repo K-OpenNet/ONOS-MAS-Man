@@ -48,7 +48,9 @@ public class Database {
             resultNumCPUs.putIfAbsent(controller.getBeanKey(), ":\t");
         }
 
-        for (State state : database) {
+        ArrayList<State> tmpDatabase = (ArrayList<State>) database.clone();
+
+        for (State state : tmpDatabase) {
             for (ControllerBean controller : Configuration.getInstance().getControllers()) {
                 // Mastership
                 String tmp = resultMastership.get(controller.getBeanKey()) + "\t"
