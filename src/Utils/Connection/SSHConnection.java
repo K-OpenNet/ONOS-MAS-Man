@@ -23,20 +23,30 @@ public class SSHConnection extends AbstractConnection implements Connection {
 
         ChannelExec channel = null;
         try {
+
             channel = (ChannelExec) targetMachine.getUserSession().openChannel("exec");
             channel.setCommand(cmd);
             channel.connect();
 
             InputStream is = channel.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            byte[] buf = new byte[2048];
 
-            String tmpLine;
-            results = br.readLine() + "\n";
-            while ((tmpLine = br.readLine()) != null) {
-                results = results + tmpLine + "\n";
+            while (channel.getExitStatus() == -1) {
+                while (is.available() > 0) {
+                    int index = is.read(buf, 0, 2048);
+                    if (index < 0) {
+                        break;
+                    }
+                    sb.append(new String(buf, 0, index));
+                }
+
+                if (channel.isClosed()) {
+                    break;
+                }
             }
 
-            br.close();
+            results = sb.toString();
+
             is.close();
 
             channel.disconnect();
@@ -57,18 +67,12 @@ public class SSHConnection extends AbstractConnection implements Connection {
         ChannelExec channel = null;
         try {
 
-            System.out.println(targetMachine.getBeanKey() + ": 1");
-
             channel = (ChannelExec) targetMachine.getRootSession().openChannel("exec");
             channel.setCommand(cmd);
             channel.connect();
 
-            System.out.println(targetMachine.getBeanKey() + ": 2");
-
             InputStream is = channel.getInputStream();
             byte[] buf = new byte[2048];
-
-            System.out.println(targetMachine.getBeanKey() + ": 3");
 
             while (channel.getExitStatus() == -1) {
                 while (is.available() > 0) {
@@ -82,18 +86,13 @@ public class SSHConnection extends AbstractConnection implements Connection {
                 if (channel.isClosed()) {
                     break;
                 }
-
             }
 
             results = sb.toString();
 
-            System.out.println(targetMachine.getBeanKey() + ": 4");
-
             is.close();
 
             channel.disconnect();
-
-            System.out.println(targetMachine.getBeanKey() + ": 5");
 
         } catch (Exception e) {
             System.out.println("SSH Command does not successfully send toward target machine in Root session");

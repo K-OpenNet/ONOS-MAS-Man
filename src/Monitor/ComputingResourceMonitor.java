@@ -70,7 +70,6 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         for (Thread thread : threads) {
             try {
-                System.out.println(thread.getName());
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -177,7 +176,7 @@ class ThreadGetNumCPUs implements Runnable {
         int index = 0;
 
         while (results.equals("") || results == null || results.equals(null) || results.equals("null")) {
-            
+
             if (index > SSH_COMMAND_RETRIES) {
                 System.out.println("SSH Retry exception occurs");
                 throw new SSHRetryExceedException();
@@ -187,8 +186,6 @@ class ThreadGetNumCPUs implements Runnable {
             }
 
             results = sshConn.sendCommandToRoot(controller, CMD_CPU_BITMAP_TEMPLATE);
-
-            System.out.println(controller.getBeanKey() + ": " + results);
 
             index++;
         }
