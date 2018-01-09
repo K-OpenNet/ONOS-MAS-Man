@@ -77,7 +77,6 @@ public class SSHConnection extends AbstractConnection implements Connection {
                         break;
                     }
                     sb.append(new String(buf, 0, index));
-=
                 }
 
                 if (channel.isClosed()) {
