@@ -26,6 +26,10 @@ public class Configuration {
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
     public static final String CMD_COMPUTING_RESOURCE_QUERY = "vboxmanage metrics query '*' CPU/Load/User,CPU/Load/Kernel,RAM/Usage/Used,Net/Rate/Rx,Net/Rate/Tx";
+    public static final String CMD_PAUSE_VM = "vboxmanage controlvm <controllerID> pause";
+    public static final String CMD_RESUME_VM = "vboxmanage controlvm <controllerID> resume";
+    public static final String CMD_DISABLE_CPU = "echo 0 > /sys/devices/system/cpu/cpu<index>/online";
+    public static final String CMD_ENABLE_CPU = "echo 1 > /sys/devices/system/cpu/cpu<index>/online";
 
     // URLs for REST API
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";
