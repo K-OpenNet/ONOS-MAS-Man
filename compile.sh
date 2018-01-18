@@ -5,7 +5,7 @@ EXP_INDEX=$2
 
 if [ ! -e $RESULT_DIR/$EXP_INDEX ]
 then
-    mkdir $RESULT_DIR/$EXP_INDEX
+    mkdir -p $RESULT_DIR/$EXP_INDEX
 fi
 
 if [ -e ./*.csv ]
