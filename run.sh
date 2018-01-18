@@ -3,6 +3,7 @@
 if [ $0 -lt 2 ]
 then
     echo "miss some parameters"
+    exit 2
 fi
 
 ./compile.sh $1 $2
