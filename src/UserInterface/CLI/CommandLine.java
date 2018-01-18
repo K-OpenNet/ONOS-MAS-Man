@@ -42,6 +42,7 @@ public class CommandLine {
                     break;
                 case 5:
                     // Save monitoring results to file
+                    saveDBResult();
                     break;
                 case 6:
                     // test
