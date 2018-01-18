@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static Database.Configure.Configuration.FILE_NAME_PREFIX;
 import static Database.Configure.Configuration.MONITORING_PERIOD;
 
 public class Controller {
@@ -94,6 +95,13 @@ public class Controller {
         ThreadMonitoring monitoringThread = new ThreadMonitoring(crMon, masMon, cpMon);
         Thread thr = new Thread(monitoringThread);
         thr.start();
+    }
+
+    // save monitoring results
+    public static void saveMonitoringResult(String results) {
+        FileIOUtil util = new FileIOUtil();
+        String path = FILE_NAME_PREFIX.replace("<timeindex>", String.valueOf(timeIndex));
+        util.saveResultsToFile(path, results);
     }
 
     public static void main (String[] args) {

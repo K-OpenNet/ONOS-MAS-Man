@@ -73,4 +73,8 @@ public class CommandLine {
     public void runMonitoringOnly() {
         Controller.runMonitoring();
     }
+
+    public void saveDBResult() {
+        Controller.saveMonitoringResult(Database.getInstance().getOverallTuples());
+    }
 }

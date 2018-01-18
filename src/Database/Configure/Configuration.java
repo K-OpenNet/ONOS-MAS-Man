@@ -40,6 +40,9 @@ public class Configuration {
     public static final String RESTURL_DOSCALEIN = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/scalein/<controllerID>";
     public static final String RESTURL_DOEQUALIZE = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/equalizing";
 
+    // etc
+    public static final String FILE_NAME_PREFIX = "result_<timeindex>.csv";
+
     private ArrayList<ControllerBean> controllers;
     private ArrayList<PMBean> pms;
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;

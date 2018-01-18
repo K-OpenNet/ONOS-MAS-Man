@@ -1,9 +1,11 @@
 package Utils.FileIO;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileIOUtil {
@@ -33,5 +35,19 @@ public class FileIOUtil {
             e.printStackTrace();
         }
         return results;
+    }
+
+    public void saveResultsToFile (String path, String results) {
+
+        try {
+            File file = new File(path);
+            FileWriter fw = new FileWriter(file);
+            fw.write(results);
+
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
