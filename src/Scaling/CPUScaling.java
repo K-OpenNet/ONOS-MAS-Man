@@ -1,6 +1,8 @@
 package Scaling;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
+import Utils.Connection.SSHConnection;
 
 import static Scaling.Scaling.scalingType.CPUSCALING;
 
@@ -24,11 +26,13 @@ public class CPUScaling extends AbstractScaling implements Scaling {
     }
 
     public void enableSpecificVirtualCPU (ControllerBean controller, int cpuNumber) {
-
+        SSHConnection sshConn = new SSHConnection();
+        sshConn.sendCommandToRoot(controller, Configuration.CMD_ENABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
     }
 
     public void disableSpecificVirtualCPU (ControllerBean controller, int cpuNumber) {
-
+        SSHConnection sshConn = new SSHConnection();
+        sshConn.sendCommandToRoot(controller, Configuration.CMD_DISABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
     }
 
     public int getCPUIndexForInc (ControllerBean controller) {
