@@ -11,6 +11,18 @@ public class CPUScaling extends AbstractScaling implements Scaling {
         scalingName = CPUSCALING;
     }
 
+    public void incMultipleVirtualCPUs (int numCPUs, ControllerBean controller) {
+        for (int index = 0; index < numCPUs; index++) {
+            incVirtualCPU(controller);
+        }
+    }
+
+    public void decMultipleVirtaulCPUs (int numCPUs, ControllerBean controller) {
+        for (int index = 0; index < numCPUs; index++) {
+            decVirtualCPU(controller);
+        }
+    }
+
     public void incVirtualCPU (ControllerBean controller) {
         int index = getCPUIndexForInc(controller);
         if (index != -1) {
