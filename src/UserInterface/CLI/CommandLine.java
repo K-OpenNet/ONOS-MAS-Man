@@ -1,6 +1,7 @@
 package UserInterface.CLI;
 
 import Controller.Controller;
+import Database.Configure.Configuration;
 import Database.Tables.Database;
 import Database.Tables.State;
 
@@ -50,6 +51,14 @@ public class CommandLine {
                     break;
                 case 7:
                     System.out.println(Database.getInstance().getOverallTuples());
+                    break;
+                case 8:
+                    // inc vCPU
+                    Controller.incVirtualCPUs(1, Configuration.getInstance().getControllers().get(0));
+                    break;
+                case 9:
+                    // dec vCPU
+                    Controller.decVirtualCPUs(1, Configuration.getInstance().getControllers().get(0));
                     break;
                 default:
                     flag_end = true;
