@@ -6,6 +6,7 @@ import Database.Tables.Database;
 import Database.Tables.State;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CommandLine {
@@ -21,7 +22,14 @@ public class CommandLine {
         while (!flag_end) {
             Scanner sc = new Scanner(System.in);
             System.out.print("Insert Menu: ");
-            int selectedItem = sc.nextInt();
+
+            int selectedItem = -1;
+            try {
+                selectedItem = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Wrong input value");
+            }
+
             System.out.println();
 
             switch (selectedItem) {
@@ -70,6 +78,15 @@ public class CommandLine {
 
     public void printMenuMessage () {
         System.out.println("Help");
+        System.out.println("1: Make initial state");
+        System.out.println("2: Change configuration parameters");
+        System.out.println("3: Run Algorithm");
+        System.out.println("4: Run monitoring only");
+        System.out.println("5: Dump database");
+        System.out.println("6: Reserved function - for test");
+        System.out.println("7: Print database");
+        System.out.println("8: Increase vCPU of first ONOS controller");
+        System.out.println("9: Decrease vCPU of first ONOS controller");
     }
 
     public void printConfigMessage () {
