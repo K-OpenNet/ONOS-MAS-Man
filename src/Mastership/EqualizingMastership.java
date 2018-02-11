@@ -5,4 +5,9 @@ public class EqualizingMastership extends AbstractMastership implements Mastersh
     public EqualizingMastership() {
         mastershipName = mastershipType.EQUALMASTERSHIP;
     }
+
+    @Override
+    public void runMastershipAlgorithm() {
+
+    }
 }
