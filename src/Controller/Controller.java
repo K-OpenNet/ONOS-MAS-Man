@@ -8,6 +8,7 @@ import Database.Tables.State;
 import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
+import DecisionMaker.DCORALAlgorithm;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
 import Monitor.MastershipMonitor;
@@ -97,6 +98,25 @@ public class Controller {
         thr.start();
     }
 
+    public static int getTimeIndex() {
+        return timeIndex;
+    }
+
+    public static void setTimeIndex(int timeIndex) {
+        Controller.timeIndex = timeIndex;
+    }
+
+    // inc/dec vCPUs for a controller
+    public static void incVirtualCPUs(int numCPUs, ControllerBean controller) {
+        DCORALAlgorithm dcoral = new DCORALAlgorithm();
+        dcoral.incVirtualCPUs(numCPUs, controller);
+    }
+
+    public static void decVirtualCPUs(int numCPUs, ControllerBean controller) {
+        DCORALAlgorithm dcoral = new DCORALAlgorithm();
+        dcoral.decVirtualCPUs(numCPUs, controller);
+    }
+
     // save monitoring results
     public static void saveMonitoringResult(String results) {
         FileIOUtil util = new FileIOUtil();
@@ -107,14 +127,6 @@ public class Controller {
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
-    }
-
-    public static int getTimeIndex() {
-        return timeIndex;
-    }
-
-    public static void setTimeIndex(int timeIndex) {
-        Controller.timeIndex = timeIndex;
     }
 }
 
