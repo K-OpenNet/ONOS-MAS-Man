@@ -23,7 +23,7 @@ public class CommandLine {
             Scanner sc = new Scanner(System.in);
             System.out.print("Insert Menu: ");
 
-            int selectedItem = -1;
+            int selectedItem = 0;
             try {
                 selectedItem = sc.nextInt();
             } catch (InputMismatchException e) {
