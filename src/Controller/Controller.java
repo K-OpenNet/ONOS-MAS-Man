@@ -109,6 +109,8 @@ public class Controller {
             System.out.println("*** Decision maker does not finished yet (timeslot: " + timeIndex + ")");
             return;
         }
+
+        //ToDo: add codes to run decision maker thread
     }
 
     public static int getTimeIndex() {
