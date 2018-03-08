@@ -1,7 +1,11 @@
 package Mastership;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import com.eclipsesource.json.JsonObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 abstract class AbstractMastership implements Mastership{
     protected mastershipType mastershipName;
@@ -19,5 +23,15 @@ abstract class AbstractMastership implements Mastership{
         rootObj.add("deviceId", dpid);
         rootObj.add("nodeId", targetController.getControllerId());
         rootObj.add("role", "MASTER");
+    }
+
+    public void changeMultipleMastership(HashMap<String, ArrayList<String>> topology) {
+
+        for (String controllerId : topology.keySet()) {
+            ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
+            for (String dpid : topology.get(controllerId)) {
+                changeMastership(dpid, tmpControllerBean);
+            }
+        }
     }
 }

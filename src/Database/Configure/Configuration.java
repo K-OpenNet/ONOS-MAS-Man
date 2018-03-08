@@ -57,6 +57,16 @@ public class Configuration {
         throw new NullPointerException();
     }
 
+    public ControllerBean getControllerBeanWithId (String controllerId) {
+        for (int index = 0; index < controllers.size(); index++) {
+            if (controllers.get(index).getControllerId().equals(controllerId)) {
+                return controllers.get(index);
+            }
+        }
+
+        throw new NullPointerException();
+    }
+
     public PMBean getPMBean (String ipAddr) {
         for (int index = 0; index < pms.size(); index++) {
             if(pms.get(index).getIpAddr().equals(ipAddr)) {

@@ -130,6 +130,12 @@ public class Controller {
         dcoral.equalizingMastership();
     }
 
+    // Set initial state in accordance with InitialState.json
+    public static void changeMasterControllerWithInitalState() {
+        FileIOUtil fileIOUtil = new FileIOUtil();
+
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
