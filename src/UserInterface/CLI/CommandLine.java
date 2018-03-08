@@ -75,6 +75,7 @@ public class CommandLine {
                     break;
                 case 11:
                     // manually change master controller
+                    changeMasterControllerManually();
                     break;
                 case 12:
                     // make initialstate.json file
@@ -119,7 +120,7 @@ public class CommandLine {
         Controller.saveMonitoringResult(Database.getInstance().getOverallTuples());
     }
 
-    public void changeMasterControllerManually (String dpid, String controllerId) {
+    public void changeMasterControllerManually () {
         Scanner sc1 = new Scanner(System.in);
         System.out.print("DPID: ");
         String input1 = "of:";
