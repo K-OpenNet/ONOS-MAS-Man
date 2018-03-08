@@ -9,6 +9,7 @@ import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 import DecisionMaker.DCORALAlgorithm;
+import DecisionMaker.DecisionMaker;
 import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
@@ -39,6 +40,7 @@ public class Controller {
     private Controller() {
         init();
         threadPoolDecisionMaker = new Thread[1];
+        threadPoolDecisionMaker[0] = null;
     }
 
     // Initialization function
@@ -99,6 +101,14 @@ public class Controller {
         ThreadMonitoring monitoringThread = new ThreadMonitoring(crMon, masMon, cpMon);
         Thread thr = new Thread(monitoringThread);
         thr.start();
+    }
+
+    // try to run DecisionMaker
+    public static void runDecisionMaker(int timeIndex, DecisionMaker.decisionMakerType decisionMakerName) {
+        if (threadPoolDecisionMaker[0] != null) {
+            System.out.println("*** Decision maker does not finished yet (timeslot: " + timeIndex + ")");
+            return;
+        }
     }
 
     public static int getTimeIndex() {
