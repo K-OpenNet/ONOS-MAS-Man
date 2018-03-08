@@ -72,6 +72,12 @@ public class CommandLine {
                     // equalizing Mastership
                     Controller.equalizingMastership();
                     break;
+                case 11:
+                    // manually change master controller
+                    break;
+                case 12:
+                    // make initialstate.json file
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -92,6 +98,8 @@ public class CommandLine {
         System.out.println("8: Increase vCPU of first ONOS controller");
         System.out.println("9: Decrease vCPU of first ONOS controller");
         System.out.println("10: Equalize Mastership");
+        System.out.println("11: Manually change master controller for specified switch");
+        System.out.println("12: Make initialstate.json file according to current state");
     }
 
     public void printConfigMessage () {
