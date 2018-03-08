@@ -1,5 +1,9 @@
 package Mastership;
 
+import Beans.ControllerBean;
+import Database.Configure.Configuration;
+import Utils.Connection.RESTConnection;
+
 public class EqualizingMastership extends AbstractMastership implements Mastership {
 
     public EqualizingMastership() {
@@ -8,6 +12,22 @@ public class EqualizingMastership extends AbstractMastership implements Mastersh
 
     @Override
     public void runMastershipAlgorithm() {
+
+        ControllerBean target = null;
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isOnosAlive()) {
+                target = controller;
+                break;
+            }
+        }
+
+        if (target == null) {
+            throw new NullPointerException();
+        }
+
+        RESTConnection conn = new RESTConnection();
+        conn.sendCommandToUser(target, Configuration.RESTURL_DOEQUALIZE);
 
     }
 }
