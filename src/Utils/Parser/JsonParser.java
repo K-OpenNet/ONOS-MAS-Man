@@ -86,6 +86,40 @@ public class JsonParser extends AbstractParser implements Parser {
         }
     }
 
+    // Key: controllerId, value: DPID
+    public HashMap<String, ArrayList<String>> parseInitialState (String rawJsonString) {
+
+        if (rawJsonString == null) {
+            throw new NullPointerException();
+        }
+
+        HashMap<String, ArrayList<String>> results = new HashMap<>();
+
+        JsonObject parser = JsonObject.readFrom(rawJsonString);
+        JsonArray controllersArray = parser.get("Controllers").asArray();
+
+        for (int index1 = 0; index1 < controllersArray.size(); index1++) {
+            ArrayList<String> tmpArray = new ArrayList<>();
+
+            JsonObject tmpObj = controllersArray.get(index1).asObject();
+            String tmpControllerId = tmpObj.get("controllerId").asString();
+
+            if (results.containsKey(tmpControllerId)) {
+                throw new InitialStateSanityException();
+            }
+
+            JsonArray tmpSwitches = tmpObj.get("switches").asArray();
+
+            for (int index2 = 0; index2 < tmpSwitches.size(); index2++) {
+                tmpArray.add(tmpSwitches.get(index2).asString());
+            }
+
+            results.put(tmpControllerId, tmpArray);
+        }
+
+        return results;
+    }
+
     public MastershipTuple parseMastershipMonitoringResults(String rawResults) {
         MastershipTuple result = new MastershipTuple();
 
@@ -136,6 +170,15 @@ class ControlPlaneMonitoringSanityException extends RuntimeException {
     }
 
     public ControlPlaneMonitoringSanityException(String message) {
+        super(message);
+    }
+}
+
+class InitialStateSanityException extends RuntimeException {
+    public InitialStateSanityException() { super();
+    }
+
+    public InitialStateSanityException(String message) {
         super(message);
     }
 }

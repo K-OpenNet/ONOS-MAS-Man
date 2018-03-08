@@ -1,7 +1,6 @@
 package Mastership;
 
 import Beans.ControllerBean;
-import Beans.SwitchBean;
 import com.eclipsesource.json.JsonObject;
 
 abstract class AbstractMastership implements Mastership{
@@ -15,9 +14,9 @@ abstract class AbstractMastership implements Mastership{
         this.mastershipName = mastershipName;
     }
 
-    public void changeMastership(SwitchBean sw, ControllerBean targetController) {
+    public void changeMastership(String dpid, ControllerBean targetController) {
         JsonObject rootObj = new JsonObject();
-        rootObj.add("deviceId", sw.getDpid());
+        rootObj.add("deviceId", dpid);
         rootObj.add("nodeId", targetController.getControllerId());
         rootObj.add("role", "MASTER");
     }
