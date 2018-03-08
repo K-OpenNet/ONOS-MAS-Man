@@ -68,6 +68,10 @@ public class CommandLine {
                     // dec vCPU
                     Controller.decVirtualCPUs(1, Configuration.getInstance().getControllers().get(0));
                     break;
+                case 10:
+                    // equalizing Mastership
+                    Controller.equalizingMastership();
+                    break;
                 default:
                     flag_end = true;
                     break;

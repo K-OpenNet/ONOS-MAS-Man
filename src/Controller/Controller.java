@@ -124,6 +124,12 @@ public class Controller {
         util.saveResultsToFile(path, results);
     }
 
+    // Equalizing mastership
+    public static void equalizingMastership() {
+        DCORALAlgorithm dcoral = new DCORALAlgorithm();
+        dcoral.equalizingMastership();
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();

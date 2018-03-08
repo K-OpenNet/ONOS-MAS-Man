@@ -1,6 +1,7 @@
 package DecisionMaker;
 
 import Beans.ControllerBean;
+import Mastership.EqualizingMastership;
 import Scaling.CPUScaling;
 
 public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
@@ -17,5 +18,10 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
     public void decVirtualCPUs (int numCPUs, ControllerBean controller) {
         CPUScaling cpuScaling = new CPUScaling();
         cpuScaling.decMultipleVirtaulCPUs(numCPUs, controller);
+    }
+
+    public void equalizingMastership() {
+        EqualizingMastership mastership = new EqualizingMastership();
+        mastership.runMastershipAlgorithm();
     }
 }
