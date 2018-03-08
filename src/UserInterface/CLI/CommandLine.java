@@ -91,6 +91,7 @@ public class CommandLine {
         System.out.println("7: Print database");
         System.out.println("8: Increase vCPU of first ONOS controller");
         System.out.println("9: Decrease vCPU of first ONOS controller");
+        System.out.println("10: Equalize Mastership");
     }
 
     public void printConfigMessage () {
