@@ -118,4 +118,15 @@ public class CommandLine {
     public void saveDBResult() {
         Controller.saveMonitoringResult(Database.getInstance().getOverallTuples());
     }
+
+    public void changeMasterControllerManually (String dpid, String controllerId) {
+        Scanner sc1 = new Scanner(System.in);
+        System.out.print("DPID: ");
+        String input1 = "of:";
+        input1 = sc1.nextLine();
+        System.out.print("Controller ID: ");
+        String input2 = sc1.nextLine();
+
+        Controller.changeMasterController(input1, input2);
+    }
 }

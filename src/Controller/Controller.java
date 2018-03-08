@@ -139,6 +139,13 @@ public class Controller {
         mastership.changeMultipleMastership(jsonParser.parseInitialState(fileIOUtil.getRawFileContents("initialstate.json")));
     }
 
+    // Change master controller manually
+    public static void changeMasterController(String dpid, String controllerId) {
+        ControllerBean tmpController = Configuration.getInstance().getControllerBeanWithId(controllerId);
+        EqualizingMastership mastership = new EqualizingMastership();
+        mastership.changeMastership(dpid, tmpController);
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
