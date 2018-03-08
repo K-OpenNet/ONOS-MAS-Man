@@ -9,6 +9,7 @@ import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 import DecisionMaker.DCORALAlgorithm;
+import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
 import Monitor.MastershipMonitor;
@@ -133,7 +134,9 @@ public class Controller {
     // Set initial state in accordance with InitialState.json
     public static void changeMasterControllerWithInitalState() {
         FileIOUtil fileIOUtil = new FileIOUtil();
-
+        JsonParser jsonParser = new JsonParser();
+        EqualizingMastership mastership = new EqualizingMastership();
+        mastership.changeMultipleMastership(jsonParser.parseInitialState(fileIOUtil.getRawFileContents("initialstate.json")));
     }
 
     public static void main (String[] args) {

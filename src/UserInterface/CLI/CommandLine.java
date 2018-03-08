@@ -38,6 +38,7 @@ public class CommandLine {
                     break;
                 case 1:
                     // Go to initial state
+                    Controller.changeMasterControllerWithInitalState();
                     break;
                 case 2:
                     // Make config to use Controller instance
