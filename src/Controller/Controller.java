@@ -28,6 +28,7 @@ import static Database.Configure.Configuration.MONITORING_PERIOD;
 public class Controller {
 
     private static int timeIndex;
+    private static Thread[] threadPoolDecisionMaker;
 
     private static Controller ourInstance = new Controller();
 
@@ -37,6 +38,7 @@ public class Controller {
 
     private Controller() {
         init();
+        threadPoolDecisionMaker = new Thread[1];
     }
 
     // Initialization function
@@ -167,6 +169,14 @@ class ThreadPMSSHSessionAssignment implements Runnable {
         conn.assignRootSession(pm);
 
         System.out.println("The SSH sessions for the PM, " + pm.getBeanKey() + ", has been set");
+
+    }
+}
+
+class ThreadDecisionMaker implements Runnable {
+
+    @Override
+    public void run() {
 
     }
 }
