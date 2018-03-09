@@ -157,7 +157,7 @@ public class CommandLine {
         Scanner sc1 = new Scanner(System.in);
         System.out.print("Monitoring period: ");
         MONITORING_PERIOD = sc1.nextInt();
-        System.out.println("Noscaling CPMan period: ");
+        System.out.print("Noscaling CPMan period: ");
         NOSCALING_CPMAN_PERIOD = sc1.nextInt();
     }
 }
