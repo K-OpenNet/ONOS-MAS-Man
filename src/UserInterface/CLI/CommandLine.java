@@ -49,7 +49,7 @@ public class CommandLine {
                     printExperimentalParams();
                     System.out.print("Are you want to change experimental parameters? (y/n) ");
                     Scanner tmpSc = new Scanner(System.in);
-                    char tmpInput = (char) tmpSc.nextByte();
+                    char tmpInput = tmpSc.next().charAt(0);
                     if (tmpInput == 'y') {
                         changeExperimentalParams();
                     } else if (tmpInput == 'n') {
