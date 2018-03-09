@@ -19,9 +19,12 @@ public class Configuration {
         relationships = new HashMap<>();
     }
 
-    // Experimental variables
-    public static final int MONITORING_PERIOD = 3;
+    // System variables
     public static final int SSH_COMMAND_RETRIES = 5;
+
+    // Experimental variables
+    public static int MONITORING_PERIOD = 3;
+    public static int NOSCALING_CPMAN_PERIOD = 3;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";

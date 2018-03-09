@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import static Database.Configure.Configuration.MONITORING_PERIOD;
+import static Database.Configure.Configuration.NOSCALING_CPMAN_PERIOD;
+import static Database.Configure.Configuration.SSH_COMMAND_RETRIES;
+
 public class CommandLine {
 
     private Controller controller = Controller.getInstance();
@@ -42,6 +46,17 @@ public class CommandLine {
                     break;
                 case 2:
                     // Make config to use Controller instance
+                    printExperimentalParams();
+                    System.out.print("Are you want to change experimental parameters? (y/n)");
+                    Scanner tmpSc = new Scanner(System.in);
+                    byte tmpInput = tmpSc.nextByte();
+                    if (tmpInput == 'y') {
+                        changeExperimentalParams();
+                    } else if (tmpInput == 'n') {
+
+                    } else {
+                        System.out.println("Wrong command, please try again.");
+                    }
                     break;
                 case 3:
                     // Run
@@ -129,5 +144,20 @@ public class CommandLine {
         String input2 = sc1.nextLine();
 
         Controller.changeMasterController(input1, input2);
+    }
+
+    public void printExperimentalParams() {
+        System.out.println("*** current variables ***");
+        System.out.println("Monitoring period: " + MONITORING_PERIOD);
+        System.out.println("Noscaling CPMan period: " + NOSCALING_CPMAN_PERIOD);
+    }
+
+    public void changeExperimentalParams() {
+        System.out.println("*** change variables ***");
+        Scanner sc1 = new Scanner(System.in);
+        System.out.print("Monitoring period: ");
+        MONITORING_PERIOD = sc1.nextInt();
+        System.out.println("Noscaling CPMan period: ");
+        NOSCALING_CPMAN_PERIOD = sc1.nextInt();
     }
 }
