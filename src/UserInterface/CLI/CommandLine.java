@@ -47,9 +47,9 @@ public class CommandLine {
                 case 2:
                     // Make config to use Controller instance
                     printExperimentalParams();
-                    System.out.print("Are you want to change experimental parameters? (y/n)");
+                    System.out.print("Are you want to change experimental parameters? (y/n) ");
                     Scanner tmpSc = new Scanner(System.in);
-                    byte tmpInput = tmpSc.nextByte();
+                    char tmpInput = (char) tmpSc.nextByte();
                     if (tmpInput == 'y') {
                         changeExperimentalParams();
                     } else if (tmpInput == 'n') {
