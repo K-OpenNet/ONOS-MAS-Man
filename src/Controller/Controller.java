@@ -18,7 +18,6 @@ import Utils.Connection.SSHConnection;
 import Utils.FileIO.FileIOUtil;
 import Utils.Parser.JsonParser;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
