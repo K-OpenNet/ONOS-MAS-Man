@@ -107,7 +107,7 @@ public class Controller {
 
         ThreadDecisionMaker threadDecisionMakerObj = new ThreadDecisionMaker(timeIndex, decisionMakerName, dbDump);
         Thread thread = new Thread(threadDecisionMakerObj);
-        thread.run();
+        thread.start();
     }
 
     public static int getTimeIndex() {
