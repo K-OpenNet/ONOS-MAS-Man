@@ -33,8 +33,6 @@ public class Controller {
     private static int timeIndex;
     public static ReentrantLock lock = new ReentrantLock();
 
-    public static Object semaphoreDecisionMaker = new Object();
-
     private static Controller ourInstance = new Controller();
 
     public static Controller getInstance() {
