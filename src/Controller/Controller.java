@@ -231,7 +231,6 @@ class ThreadDecisionMaker implements Runnable {
         dmAlgorithm.runDecisionMakerAlgorithm(currentTimeIndex, dbDump);
 
         dt = new Date();
-        System.out.println("** Current algorithm: " + Configuration.DECISIONMAKER_TYPE);
         System.out.println("** Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + currentTimeIndex + ", Algorithm: " + algorithmType + ")");
 
         Controller.lock.unlock();

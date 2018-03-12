@@ -59,10 +59,10 @@ public class CommandLine {
                     break;
                 case 3:
                     // Run
+                    runAlgorithm();
                     break;
                 case 4:
                     // Monitoring only
-                    DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
                     runMonitoringOnly();
                     break;
                 case 5:
@@ -128,8 +128,11 @@ public class CommandLine {
     }
 
     public void runMonitoringOnly() {
+        DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
         Controller.runMonitoring();
     }
+
+    public void runAlgorithm() {Controller.runMonitoring();}
 
     public void saveDBResult() {
         Controller.saveMonitoringResult(Database.getInstance().getOverallTuples());
