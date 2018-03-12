@@ -23,11 +23,6 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
         cpuScaling.decMultipleVirtaulCPUs(numCPUs, controller);
     }
 
-    public void equalizingMastership() {
-        EqualizingMastership mastership = new EqualizingMastership();
-        mastership.runMastershipAlgorithm(new ArrayList<State>());
-    }
-
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 

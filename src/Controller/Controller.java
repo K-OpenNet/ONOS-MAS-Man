@@ -137,8 +137,8 @@ public class Controller {
 
     // Equalizing mastership
     public static void equalizingMastership() {
-        DCORALAlgorithm dcoral = new DCORALAlgorithm();
-        dcoral.equalizingMastership();
+        NoScalingEqualizingAlgorithm noscaling = new NoScalingEqualizingAlgorithm();
+        noscaling.runDecisionMakerAlgorithm(timeIndex, new ArrayList<>());
     }
 
     // Set initial state in accordance with InitialState.json
