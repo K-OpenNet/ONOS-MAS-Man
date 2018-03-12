@@ -232,7 +232,7 @@ class ThreadDecisionMaker implements Runnable {
         dmAlgorithm.runDecisionMakerAlgorithm(currentTimeIndex, dbDump);
 
         dt = new Date();
-        System.out.println("** Scaling time: " + (dt.getTime() - startTime));
+        System.out.println("** Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + currentTimeIndex + ")");
 
         Controller.lock.unlock();
     }
@@ -259,7 +259,7 @@ class ThreadMonitoring implements Runnable {
 
             Date dt = new Date();
             long tmpPrevTime = dt.getTime();
-            System.out.println("Time: " + Controller.getTimeIndex() + "(Current time: " + tmpPrevTime + ")");
+            System.out.println("Time: " + Controller.getTimeIndex() + " (Current time: " + tmpPrevTime + ")");
 
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
             ThreadMastershipMonitoring masMonThread = new ThreadMastershipMonitoring(masMon);
