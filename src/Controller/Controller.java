@@ -8,10 +8,7 @@ import Database.Tables.State;
 import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
-import DecisionMaker.DCORALAlgorithm;
-import DecisionMaker.DecisionMaker;
-import DecisionMaker.NoScalingCPManAlgorithm;
-import DecisionMaker.NoScalingEqualizingAlgorithm;
+import DecisionMaker.*;
 import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
@@ -214,10 +211,12 @@ class ThreadDecisionMaker implements Runnable {
             case DCORAL:
                 dmAlgorithm = new DCORALAlgorithm();
                 break;
-            //case SCALING_CPU:
-            //    break;
-            //case SCALING_NETWORK:
-            //    break;
+            case SCALING_CPU:
+                dmAlgorithm = new CPUScalingAlgorithm();
+                break;
+            case SCALING_NETWORK:
+                dmAlgorithm = new NetworkingScalingAlgorithm();
+                break;
             case NOSCALING_CPMAN:
                 dmAlgorithm = new NoScalingCPManAlgorithm();
                 break;
