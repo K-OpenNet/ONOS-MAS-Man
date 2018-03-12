@@ -1,8 +1,11 @@
 package DecisionMaker;
 
 import Beans.ControllerBean;
+import Database.Tables.State;
 import Mastership.EqualizingMastership;
 import Scaling.CPUScaling;
+
+import java.util.ArrayList;
 
 public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
 
@@ -26,7 +29,7 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
     }
 
     @Override
-    public void runDecisionMakerAlgorithm(int currentTimeIndex) {
+    public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 
     }
 }

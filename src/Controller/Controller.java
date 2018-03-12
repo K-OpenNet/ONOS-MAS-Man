@@ -106,9 +106,9 @@ public class Controller {
     }
 
     // try to run DecisionMaker
-    public static void runDecisionMaker(int timeIndex, DecisionMaker.decisionMakerType decisionMakerName) {
+    public static void runDecisionMaker(int timeIndex, DecisionMaker.decisionMakerType decisionMakerName, ArrayList<State> dbDump) {
 
-        ThreadDecisionMaker threadDecisionMakerObj = new ThreadDecisionMaker(timeIndex, decisionMakerName);
+        ThreadDecisionMaker threadDecisionMakerObj = new ThreadDecisionMaker(timeIndex, decisionMakerName, dbDump);
         Thread thread = new Thread(threadDecisionMakerObj);
         thread.run();
     }
@@ -189,8 +189,10 @@ class ThreadDecisionMaker implements Runnable {
 
     private int currentTimeIndex;
     private DecisionMaker.decisionMakerType algorithmType;
+    private ArrayList<State> dbDump;
 
-    public ThreadDecisionMaker(int currentTimeIndex, DecisionMaker.decisionMakerType algorithmType) {
+    public ThreadDecisionMaker(int currentTimeIndex, DecisionMaker.decisionMakerType algorithmType, ArrayList<State> dbDump) {
+        this.dbDump = dbDump;
         this.currentTimeIndex = currentTimeIndex;
         this.algorithmType = algorithmType;
     }
@@ -225,7 +227,7 @@ class ThreadDecisionMaker implements Runnable {
                 break;
         }
 
-        dmAlgorithm.runDecisionMakerAlgorithm(currentTimeIndex);
+        dmAlgorithm.runDecisionMakerAlgorithm(currentTimeIndex, dbDump);
 
         dt = new Date();
         System.out.println("** Scaling time: " + (dt.getTime() - startTime));
