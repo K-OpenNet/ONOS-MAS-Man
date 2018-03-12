@@ -6,7 +6,7 @@ public class NoScalingCPManAlgorithm extends AbstractDecisionMaker implements De
     }
 
     @Override
-    public void runDecisionMakerAlgorithm() {
+    public void runDecisionMakerAlgorithm(int currentTimeIndex) {
 
     }
 }

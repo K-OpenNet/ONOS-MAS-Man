@@ -225,7 +225,7 @@ class ThreadDecisionMaker implements Runnable {
                 break;
         }
 
-        dmAlgorithm.runDecisionMakerAlgorithm();
+        dmAlgorithm.runDecisionMakerAlgorithm(currentTimeIndex);
 
         dt = new Date();
         System.out.println("** Scaling time: " + (dt.getTime() - startTime));
@@ -302,6 +302,8 @@ class ThreadMonitoring implements Runnable {
 
             long elapseTime = dt.getTime() - tmpPrevTime;
             long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
+
+            // ToDo: run decision maker algorithm function
 
             if (remainTime > 0) {
                 try {

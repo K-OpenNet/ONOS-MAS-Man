@@ -5,5 +5,5 @@ public interface DecisionMaker {
         DCORAL, SCALING_CPU, SCALING_NETWORK, NOSCALING_CPMAN;
     }
 
-    void runDecisionMakerAlgorithm();
+    void runDecisionMakerAlgorithm(int currentTimeIndex);
 }

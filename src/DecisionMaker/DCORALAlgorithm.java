@@ -26,7 +26,7 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
     }
 
     @Override
-    public void runDecisionMakerAlgorithm() {
+    public void runDecisionMakerAlgorithm(int currentTimeIndex) {
 
     }
 }
