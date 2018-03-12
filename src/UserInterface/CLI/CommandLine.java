@@ -173,7 +173,7 @@ public class CommandLine {
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_CPU;
                 break;
             case 3:
-                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_NETWORK
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_NETWORK;
                 break;
             default:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
