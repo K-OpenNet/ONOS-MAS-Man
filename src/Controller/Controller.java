@@ -11,6 +11,7 @@ import Database.Tuples.MastershipTuple;
 import DecisionMaker.DCORALAlgorithm;
 import DecisionMaker.DecisionMaker;
 import DecisionMaker.NoScalingCPManAlgorithm;
+import DecisionMaker.NoScalingEqualizingAlgorithm;
 import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
@@ -219,6 +220,9 @@ class ThreadDecisionMaker implements Runnable {
             //    break;
             case NOSCALING_CPMAN:
                 dmAlgorithm = new NoScalingCPManAlgorithm();
+                break;
+            case NOSCALING:
+                dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
             default:
                 dmAlgorithm = new NoScalingCPManAlgorithm();

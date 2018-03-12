@@ -156,15 +156,16 @@ public class CommandLine {
         System.out.println("*** change variables ***");
         Scanner sc1 = new Scanner(System.in);
         System.out.println("Decision Maker Algorithm");
-        System.out.println("0: No Scaling with CPMan");
+        System.out.println("0: No Scaling");
         System.out.println("1: DCORAL");
         System.out.println("2: Scaling considering with CPU");
         System.out.println("3: Scaling considering with Networking");
+        System.out.println("4: No Scaling with CPMan");
         System.out.print("Choose one of algorithms: ");
         int algorithm = sc1.nextInt();
         switch(algorithm) {
             case 0:
-                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
                 break;
             case 1:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.DCORAL;
@@ -174,6 +175,9 @@ public class CommandLine {
                 break;
             case 3:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_NETWORK;
+                break;
+            case 4:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
                 break;
             default:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
