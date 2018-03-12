@@ -4,4 +4,9 @@ public class NoScalingCPManAlgorithm extends AbstractDecisionMaker implements De
     public NoScalingCPManAlgorithm() {
         decisionMakerName = decisionMakerType.NOSCALING_CPMAN;
     }
+
+    @Override
+    public void runDecisionMakerAlgorithm() {
+
+    }
 }

@@ -199,6 +199,19 @@ class ThreadDecisionMaker implements Runnable {
         if (Controller.lock.isLocked()) {
             System.out.println("*** Decision maker does not finished yet (timeslot: " + currentTimeIndex + ")");
         }
+
+        switch(algorithmType) {
+            case DCORAL:
+                break;
+            case SCALING_CPU:
+                break;
+            case SCALING_NETWORK:
+                break;
+            case NOSCALING_CPMAN:
+                break;
+            default:
+                break;
+        }
     }
 }
 

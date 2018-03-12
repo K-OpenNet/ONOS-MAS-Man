@@ -24,4 +24,9 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
         EqualizingMastership mastership = new EqualizingMastership();
         mastership.runMastershipAlgorithm();
     }
+
+    @Override
+    public void runDecisionMakerAlgorithm() {
+
+    }
 }
