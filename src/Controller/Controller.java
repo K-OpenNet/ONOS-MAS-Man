@@ -10,6 +10,7 @@ import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 import DecisionMaker.DCORALAlgorithm;
 import DecisionMaker.DecisionMaker;
+import DecisionMaker.NoScalingCPManAlgorithm;
 import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
@@ -198,20 +199,38 @@ class ThreadDecisionMaker implements Runnable {
     public void run() {
         if (Controller.lock.isLocked()) {
             System.out.println("*** Decision maker does not finished yet (timeslot: " + currentTimeIndex + ")");
+            return;
         }
+
+        Controller.lock.lock();
+
+        Date dt = new Date();
+        long startTime = dt.getTime();
+
+        DecisionMaker dmAlgorithm;
 
         switch(algorithmType) {
             case DCORAL:
+                dmAlgorithm = new DCORALAlgorithm();
                 break;
-            case SCALING_CPU:
-                break;
-            case SCALING_NETWORK:
-                break;
+            //case SCALING_CPU:
+            //    break;
+            //case SCALING_NETWORK:
+            //    break;
             case NOSCALING_CPMAN:
+                dmAlgorithm = new NoScalingCPManAlgorithm();
                 break;
             default:
+                dmAlgorithm = new NoScalingCPManAlgorithm();
                 break;
         }
+
+        dmAlgorithm.runDecisionMakerAlgorithm();
+
+        dt = new Date();
+        System.out.println("** Scaling time: " + (dt.getTime() - startTime));
+
+        Controller.lock.unlock();
     }
 }
 
