@@ -256,9 +256,9 @@ class ThreadMonitoring implements Runnable {
 
         while (true) {
 
-            System.out.println("Time: " + Controller.getTimeIndex());
             Date dt = new Date();
             long tmpPrevTime = dt.getTime();
+            System.out.println("Time: " + Controller.getTimeIndex() + "(Current time: " + dt.toString() + ")");
 
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
             ThreadMastershipMonitoring masMonThread = new ThreadMastershipMonitoring(masMon);
