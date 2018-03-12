@@ -29,8 +29,6 @@ public class NoScalingCPManAlgorithm extends AbstractDecisionMaker implements De
 
             State state = mergeStates(targetStates);
             runCPManMastershipAlgorithm(state);
-
-            System.out.println("= test: " + startPoint + "/" + endPoint);
         }
 
     }
