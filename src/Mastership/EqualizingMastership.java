@@ -14,7 +14,7 @@ public class EqualizingMastership extends AbstractMastership implements Mastersh
     }
 
     @Override
-    public void runMastershipAlgorithm(ArrayList<State> dbDump) {
+    public void runMastershipAlgorithm(State state) {
 
         ControllerBean target = null;
 

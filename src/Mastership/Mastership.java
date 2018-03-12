@@ -10,6 +10,6 @@ public interface Mastership {
         EQUALMASTERSHIP, CPMAN;
     }
 
-    void runMastershipAlgorithm(ArrayList<State> dbDump);
+    void runMastershipAlgorithm(State state);
     void changeMastership(String dpid, ControllerBean targetController);
 }
