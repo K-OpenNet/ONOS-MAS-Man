@@ -2,7 +2,10 @@ package Mastership;
 
 import Beans.ControllerBean;
 import Database.Configure.Configuration;
+import Database.Tables.State;
 import Utils.Connection.RESTConnection;
+
+import java.util.ArrayList;
 
 public class EqualizingMastership extends AbstractMastership implements Mastership {
 
@@ -11,7 +14,7 @@ public class EqualizingMastership extends AbstractMastership implements Mastersh
     }
 
     @Override
-    public void runMastershipAlgorithm() {
+    public void runMastershipAlgorithm(ArrayList<State> dbDump) {
 
         ControllerBean target = null;
 

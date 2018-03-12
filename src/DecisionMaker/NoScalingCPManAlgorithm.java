@@ -15,13 +15,13 @@ public class NoScalingCPManAlgorithm extends AbstractDecisionMaker implements De
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 
         if (currentTimeIndex % Configuration.NOSCALING_CPMAN_PERIOD == 0) {
-            runCPManMastershipAlgorithm();
+            runCPManMastershipAlgorithm(dbDump);
         }
 
     }
 
-    public void runCPManMastershipAlgorithm() {
+    public void runCPManMastershipAlgorithm(ArrayList<State> dbDump) {
         CPManMastership mastership = new CPManMastership();
-        mastership.runMastershipAlgorithm();
+        mastership.runMastershipAlgorithm(dbDump);
     }
 }
