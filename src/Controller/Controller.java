@@ -225,7 +225,7 @@ class ThreadDecisionMaker implements Runnable {
                 dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
             default:
-                dmAlgorithm = new NoScalingCPManAlgorithm();
+                dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
         }
 
