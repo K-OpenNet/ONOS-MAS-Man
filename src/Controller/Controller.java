@@ -18,6 +18,7 @@ import Utils.Connection.SSHConnection;
 import Utils.FileIO.FileIOUtil;
 import Utils.Parser.JsonParser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -258,7 +259,7 @@ class ThreadMonitoring implements Runnable {
 
             Date dt = new Date();
             long tmpPrevTime = dt.getTime();
-            System.out.println("Time: " + Controller.getTimeIndex() + "(Current time: " + dt.toString() + ")");
+            System.out.println("Time: " + Controller.getTimeIndex() + "(Current time: " + tmpPrevTime + ")");
 
             ThreadComputingResourceMonitoring crMonThread = new ThreadComputingResourceMonitoring(crMon);
             ThreadMastershipMonitoring masMonThread = new ThreadMastershipMonitoring(masMon);
