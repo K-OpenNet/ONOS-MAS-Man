@@ -62,6 +62,7 @@ public class CommandLine {
                     break;
                 case 4:
                     // Monitoring only
+                    DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
                     runMonitoringOnly();
                     break;
                 case 5:

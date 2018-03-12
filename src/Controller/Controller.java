@@ -308,8 +308,8 @@ class ThreadMonitoring implements Runnable {
             long remainTime = (MONITORING_PERIOD * 1000) - elapseTime;
 
             // ToDo: run decision maker algorithm function
-            //ArrayList<State> dbDump = (ArrayList<State>) Database.getDatabase().clone();
-            //Controller.runDecisionMaker(Controller.getTimeIndex(), DecisionMaker.decisionMakerType.NOSCALING_CPMAN, dbDump);
+            ArrayList<State> dbDump = (ArrayList<State>) Database.getDatabase().clone();
+            Controller.runDecisionMaker(Controller.getTimeIndex(), Configuration.DECISIONMAKER_TYPE, dbDump);
 
             if (remainTime > 0) {
                 try {
