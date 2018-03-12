@@ -2,6 +2,7 @@ package Database.Configure;
 
 import Beans.ControllerBean;
 import Beans.PMBean;
+import DecisionMaker.DecisionMaker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class Configuration {
     // Experimental variables
     public static int MONITORING_PERIOD = 3;
     public static int NOSCALING_CPMAN_PERIOD = 3;
+    public static DecisionMaker.decisionMakerType DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";

@@ -4,14 +4,13 @@ import Controller.Controller;
 import Database.Configure.Configuration;
 import Database.Tables.Database;
 import Database.Tables.State;
+import DecisionMaker.DecisionMaker;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import static Database.Configure.Configuration.MONITORING_PERIOD;
-import static Database.Configure.Configuration.NOSCALING_CPMAN_PERIOD;
-import static Database.Configure.Configuration.SSH_COMMAND_RETRIES;
+import static Database.Configure.Configuration.*;
 
 public class CommandLine {
 
@@ -148,6 +147,7 @@ public class CommandLine {
 
     public void printExperimentalParams() {
         System.out.println("*** current variables ***");
+        System.out.println("The type of Decision maker algorithm: " + DECISIONMAKER_TYPE);
         System.out.println("Monitoring period: " + MONITORING_PERIOD);
         System.out.println("Noscaling CPMan period: " + NOSCALING_CPMAN_PERIOD);
     }
@@ -155,6 +155,30 @@ public class CommandLine {
     public void changeExperimentalParams() {
         System.out.println("*** change variables ***");
         Scanner sc1 = new Scanner(System.in);
+        System.out.println("Decision Maker Algorithm");
+        System.out.println("0: No Scaling with CPMan");
+        System.out.println("1: DCORAL");
+        System.out.println("2: Scaling considering with CPU");
+        System.out.println("3: Scaling considering with Networking");
+        System.out.print("Choose one of algorithms: ");
+        int algorithm = sc1.nextInt();
+        switch(algorithm) {
+            case 0:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
+                break;
+            case 1:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.DCORAL;
+                break;
+            case 2:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_CPU;
+                break;
+            case 3:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SCALING_NETWORK
+                break;
+            default:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
+                break;
+        }
         System.out.print("Monitoring period: ");
         MONITORING_PERIOD = sc1.nextInt();
         System.out.print("Noscaling CPMan period: ");
