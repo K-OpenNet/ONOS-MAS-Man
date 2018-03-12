@@ -22,6 +22,7 @@ import Utils.Parser.JsonParser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static Database.Configure.Configuration.FILE_NAME_PREFIX;
 import static Database.Configure.Configuration.MONITORING_PERIOD;
@@ -29,7 +30,9 @@ import static Database.Configure.Configuration.MONITORING_PERIOD;
 public class Controller {
 
     private static int timeIndex;
-    private static Thread[] threadPoolDecisionMaker;
+    public static ReentrantLock lock = new ReentrantLock();
+
+    public static Object semaphoreDecisionMaker = new Object();
 
     private static Controller ourInstance = new Controller();
 
@@ -39,8 +42,6 @@ public class Controller {
 
     private Controller() {
         init();
-        threadPoolDecisionMaker = new Thread[1];
-        threadPoolDecisionMaker[0] = null;
     }
 
     // Initialization function
@@ -105,12 +106,10 @@ public class Controller {
 
     // try to run DecisionMaker
     public static void runDecisionMaker(int timeIndex, DecisionMaker.decisionMakerType decisionMakerName) {
-        if (threadPoolDecisionMaker[0] != null) {
-            System.out.println("*** Decision maker does not finished yet (timeslot: " + timeIndex + ")");
-            return;
-        }
 
-        //ToDo: add codes to run decision maker thread
+        ThreadDecisionMaker threadDecisionMakerObj = new ThreadDecisionMaker(timeIndex, decisionMakerName);
+        Thread thread = new Thread(threadDecisionMakerObj);
+        thread.run();
     }
 
     public static int getTimeIndex() {
@@ -187,9 +186,19 @@ class ThreadPMSSHSessionAssignment implements Runnable {
 
 class ThreadDecisionMaker implements Runnable {
 
+    private int currentTimeIndex;
+    private DecisionMaker.decisionMakerType algorithmType;
+
+    public ThreadDecisionMaker(int currentTimeIndex, DecisionMaker.decisionMakerType algorithmType) {
+        this.currentTimeIndex = currentTimeIndex;
+        this.algorithmType = algorithmType;
+    }
+
     @Override
     public void run() {
-
+        if (Controller.lock.isLocked()) {
+            System.out.println("*** Decision maker does not finished yet (timeslot: " + currentTimeIndex + ")");
+        }
     }
 }
 
