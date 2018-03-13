@@ -34,7 +34,7 @@ abstract class AbstractDecisionMaker implements DecisionMaker {
                 // ToDo: merge two states with following strategies
                 // mastership: last -- do not touch
                 // num cpus: last -- do not touch
-                // computing resource: average
+                // computing resource: summation and then average
                 // control plane: summation
 
             }

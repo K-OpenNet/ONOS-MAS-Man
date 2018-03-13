@@ -34,30 +34,50 @@ public class SSHParser extends AbstractParser implements Parser {
 
             switch(splittedResultsForEachLine[1]) {
                 case "CPU/Load/User":
+                    if (splittedResultsForEachLine.length == 2) {
+                        tmpTuple.getCpuUsageUser().add(Double.valueOf(0.0));
+                        break;
+                    }
                     for(int index2 = 2; index2 < splittedResultsForEachLine.length; index2++) {
                         String tmpResult = splittedResultsForEachLine[index2].replace(",", "").replace("%", "");
                         tmpTuple.getCpuUsageUser().add(Double.valueOf(tmpResult));
                     }
                     break;
                 case "CPU/Load/Kernel":
+                    if (splittedResultsForEachLine.length == 2) {
+                        tmpTuple.getCpuUsageKernel().add(Double.valueOf(0.0));
+                        break;
+                    }
                     for(int index2 = 2; index2 < splittedResultsForEachLine.length; index2++) {
                         String tmpResult = splittedResultsForEachLine[index2].replace(",", "").replace("%", "");
                         tmpTuple.getCpuUsageKernel().add(Double.valueOf(tmpResult));
                     }
                     break;
                 case "RAM/Usage/Used":
+                    if (splittedResultsForEachLine.length == 2) {
+                        tmpTuple.getRamUsage().add(Integer.valueOf(0));
+                        break;
+                    }
                     for(int index2 = 2; index2 < splittedResultsForEachLine.length; index2 = index2 + 2) {
                         String tmpResult = splittedResultsForEachLine[index2];
                         tmpTuple.getRamUsage().add(Integer.valueOf(tmpResult));
                     }
                     break;
                 case "Net/Rate/Rx":
+                    if (splittedResultsForEachLine.length == 2) {
+                        tmpTuple.getNetRx().add(Integer.valueOf(0));
+                        break;
+                    }
                     for(int index2 = 2; index2 < splittedResultsForEachLine.length; index2 = index2 + 2) {
                         String tmpResult = splittedResultsForEachLine[index2];
                         tmpTuple.getNetRx().add(Integer.valueOf(tmpResult));
                     }
                     break;
                 case "Net/Rate/Tx":
+                    if (splittedResultsForEachLine.length == 2) {
+                        tmpTuple.getNetTx().add(Integer.valueOf(0));
+                        break;
+                    }
                     for(int index2 = 2; index2 < splittedResultsForEachLine.length; index2 = index2 + 2) {
                         String tmpResult = splittedResultsForEachLine[index2];
                         tmpTuple.getNetTx().add(Integer.valueOf(tmpResult));
