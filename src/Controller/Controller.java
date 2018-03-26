@@ -157,9 +157,9 @@ public class Controller {
     }
 
     // merge states
-    public static void mergeStates(ArrayList<State> states) {
+    public static State mergeStates(ArrayList<State> states) {
         NoScalingEqualizingAlgorithm noScaling = new NoScalingEqualizingAlgorithm();
-        noScaling.mergeStates(states);
+        return noScaling.mergeStates(states);
     }
 
     public static void main (String[] args) {

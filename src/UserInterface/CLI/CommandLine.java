@@ -132,7 +132,17 @@ public class CommandLine {
     }
 
     public void mergeMultipleStates() {
+        int numMergeStates = 3;
+        int finishedTimeIndex = Controller.getTimeIndex() - 1;
+        ArrayList<State> states = new ArrayList<>();
+        for (int index = 0; index < numMergeStates ; index++) {
+            State state = Database.getDatabase().get(finishedTimeIndex - index);
+            states.add(state);
+        }
 
+        State state = Controller.mergeStates(states);
+
+        System.out.println(Database.getInstance().getSingleTuple(state));
     }
 
     public void runMonitoringOnly() {
