@@ -18,12 +18,15 @@ public class State {
     private HashMap<String, HashMap<String, ControlPlaneTuple>> controlPlaneTuples;
     // Key: controllerKey, value # CPUs
     private HashMap<String, Integer> numCPUsTuples;
+    // Key: controllerKey, value active/inactive flag
+    private HashMap<String, String> activeFlags;
 
     public State() {
         mastershipTuples = new HashMap<>();
         computingResourceTuples = new HashMap<>();
         controlPlaneTuples = new HashMap<>();
         numCPUsTuples = new HashMap<>();
+        activeFlags = new HashMap<>();
     }
 
     public void addMastershipTuple(ControllerBean controller, String switchId) {
