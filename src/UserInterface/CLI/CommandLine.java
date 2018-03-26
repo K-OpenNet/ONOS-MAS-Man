@@ -96,7 +96,7 @@ public class CommandLine {
                     // make initialstate.json file
                     break;
                 case 13:
-                    // test to merge multiple states
+                    mergeMultipleStates();
                     break;
                 default:
                     flag_end = true;
