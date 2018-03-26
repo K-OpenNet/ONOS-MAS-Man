@@ -35,6 +35,7 @@ public class Database {
         HashMap<String, String> resultNumOfMsgs = new HashMap<>();
         HashMap<String, String> resultByteOfMsgs = new HashMap<>();
         HashMap<String, String> resultNumCPUs = new HashMap<>();
+        HashMap<String, String> resultActiveFlages = new HashMap<>();
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             resultMastership.putIfAbsent(controller.getBeanKey(), ":\t");
@@ -46,6 +47,7 @@ public class Database {
             resultNumOfMsgs.putIfAbsent(controller.getBeanKey(), ":\t");
             resultByteOfMsgs.putIfAbsent(controller.getBeanKey(), ":\t");
             resultNumCPUs.putIfAbsent(controller.getBeanKey(), ":\t");
+            resultActiveFlages.putIfAbsent(controller.getBeanKey(), ":\t");
         }
 
         ArrayList<State> tmpDatabase = (ArrayList<State>) database.clone();
@@ -104,6 +106,11 @@ public class Database {
                 tmp = resultNumCPUs.get(controller.getBeanKey()) + "\t"
                         + state.getNumCPUsTuples().get(controller.getBeanKey());
                 resultNumCPUs.replace(controller.getBeanKey(), tmp);
+
+                // active flags
+                tmp = resultActiveFlages.get(controller.getBeanKey()) + "\t"
+                        + state.getActiveFlags().get(controller.getBeanKey());
+                resultActiveFlages.replace(controller.getBeanKey(), tmp);
             }
         }
         results += "Index\t";
@@ -166,6 +173,12 @@ public class Database {
             results += "\n";
         }
 
+        results += "Active/Inactive Flags\n";
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            results += results + controller.getBeanKey() + resultActiveFlages.get(controller.getBeanKey());
+            results += "\n";
+        }
+
         return results;
     }
 
@@ -181,6 +194,7 @@ public class Database {
         HashMap<String, String> resultNumOfMsgs = new HashMap<>();
         HashMap<String, String> resultByteOfMsgs = new HashMap<>();
         HashMap<String, String> resultNumCPUs = new HashMap<>();
+        HashMap<String, String> resultActiveFlages = new HashMap<>();
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             resultMastership.putIfAbsent(controller.getBeanKey(), ":\t");
@@ -192,6 +206,7 @@ public class Database {
             resultNumOfMsgs.putIfAbsent(controller.getBeanKey(), ":\t");
             resultByteOfMsgs.putIfAbsent(controller.getBeanKey(), ":\t");
             resultNumCPUs.putIfAbsent(controller.getBeanKey(), ":\t");
+            resultActiveFlages.putIfAbsent(controller.getBeanKey(), ":\t");
         }
 
 
@@ -248,6 +263,11 @@ public class Database {
             tmp = resultNumCPUs.get(controller.getBeanKey()) + "\t"
                     + state.getNumCPUsTuples().get(controller.getBeanKey());
             resultNumCPUs.replace(controller.getBeanKey(), tmp);
+
+            // active flags
+            tmp = resultActiveFlages.get(controller.getBeanKey()) + "\t"
+                    + state.getActiveFlags().get(controller.getBeanKey());
+            resultActiveFlages.replace(controller.getBeanKey(), tmp);
         }
 
         results += "Index\t";
@@ -307,6 +327,12 @@ public class Database {
         results += "Num CPUs\n";
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             results = results + controller.getBeanKey() + resultNumCPUs.get(controller.getBeanKey());
+            results += "\n";
+        }
+
+        results += "Active/Inactive Flags\n";
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            results += results + controller.getBeanKey() + resultActiveFlages.get(controller.getBeanKey());
             results += "\n";
         }
 
