@@ -95,6 +95,9 @@ public class CommandLine {
                 case 12:
                     // make initialstate.json file
                     break;
+                case 13:
+                    // test to merge multiple states
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -117,6 +120,7 @@ public class CommandLine {
         System.out.println("10: Equalize Mastership");
         System.out.println("11: Manually change master controller for specified switch");
         System.out.println("12: Make initialstate.json file according to current state");
+        System.out.println("13: Test to merge multiple states");
     }
 
     public void printConfigMessage () {
@@ -124,6 +128,10 @@ public class CommandLine {
     }
 
     public void testFuncForDev () {
+
+    }
+
+    public void mergeMultipleStates() {
 
     }
 
