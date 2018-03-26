@@ -88,6 +88,14 @@ public class State {
     public void setNumCPUsTuples(HashMap<String, Integer> numCPUsTuples) {
         this.numCPUsTuples = numCPUsTuples;
     }
+
+    public HashMap<String, String> getActiveFlags() {
+        return activeFlags;
+    }
+
+    public void setActiveFlags(HashMap<String, String> activeFlags) {
+        this.activeFlags = activeFlags;
+    }
 }
 
 class MastershipTupleSanityException extends RuntimeException {

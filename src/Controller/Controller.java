@@ -305,6 +305,17 @@ class ThreadMonitoring implements Runnable {
             tmpState.setMastershipTuples(masMonThread.getMastershipTuples());
             tmpState.setControlPlaneTuples(cpMonThread.getControlPlaneTuples());
             tmpState.setNumCPUsTuples(cpuMonThread.getNumCPUsTuples());
+            // add Active flags
+            for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+                if (!controller.isVmAlive()) {
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "M-X");
+                } else if (!controller.isOnosAlive()) {
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "C-X");
+                } else {
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "O");
+                }
+            }
+
             Database.getDatabase().add(Controller.getTimeIndex(), tmpState);
 
             dt = new Date();
