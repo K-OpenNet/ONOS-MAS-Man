@@ -156,6 +156,12 @@ public class Controller {
         mastership.changeMastership(dpid, tmpController);
     }
 
+    // merge states
+    public static void mergeStates(ArrayList<State> states) {
+        NoScalingEqualizingAlgorithm noScaling = new NoScalingEqualizingAlgorithm();
+        noScaling.mergeStates(states);
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
