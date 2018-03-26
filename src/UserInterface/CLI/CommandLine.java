@@ -112,8 +112,8 @@ public class CommandLine {
         System.out.println("5: Dump database");
         System.out.println("6: Reserved function - for test");
         System.out.println("7: Print database");
-        System.out.println("8: Increase vCPU of first ONOS controller");
-        System.out.println("9: Decrease vCPU of first ONOS controller");
+        System.out.println("8: Increase vCPU of first ONOS controller -- for test");
+        System.out.println("9: Decrease vCPU of first ONOS controller -- for test");
         System.out.println("10: Equalize Mastership");
         System.out.println("11: Manually change master controller for specified switch");
         System.out.println("12: Make initialstate.json file according to current state");
