@@ -35,8 +35,17 @@ abstract class AbstractDecisionMaker implements DecisionMaker {
                 // mastership: last -- do not touch
                 // num cpus: last -- do not touch
                 // computing resource: summation and then average
+                HashMap<String, ComputingResourceTuple> tmpComputingResource = states.get(lastIndex1).getComputingResourceTuples();
+                for (String controllerId : tmpComputingResource.keySet()) {
+                    ComputingResourceTuple tmpComputingResourceTuple = tmpComputingResource.get(controllerId);
+                    result.getComputingResourceTuples().get(controllerId).getCpuUsageUser().addAll(tmpComputingResourceTuple.getCpuUsageUser());
+                    result.getComputingResourceTuples().get(controllerId).getCpuUsageKernel().addAll(tmpComputingResourceTuple.getCpuUsageKernel());
+                    result.getComputingResourceTuples().get(controllerId).getRamUsage().addAll(tmpComputingResourceTuple.getRamUsage());
+                    result.getComputingResourceTuples().get(controllerId).getNetRx().addAll(tmpComputingResourceTuple.getNetRx());
+                    result.getComputingResourceTuples().get(controllerId).getNetTx().addAll(tmpComputingResourceTuple.getNetTx());
+                }
                 // control plane: summation
-
+                HashMap<String, HashMap<String, ControlPlaneTuple>> tmpControlPlane = states.get(lastIndex1).getControlPlaneTuples();
             }
         }
         return result;
