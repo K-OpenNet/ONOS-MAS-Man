@@ -133,7 +133,7 @@ public class CommandLine {
 
     public void mergeMultipleStates() {
         int numMergeStates = 3;
-        int finishedTimeIndex = Controller.getTimeIndex() - 1;
+        int finishedTimeIndex = Database.getDatabase().size() - 1;
         ArrayList<State> states = new ArrayList<>();
         for (int index = 0; index < numMergeStates ; index++) {
             State state = Database.getDatabase().get(finishedTimeIndex - index);
