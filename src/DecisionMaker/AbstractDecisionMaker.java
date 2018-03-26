@@ -25,7 +25,7 @@ abstract class AbstractDecisionMaker implements DecisionMaker {
         int lengthOfStates = states.size();
         State result = null;
 
-        for (int lastIndex1 = states.size() - 1; lastIndex1 <= 0; lastIndex1--) {
+        for (int lastIndex1 = states.size() - 1; lastIndex1 >= 0; lastIndex1--) {
             if (result == null) {
                 result = new State();
                 result.setMastershipTuples((HashMap<String, MastershipTuple>) states.get(lastIndex1).getMastershipTuples().clone());
