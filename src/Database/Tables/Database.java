@@ -175,7 +175,7 @@ public class Database {
 
         results += "Active/Inactive Flags\n";
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            results += results + controller.getBeanKey() + resultActiveFlages.get(controller.getBeanKey());
+            results = results + controller.getBeanKey() + resultActiveFlages.get(controller.getBeanKey());
             results += "\n";
         }
 
