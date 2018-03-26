@@ -5,6 +5,7 @@ import Database.Tables.State;
 import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
+import org.projectfloodlight.openflow.protocol.OFType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ abstract class AbstractDecisionMaker implements DecisionMaker {
     }
 
     public State mergeStates(ArrayList<State> states) {
+        int lengthOfStates = states.size();
         State result = null;
 
         for (int lastIndex1 = states.size() - 1; lastIndex1 <= 0; lastIndex1--) {
@@ -46,8 +48,37 @@ abstract class AbstractDecisionMaker implements DecisionMaker {
                 }
                 // control plane: summation
                 HashMap<String, HashMap<String, ControlPlaneTuple>> tmpControlPlane = states.get(lastIndex1).getControlPlaneTuples();
+                for (String controllerId : tmpControlPlane.keySet()) {
+                    HashMap <String, ControlPlaneTuple> tmpInnerControlPlane = tmpControlPlane.get(controllerId);
+                    for (String dpid : tmpInnerControlPlane.keySet()) {
+                        ControlPlaneTuple tmpControlPlaneTuple = tmpInnerControlPlane.get(dpid);
+                        for (OFType ofType : OFType.values()) {
+                            long tmpTrafficResult = result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficResults().get(ofType);
+                            long tmpTrafficResultByte = result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficByteResults().get(ofType);
+                            long origTrafficResult = tmpControlPlaneTuple.getControlTrafficResults().get(ofType);
+                            long origTrafficResultByte = tmpControlPlaneTuple.getControlTrafficByteResults().get(ofType);
+                            result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficResults().replace(ofType, tmpTrafficResult + origTrafficResult);
+                            result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficByteResults().replace(ofType, tmpTrafficResultByte + origTrafficResultByte);
+                        }
+                    }
+                }
             }
         }
+
+        // control plane: cal average
+        HashMap<String, HashMap<String, ControlPlaneTuple>> tmpControlPlane = result.getControlPlaneTuples();
+        for (String controllerId : tmpControlPlane.keySet()) {
+            HashMap <String, ControlPlaneTuple> tmpInnerControlPlane = tmpControlPlane.get(controllerId);
+            for (String dpid : tmpInnerControlPlane.keySet()) {
+                for (OFType ofType : OFType.values()) {
+                    long tmpTrafficResult = result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficResults().get(ofType)/lengthOfStates;
+                    long tmpTrafficResultByte = result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficByteResults().get(ofType)/lengthOfStates;
+                    result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficResults().replace(ofType, tmpTrafficResult);
+                    result.getControlPlaneTuples().get(controllerId).get(dpid).getControlTrafficByteResults().replace(ofType, tmpTrafficResultByte);
+                }
+            }
+        }
+
         return result;
     }
 
