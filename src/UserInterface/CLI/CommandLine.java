@@ -100,6 +100,7 @@ public class CommandLine {
                     break;
                 case 14:
                     // run CPMan mastership function, onetime
+                    runCPManMastershipFunction();
                     break;
                 default:
                     flag_end = true;
@@ -136,7 +137,7 @@ public class CommandLine {
     }
 
     public void runCPManMastershipFunction() {
-
+        Controller.runCPManMastershipFunction();
     }
 
     public void mergeMultipleStates() {
