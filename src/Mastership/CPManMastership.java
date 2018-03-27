@@ -27,6 +27,12 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
         }
 
+        // sort over-subscribed switch list
+        HashMap<String, ArrayList<String>> sortedSwitchesUnderSub = new HashMap<>();
+        for (ControllerBean controller : underSubControllers) {
+            sortedSwitchesUnderSub.putIfAbsent(controller.getControllerId(), getSortedSwitchList(controller, state));
+        }
+
         changeMultipleMastership(topology);
     }
 
@@ -113,8 +119,22 @@ public class CPManMastership extends AbstractMastership implements Mastership {
     public ArrayList<String> getSortedSwitchList (ControllerBean masterController, State state) {
         ArrayList<String> result = new ArrayList<>();
 
+        HashMap<String, ControlPlaneTuple> tmpControlPlaneTuples = state.getControlPlaneTuples().get(masterController.getControllerId());
+        HashMap<String, Long> tmpOFMsgsForEachSwitch = new HashMap<>();
 
+        for (String dpid : tmpControlPlaneTuples.keySet()) {
+            long tmpNumOFMsgs = getNumOFMsgsForSingleSwitchInMasterController(masterController, dpid, state);
+            tmpOFMsgsForEachSwitch.putIfAbsent(dpid, tmpNumOFMsgs);
+        }
+
+        printHashmapForTest(tmpOFMsgsForEachSwitch);
 
         return result;
+    }
+
+    public void printHashmapForTest(HashMap<String, Long> hashMap) {
+        for (String key : hashMap) {
+            System.out.println("***" + key + ": " + hashMap.get(key));
+        }
     }
 }
