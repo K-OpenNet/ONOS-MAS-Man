@@ -4,6 +4,7 @@ import Beans.ControllerBean;
 import Database.Configure.Configuration;
 import Database.Tables.State;
 import Database.Tuples.ControlPlaneTuple;
+import Database.Tuples.MastershipTuple;
 import org.projectfloodlight.openflow.protocol.OFType;
 
 import java.util.ArrayList;
@@ -120,14 +121,20 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         ArrayList<String> result = new ArrayList<>();
 
         HashMap<String, ControlPlaneTuple> tmpControlPlaneTuples = state.getControlPlaneTuples().get(masterController.getControllerId());
+        HashMap<String, Long> tmpRawOFMsgsForEachSwitch = new HashMap<>();
         HashMap<String, Long> tmpOFMsgsForEachSwitch = new HashMap<>();
 
         for (String dpid : tmpControlPlaneTuples.keySet()) {
             long tmpNumOFMsgs = getNumOFMsgsForSingleSwitchInMasterController(masterController, dpid, state);
-            tmpOFMsgsForEachSwitch.putIfAbsent(dpid, tmpNumOFMsgs);
+            tmpRawOFMsgsForEachSwitch.putIfAbsent(dpid, tmpNumOFMsgs);
         }
 
-        printHashmapForTest(tmpOFMsgsForEachSwitch);
+        MastershipTuple mastershipTuple = state.getMastershipTuples().get(masterController.getControllerId());
+        for (String dpid : mastershipTuple.getSwitchList()) {
+            tmpOFMsgsForEachSwitch.putIfAbsent(dpid, tmpRawOFMsgsForEachSwitch.get(dpid));
+        }
+
+        printHashmapForTest(tmpRawOFMsgsForEachSwitch);
 
         return result;
     }
