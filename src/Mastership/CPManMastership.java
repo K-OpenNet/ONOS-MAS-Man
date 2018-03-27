@@ -109,4 +109,12 @@ public class CPManMastership extends AbstractMastership implements Mastership {
 
         return sumOFMsgs;
     }
+
+    public ArrayList<String> getSortedSwitchList (ControllerBean masterController, State state) {
+        ArrayList<String> result = new ArrayList<>();
+
+
+
+        return result;
+    }
 }
