@@ -133,7 +133,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
     }
 
     public void printHashmapForTest(HashMap<String, Long> hashMap) {
-        for (String key : hashMap) {
+        for (String key : hashMap.keySet()) {
             System.out.println("***" + key + ": " + hashMap.get(key));
         }
     }
