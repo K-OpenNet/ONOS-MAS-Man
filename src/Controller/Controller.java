@@ -163,6 +163,13 @@ public class Controller {
         return noScaling.mergeStates(states);
     }
 
+    // run CPMan mastership just onetime
+    public static void runCPManMastershipFunction() {
+        State state = Database.getDatabase().get(timeIndex-1);
+        CPManMastership mastership = new CPManMastership();
+        mastership.runMastershipAlgorithm(state);
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();

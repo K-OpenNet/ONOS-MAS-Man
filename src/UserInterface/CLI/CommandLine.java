@@ -98,6 +98,9 @@ public class CommandLine {
                 case 13:
                     mergeMultipleStates();
                     break;
+                case 14:
+                    // run CPMan mastership function, onetime
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -121,6 +124,7 @@ public class CommandLine {
         System.out.println("11: Manually change master controller for specified switch");
         System.out.println("12: Make initialstate.json file according to current state");
         System.out.println("13: Test to merge multiple states");
+        System.out.println("14: Run CPMan mastership function, onetime");
     }
 
     public void printConfigMessage () {
@@ -128,6 +132,10 @@ public class CommandLine {
     }
 
     public void testFuncForDev () {
+
+    }
+
+    public void runCPManMastershipFunction() {
 
     }
 
