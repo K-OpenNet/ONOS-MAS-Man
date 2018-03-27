@@ -99,4 +99,14 @@ public class CPManMastership extends AbstractMastership implements Mastership {
 
         return sumOFMsgs;
     }
+
+    public long getNumOFMsgsForSingleSwitchInMasterController(ControllerBean masterController, String dpid, State state) {
+        long sumOFMsgs = 0;
+
+        for (OFType ofType : OFType.values()) {
+            sumOFMsgs += state.getControlPlaneTuples().get(masterController.getControllerId()).get(dpid).getControlTrafficResults().get(ofType);
+        }
+
+        return sumOFMsgs;
+    }
 }
