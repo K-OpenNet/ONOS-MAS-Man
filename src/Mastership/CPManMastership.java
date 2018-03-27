@@ -134,7 +134,28 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             tmpOFMsgsForEachSwitch.putIfAbsent(dpid, tmpRawOFMsgsForEachSwitch.get(dpid));
         }
 
+        for (String dpid : tmpOFMsgsForEachSwitch.keySet()) {
+            if (result.size() == 0) {
+                result.add(dpid);
+            } else {
+                long numOFMsgsForTargetSwitch = tmpOFMsgsForEachSwitch.get(dpid);
+                for (int index = 0; index < result.size(); index++) {
+                    String tmpDpid = result.get(index);
+                    long tmpNumOFMsgsForSwitch = tmpOFMsgsForEachSwitch.get(tmpDpid);
+                    if (numOFMsgsForTargetSwitch > tmpNumOFMsgsForSwitch) {
+                        continue;
+                    } else {
+                        result.add(index, tmpDpid);
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        System.out.println("--" + masterController.getBeanKey());
         printHashmapForTest(tmpOFMsgsForEachSwitch);
+        printArrayListForTest(result);
 
         return result;
     }
@@ -142,6 +163,12 @@ public class CPManMastership extends AbstractMastership implements Mastership {
     public void printHashmapForTest(HashMap<String, Long> hashMap) {
         for (String key : hashMap.keySet()) {
             System.out.println("***" + key + ": " + hashMap.get(key));
+        }
+    }
+
+    public void printArrayListForTest(ArrayList<String> arrayList) {
+        for (String value : arrayList) {
+            System.out.println(value);
         }
     }
 }
