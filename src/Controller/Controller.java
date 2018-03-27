@@ -165,7 +165,7 @@ public class Controller {
 
     // run CPMan mastership just onetime
     public static void runCPManMastershipFunction() {
-        State state = Database.getDatabase().get(timeIndex-1);
+        State state = Database.getDatabase().get(timeIndex);
         CPManMastership mastership = new CPManMastership();
         mastership.runMastershipAlgorithm(state);
     }
