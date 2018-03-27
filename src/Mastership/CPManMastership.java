@@ -134,7 +134,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             tmpOFMsgsForEachSwitch.putIfAbsent(dpid, tmpRawOFMsgsForEachSwitch.get(dpid));
         }
 
-        printHashmapForTest(tmpRawOFMsgsForEachSwitch);
+        printHashmapForTest(tmpOFMsgsForEachSwitch);
 
         return result;
     }
