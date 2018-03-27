@@ -143,12 +143,14 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                     String tmpDpid = result.get(index);
                     long tmpNumOFMsgsForSwitch = tmpOFMsgsForEachSwitch.get(tmpDpid);
                     if (numOFMsgsForTargetSwitch <= tmpNumOFMsgsForSwitch) {
+                        if (index == result.size() -1) {
+                            result.add(dpid);
+                        }
                         continue;
                     } else {
                         result.add(index, dpid);
                         break;
                     }
-
                 }
             }
         }
