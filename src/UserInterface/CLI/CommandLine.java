@@ -98,10 +98,6 @@ public class CommandLine {
                 case 13:
                     mergeMultipleStates();
                     break;
-                case 14:
-                    // test: average number of OF msgs
-                    Controller.testCalAvgNumOFMsgs();
-                    break;
                 default:
                     flag_end = true;
                     break;

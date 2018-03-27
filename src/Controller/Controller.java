@@ -163,26 +163,6 @@ public class Controller {
         return noScaling.mergeStates(states);
     }
 
-    // test function to calculate average number of OF msgs in CPMan class
-    public static void testCalAvgNumOFMsgs() {
-        CPManMastership mastership = new CPManMastership();
-
-        int numMergeStates = 3;
-        int finishedTimeIndex = Database.getDatabase().size() - 1;
-        ArrayList<State> states = new ArrayList<>();
-        for (int index = 0; index < numMergeStates ; index++) {
-            State state = Database.getDatabase().get(finishedTimeIndex - index);
-            states.add(state);
-        }
-
-        State state = mergeStates(states);
-
-        long results = mastership.getAverageNumOFMsgs(mastership.getActiveControllers(), state);
-
-        System.out.println(results);
-
-    }
-
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();
