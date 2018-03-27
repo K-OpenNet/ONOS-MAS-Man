@@ -19,8 +19,10 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         HashMap<String, ArrayList<String>> topology = new HashMap<>();
 
         ArrayList<ControllerBean> activeControllers = getActiveControllers();
-        ArrayList<ControllerBean> underSubControllers = getUnderSubControllers(state);
-        ArrayList<ControllerBean> overSubControllers = getOverSubControllers(state);
+        ArrayList<ControllerBean> underSubControllers = getUnderSubControllers(activeControllers, state);
+        ArrayList<ControllerBean> overSubControllers = getOverSubControllers(activeControllers, state);
+
+
 
         changeMultipleMastership(topology);
     }
@@ -37,18 +39,32 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         return activeControllers;
     }
 
-    public ArrayList<ControllerBean> getUnderSubControllers(State state) {
+    public ArrayList<ControllerBean> getUnderSubControllers(ArrayList<ControllerBean> activeControllers, State state) {
         ArrayList<ControllerBean> underSubControllers = new ArrayList<>();
 
         long avgNumOFMsgs = getAverageNumOFMsgs(getActiveControllers(), state);
 
+        for (ControllerBean controller : activeControllers) {
+            long tmpNumOFMsgs = getNumOFMsgsForSingleController(controller, state);
+            if (tmpNumOFMsgs < avgNumOFMsgs) {
+                underSubControllers.add(controller);
+            }
+        }
+
         return underSubControllers;
     }
 
-    public ArrayList<ControllerBean> getOverSubControllers(State state) {
+    public ArrayList<ControllerBean> getOverSubControllers(ArrayList<ControllerBean> activeControllers, State state) {
         ArrayList<ControllerBean> overSubControllers = new ArrayList<>();
 
         long avgNumOFMsgs = getAverageNumOFMsgs(getActiveControllers(), state);
+
+        for (ControllerBean controller : activeControllers) {
+            long tmpNumOFMsgs = getNumOFMsgsForSingleController(controller, state);
+            if (tmpNumOFMsgs >= avgNumOFMsgs) {
+                overSubControllers.add(controller);
+            }
+        }
 
         return overSubControllers;
     }
@@ -68,4 +84,16 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         return sumOFMsgs/activeControllers.size();
     }
 
+    public long getNumOFMsgsForSingleController(ControllerBean targetController, State state) {
+        long sumOFMsgs = 0;
+
+        HashMap<String, ControlPlaneTuple> tmpCPTuple = state.getControlPlaneTuples().get(targetController.getControllerId());
+        for (String dpid : tmpCPTuple.keySet()) {
+            for (OFType ofType : OFType.values()) {
+                sumOFMsgs += tmpCPTuple.get(dpid).getControlTrafficResults().get(ofType);
+            }
+        }
+
+        return sumOFMsgs;
+    }
 }
