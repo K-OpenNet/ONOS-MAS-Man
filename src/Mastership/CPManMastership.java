@@ -22,7 +22,10 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         ArrayList<ControllerBean> underSubControllers = getUnderSubControllers(activeControllers, state);
         ArrayList<ControllerBean> overSubControllers = getOverSubControllers(activeControllers, state);
 
-
+        // initialize topology
+        for (ControllerBean controller : activeControllers) {
+            topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
+        }
 
         changeMultipleMastership(topology);
     }
