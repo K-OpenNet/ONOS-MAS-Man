@@ -145,7 +145,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                     if (numOFMsgsForTargetSwitch > tmpNumOFMsgsForSwitch) {
                         continue;
                     } else {
-                        result.add(index, tmpDpid);
+                        result.add(index, dpid);
                         break;
                     }
 
