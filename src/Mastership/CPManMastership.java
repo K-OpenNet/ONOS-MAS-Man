@@ -1,5 +1,7 @@
 package Mastership;
 
+import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import Database.Tables.State;
 
 import java.util.ArrayList;
@@ -23,6 +25,12 @@ public class CPManMastership extends AbstractMastership implements Mastership {
 
     public ArrayList<String> getActiveControllers() {
         ArrayList<String> activeControllers = new ArrayList<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isOnosAlive()) {
+                activeControllers.add(controller.getControllerId());
+            }
+        }
 
         return activeControllers;
     }
