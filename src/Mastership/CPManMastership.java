@@ -87,6 +87,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                 // if it is last index and there is no movable switch, remove oversubcontroller
                 if (index == (tmpSwitchListInMostController.size() - 1)) {
                     tmpOverSubControllers.remove(mostController.getControllerId());
+                    estimatedOverSubControllerOFMsgs.remove(mostController);
                 }
             }
         }
