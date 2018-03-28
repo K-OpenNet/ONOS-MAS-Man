@@ -178,6 +178,38 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         return result;
     }
 
+    public ControllerBean getMostOFMsgsController(HashMap<ControllerBean, Long> estimatedControllerOFMsgs) {
+        ControllerBean tmpController = null;
+
+        for (ControllerBean controller : estimatedControllerOFMsgs.keySet()) {
+            if (tmpController == null) {
+                tmpController = controller;
+            } else {
+                if (estimatedControllerOFMsgs.get(controller) > estimatedControllerOFMsgs.get(tmpController)) {
+                    tmpController = controller;
+                }
+            }
+        }
+
+        return tmpController;
+    }
+
+    public ControllerBean getLeastOFMsgsController (HashMap<ControllerBean, Long> estimatedControllerOFMsgs) {
+        ControllerBean tmpController = null;
+
+        for (ControllerBean controller : estimatedControllerOFMsgs.keySet()) {
+            if (tmpController == null) {
+                tmpController = controller;
+            } else {
+                if (estimatedControllerOFMsgs.get(controller) < estimatedControllerOFMsgs.get(tmpController)) {
+                    tmpController = controller;
+                }
+            }
+        }
+
+        return tmpController;
+    }
+
     public void printHashmapForTest(HashMap<String, Long> hashMap) {
         for (String key : hashMap.keySet()) {
             System.out.println("***" + key + ": " + hashMap.get(key));
