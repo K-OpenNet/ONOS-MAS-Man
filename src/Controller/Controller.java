@@ -14,6 +14,7 @@ import Mastership.EqualizingMastership;
 import Monitor.ComputingResourceMonitor;
 import Monitor.ControlPlaneMonitor;
 import Monitor.MastershipMonitor;
+import Scaling.ControllerScaling;
 import UserInterface.CLI.CommandLine;
 import Utils.Connection.SSHConnection;
 import Utils.FileIO.FileIOUtil;
@@ -171,27 +172,33 @@ public class Controller {
     }
 
     public static void runL1ONOSScaleInFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL1ONOSScaleIn();
     }
 
     public static void runL2ONOSScaleInFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL2ONOSScaleIn();
     }
 
     public static void runL3ONOSScaleInFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL3ONOSScaleIn();
     }
 
     public static void runL1ONOSScaleOutFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL1ONOSScaleOut();
     }
 
     public static void runL2ONOSScaleOutFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL2ONOSScaleOut();
     }
 
     public static void runL3ONOSScaleOutFunction() {
-
+        ControllerScaling scaling = new ControllerScaling();
+        scaling.runL3ONOSScaleOut();
     }
 
     public static void main (String[] args) {
