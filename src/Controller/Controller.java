@@ -351,11 +351,13 @@ class ThreadMonitoring implements Runnable {
             // add Active flags
             for (ControllerBean controller : Configuration.getInstance().getControllers()) {
                 if (!controller.isVmAlive()) {
-                    tmpState.getActiveFlags().put(controller.getControllerId(), "M-X");
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "IA-MX");
                 } else if (!controller.isOnosAlive()) {
-                    tmpState.getActiveFlags().put(controller.getControllerId(), "C-X");
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "IA-OX");
+                } else if (!controller.isActive()) {
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "IA");
                 } else {
-                    tmpState.getActiveFlags().put(controller.getControllerId(), "O");
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "A");
                 }
             }
 
