@@ -2,6 +2,7 @@ package DecisionMaker;
 
 import Beans.ControllerBean;
 import Database.Tables.State;
+import Mastership.CPManMastership;
 import Mastership.EqualizingMastership;
 import Scaling.CPUScaling;
 
@@ -26,5 +27,10 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 
+    }
+
+    public void runCPManMastershipAlgorithm(State state) {
+        CPManMastership mastership = new CPManMastership();
+        mastership.runMastershipAlgorithm(state);
     }
 }
