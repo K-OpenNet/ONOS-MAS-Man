@@ -82,6 +82,13 @@ public class CPManMastership extends AbstractMastership implements Mastership {
 
         // test code: should be removed
         // print topology
+        for (String controller : topology.keySet()) {
+            System.out.print("@@ " + controller + ":");
+            for (String dpid : topology.get(controller)) {
+                System.out.print("\t" + dpid);
+            }
+            System.out.println("\t");
+        }
 
         // should be uncommented
         //changeMultipleMastership(topology);
