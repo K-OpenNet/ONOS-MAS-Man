@@ -125,11 +125,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
         try {
+            restConn.sendCommandToUser(targetController, url);
 
         } catch (BadRequestException e) {
             System.out.println("BadRequestException");
         }
-        restConn.sendCommandToUser(targetController, url);
         String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
         String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStartCMD);
