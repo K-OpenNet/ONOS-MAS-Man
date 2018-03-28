@@ -94,11 +94,16 @@ public class Database {
 
                 // Control Plane
                 // Num OF msgs
-                long tmpNumMsg = 0;
-                for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
-                    tmpNumMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficMessages();
+                if (controller.isActive()) {
+                    long tmpNumMsg = 0;
+                    for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
+                        tmpNumMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficMessages();
+                    }
+                    tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + tmpNumMsg;
+                } else {
+                    tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + 0;
                 }
-                tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + tmpNumMsg;
+
                 resultNumOfMsgs.replace(controller.getBeanKey(), tmp);
 
                 // Bytes OF msgs
