@@ -1,12 +1,8 @@
 package Scaling;
 
 import Beans.ControllerBean;
-import Database.Configure.Configuration;
 import Database.Tables.State;
-import Database.Tuples.ControlPlaneTuple;
-import Database.Tuples.MastershipTuple;
 import Mastership.CPManMastership;
-import org.projectfloodlight.openflow.protocol.OFType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +13,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         scalingName = scalingType.CONTROLLERSCALING;
     }
 
-    public void runL1ONOSScaleIn() {
+    public void runL1ONOSScaleIn(ControllerBean targetController, State state) {
+        distributeMastershipForScaleIn(targetController, state);
+        targetController.setActive(false);
     }
 
     public void runL2ONOSScaleIn() {
@@ -26,7 +24,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     public void runL3ONOSScaleIn() {
     }
 
-    public void runL1ONOSScaleOut() {
+    public void runL1ONOSScaleOut(ControllerBean targetController, State state) {
+        targetController.setActive(true);
+        distributeMastershipForScaleOut(targetController, state);
     }
 
     public void runL2ONOSScaleOut() {
@@ -72,14 +72,12 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         mastership.changeMultipleMastership(topology);
-        targetController.setActive(false);
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
-        targetController.setActive(true);
         CPManMastership mastership = new CPManMastership();
         mastership.runMastershipAlgorithm(state);
     }

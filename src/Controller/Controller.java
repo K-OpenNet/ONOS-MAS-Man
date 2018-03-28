@@ -172,8 +172,10 @@ public class Controller {
     }
 
     public static void runL1ONOSScaleInFunction() {
+        State state = Database.getDatabase().get(timeIndex);
+        ControllerBean targetController = Configuration.getInstance().getControllers().get(0);
         ControllerScaling scaling = new ControllerScaling();
-        scaling.runL1ONOSScaleIn();
+        scaling.runL1ONOSScaleIn(targetController, state);
     }
 
     public static void runL2ONOSScaleInFunction() {
@@ -187,8 +189,10 @@ public class Controller {
     }
 
     public static void runL1ONOSScaleOutFunction() {
+        State state = Database.getDatabase().get(timeIndex);
+        ControllerBean targetController = Configuration.getInstance().getControllers().get(0);
         ControllerScaling scaling = new ControllerScaling();
-        scaling.runL1ONOSScaleOut();
+        scaling.runL1ONOSScaleOut(targetController, state);
     }
 
     public static void runL2ONOSScaleOutFunction() {
