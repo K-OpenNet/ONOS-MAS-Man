@@ -72,13 +72,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         mastership.changeMultipleMastership(topology);
+        targetController.setActive(false);
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
-
+        targetController.setActive(true);
         CPManMastership mastership = new CPManMastership();
         mastership.runMastershipAlgorithm(state);
     }

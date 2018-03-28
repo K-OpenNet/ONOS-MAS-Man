@@ -94,7 +94,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         ArrayList<ControllerBean> activeControllers = new ArrayList<>();
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            if (controller.isOnosAlive()) {
+            if (controller.isActive()) {
                 activeControllers.add(controller);
             }
         }
