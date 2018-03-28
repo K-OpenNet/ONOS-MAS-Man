@@ -8,6 +8,7 @@ import Mastership.CPManMastership;
 import Utils.Connection.RESTConnection;
 import Utils.Connection.SSHConnection;
 
+import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -107,7 +108,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         SSHConnection sshConn = new SSHConnection();
 
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
-        restConn.sendCommandToUser(targetController, url);
+        try {
+            restConn.sendCommandToUser(targetController, url);
+        } catch (BadRequestException e) {
+            System.out.println("BadRequestException");
+        }
         String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStopCMD);
     }
@@ -119,6 +124,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         SSHConnection sshConn = new SSHConnection();
 
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
+        try {
+
+        } catch (BadRequestException e) {
+            System.out.println("BadRequestException");
+        }
         restConn.sendCommandToUser(targetController, url);
         String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
         String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
