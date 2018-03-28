@@ -49,6 +49,22 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             estimatedOverSubControllerOFMsgs.putIfAbsent(overController, tmpNumOFMsgs);
         }
 
+        // test code: should be removed
+        // print hashmaps including estimation results
+        System.out.println("@@ average: " + getAverageNumOFMsgs(getActiveControllers(), state));
+        System.out.println("@@ print under sub controller");
+        for (ControllerBean controller : estimatedUnderSubControllerOFMsgs.keySet()) {
+            System.out.println(controller.getControllerId() + ": " + estimatedUnderSubControllerOFMsgs.get(controller));
+        }
+        System.out.println("@@ print over sub controller");
+        for (ControllerBean controller : estimatedOverSubControllerOFMsgs.keySet()) {
+            System.out.println(controller.getControllerId() + ": " + estimatedOverSubControllerOFMsgs.get(controller));
+        }
+        System.out.println("@@ most OF msgs controller");
+        System.out.println(getMostOFMsgsController(estimatedOverSubControllerOFMsgs).getControllerId());
+        System.out.println("@@ least OF msgs controller");
+        System.out.println(getLeastOFMsgsController(estimatedUnderSubControllerOFMsgs).getControllerId());
+
         changeMultipleMastership(topology);
     }
 
