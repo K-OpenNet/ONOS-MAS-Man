@@ -52,7 +52,11 @@ public class CPManMastership extends AbstractMastership implements Mastership {
 
         // Loop: Move a switch
         // - traversal under sub controllers --> traversal over sub controllers for each under sub controllers
-        ArrayList<ControllerBean> tmpOverSubControllers = (ArrayList<ControllerBean>) overSubControllers.clone();
+        ArrayList<String> tmpOverSubControllers = new ArrayList<>();
+        for (ControllerBean controller : overSubControllers) {
+            tmpOverSubControllers.add(controller.getControllerId());
+        }
+
         while (tmpOverSubControllers.size() != 0) {
             ControllerBean mostController = getMostOFMsgsController(estimatedOverSubControllerOFMsgs);
             ControllerBean leastController = getLeastOFMsgsController(estimatedUnderSubControllerOFMsgs);
@@ -82,7 +86,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                 }
                 // if it is last index and there is no movable switch, remove oversubcontroller
                 if (index == (tmpSwitchListInMostController.size() - 1)) {
-                    tmpOverSubControllers.remove(mostController);
+                    tmpOverSubControllers.remove(mostController.getControllerId());
                 }
             }
         }
