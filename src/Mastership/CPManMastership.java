@@ -71,11 +71,19 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                     topology.get(leastController.getControllerId()).add(tmpDpid);
                     estimatedOverSubControllerOFMsgs.replace(mostController, tmpMostControllerOFMsgsChanged);
                     estimatedUnderSubControllerOFMsgs.replace(leastController, tmpLeastControllerOFMsgsChanged);
-                    break;
+                    continue;
+                }
+                // if it is last index and there is no movable switch, remove oversubcontroller
+                if (index == (tmpSwitchListInMostController.size() - 1)) {
+                    tmpOverSubControllers.remove(mostController);
                 }
             }
         }
 
+        // test code: should be removed
+        // print topology
+
+        // should be uncommented
         //changeMultipleMastership(topology);
     }
 
