@@ -3,9 +3,13 @@ package Scaling;
 import Beans.ControllerBean;
 import Database.Tables.State;
 import Mastership.CPManMastership;
+import Utils.Connection.RESTConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static Database.Configure.Configuration.RESTURL_DOSCALEIN;
+import static Database.Configure.Configuration.RESTURL_DOSCALEOUT;
 
 public class ControllerScaling extends AbstractScaling implements Scaling {
 
@@ -20,13 +24,13 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
         runL1ONOSScaleIn(targetController, state);
-        switchOffControllerForScaleIn();
+        switchOffControllerForScaleIn(targetController, state);
         targetController.setOnosAlive(false);
     }
 
     public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
         runL2ONOSScaleIn(targetController, state);
-        switchOffVMForScaleIn();
+        switchOffVMForScaleIn(targetController, state);
         targetController.setVmAlive(false);
     }
 
@@ -37,13 +41,13 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void runL2ONOSScaleOut(ControllerBean targetController, State state) {
         targetController.setOnosAlive(true);
-        switchOnControllerForScaleOut();
+        switchOnControllerForScaleOut(targetController, state);
         runL1ONOSScaleOut(targetController, state);
     }
 
     public void runL3ONOSScaleOut(ControllerBean targetController, State state) {
         targetController.setVmAlive(true);
-        switchOnVMForScaleOut();
+        switchOnVMForScaleOut(targetController, state);
         runL2ONOSScaleOut(targetController, state);
     }
 
@@ -94,19 +98,23 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         mastership.runMastershipAlgorithm(state);
     }
 
-    public void switchOffControllerForScaleIn() {
+    public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
+        RESTConnection restConn = new RESTConnection();
+        String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
+        restConn.sendCommandToUser(targetController, url);
+    }
+
+    public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
+        RESTConnection restConn = new RESTConnection();
+        String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
+        restConn.sendCommandToUser(targetController, url);
+    }
+
+    public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
 
     }
 
-    public void switchOnControllerForScaleOut() {
-
-    }
-
-    public void switchOffVMForScaleIn() {
-
-    }
-
-    public void switchOnVMForScaleOut() {
+    public void switchOnVMForScaleOut(ControllerBean targetController, State state) {
 
     }
 }
