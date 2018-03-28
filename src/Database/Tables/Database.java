@@ -57,10 +57,10 @@ public class Database {
                 // Mastership
 
                 String tmp;
-                if (controller.isActive()) {
+                try {
                     tmp = resultMastership.get(controller.getBeanKey()) + "\t"
                             + state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
-                } else {
+                } catch (NullPointerException e) {
                     tmp = resultMastership.get(controller.getBeanKey()) + "\t" + 0;
                 }
 
@@ -94,27 +94,29 @@ public class Database {
 
                 // Control Plane
                 // Num OF msgs
-                if (controller.isActive()) {
+                try {
                     long tmpNumMsg = 0;
                     for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
                         tmpNumMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficMessages();
                     }
                     tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + tmpNumMsg;
-                } else {
+                } catch (NullPointerException e) {
                     tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + 0;
                 }
+
                 resultNumOfMsgs.replace(controller.getBeanKey(), tmp);
 
                 // Bytes OF msgs
-                if (controller.isActive()) {
+                try {
                     long tmpByteMsg = 0;
                     for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
                         tmpByteMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficBytes();
                     }
                     tmp = resultByteOfMsgs.get(controller.getBeanKey()) + "\t" + tmpByteMsg;
-                } else {
+                } catch (NullPointerException e) {
                     tmp = resultByteOfMsgs.get(controller.getBeanKey()) + "\t" + 0;
                 }
+
                 resultByteOfMsgs.replace(controller.getBeanKey(), tmp);
 
                 // # CPUs
