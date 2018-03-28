@@ -127,7 +127,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         // check whether finish to run or not
         while (true) {
             String result = sshConn.sendCommandToUser(pm, checkServiceCMD);
+            System.out.println("@@ " + result);
             if (result.equals("Deployed")) {
+                System.out.println("Finish!");
                 break;
             }
             try {
