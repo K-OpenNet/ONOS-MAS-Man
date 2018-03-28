@@ -105,7 +105,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         }
 
         // should be uncommented
-        //changeMultipleMastership(topology);
+        changeMultipleMastership(topology);
     }
 
     public ArrayList<ControllerBean> getActiveControllers() {
