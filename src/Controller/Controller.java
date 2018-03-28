@@ -355,7 +355,7 @@ class ThreadMonitoring implements Runnable {
                 } else if (!controller.isOnosAlive()) {
                     tmpState.getActiveFlags().put(controller.getControllerId(), "IA-OX");
                 } else if (!controller.isActive()) {
-                    tmpState.getActiveFlags().put(controller.getControllerId(), "IA");
+                    tmpState.getActiveFlags().put(controller.getControllerId(), "IA-OO");
                 } else {
                     tmpState.getActiveFlags().put(controller.getControllerId(), "A");
                 }
