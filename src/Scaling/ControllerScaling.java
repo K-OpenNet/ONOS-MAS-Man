@@ -23,4 +23,28 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void runL3ONOSScaleOut() {
     }
+
+    public void distributeMastershipForScaleIn() {
+
+    }
+
+    public void distributeMastershipForScaleOut() {
+
+    }
+
+    public void switchOffControllerForScaleIn() {
+
+    }
+
+    public void switchOnControllerForScaleOut() {
+
+    }
+    
+    public void switchOffVMForScaleIn() {
+
+    }
+
+    public void switchOnVMForScaleOut() {
+
+    }
 }
