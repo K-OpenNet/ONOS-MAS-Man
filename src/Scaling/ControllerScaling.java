@@ -1,7 +1,5 @@
 package Scaling;
 
-import Controller.Controller;
-
 public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public ControllerScaling() {
