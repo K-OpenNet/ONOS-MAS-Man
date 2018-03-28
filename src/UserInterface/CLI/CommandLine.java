@@ -1,10 +1,12 @@
 package UserInterface.CLI;
 
+import Beans.PMBean;
 import Controller.Controller;
 import Database.Configure.Configuration;
 import Database.Tables.Database;
 import Database.Tables.State;
 import DecisionMaker.DecisionMaker;
+import Utils.Connection.SSHConnection;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -163,7 +165,9 @@ public class CommandLine {
     }
 
     public void testFuncForDev () {
-
+        PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
+        SSHConnection sshConn = new SSHConnection();
+        System.out.println(sshConn.sendCommandToUser(pm, "onos-secure-ssh <controllerID> | grep cpmanrt | awk \'{print $5}\'"));
     }
 
     public void runL1ONOSScaleInFunction() {
