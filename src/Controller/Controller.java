@@ -170,6 +170,30 @@ public class Controller {
         mastership.runMastershipAlgorithm(state);
     }
 
+    public static void runL1ONOSScaleInFunction() {
+
+    }
+
+    public static void runL2ONOSScaleInFunction() {
+
+    }
+
+    public static void runL3ONOSScaleInFunction() {
+
+    }
+
+    public static void runL1ONOSScaleOutFunction() {
+
+    }
+
+    public static void runL2ONOSScaleOutFunction() {
+
+    }
+
+    public static void runL3ONOSScaleOutFunction() {
+
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();

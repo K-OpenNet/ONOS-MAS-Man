@@ -102,6 +102,30 @@ public class CommandLine {
                     // run CPMan mastership function, onetime
                     runCPManMastershipFunction();
                     break;
+                case 15:
+                    // L1 scale-in, onetime
+                    runL1ONOSScaleInFunction();
+                    break;
+                case 16:
+                    // L2 scale-in, onetime
+                    runL2ONOSScaleInFunction();
+                    break;
+                case 17:
+                    // L2 scale-in, onetime
+                    runL3ONOSScaleInFunction();
+                    break;
+                case 18:
+                    // L1 scale-out, onetime
+                    runL1ONOSScaleOutFunction();
+                    break;
+                case 19:
+                    // L2 scale-out, onetime
+                    runL2ONOSScaleOutFunction();
+                    break;
+                case 20:
+                    runL3ONOSScaleOutFunction();
+                    // L3 scale-out, onetime
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -126,6 +150,12 @@ public class CommandLine {
         System.out.println("12: Make initialstate.json file according to current state");
         System.out.println("13: Test to merge multiple states");
         System.out.println("14: Run CPMan mastership function, onetime");
+        System.out.println("15: Run L1 ONOS scale-in function, onetime");
+        System.out.println("16: Run L2 ONOS scale-in function, onetime");
+        System.out.println("17: Run L3 ONOS scale-in function, onetime");
+        System.out.println("18: Run L1 ONOS scale-out function, onetime");
+        System.out.println("19: Run L2 ONOS scale-out function, onetime");
+        System.out.println("20: Run L3 ONOS scale-out function, onetime");
     }
 
     public void printConfigMessage () {
@@ -134,6 +164,30 @@ public class CommandLine {
 
     public void testFuncForDev () {
 
+    }
+
+    public void runL1ONOSScaleInFunction() {
+        Controller.runL1ONOSScaleInFunction();
+    }
+
+    public void runL2ONOSScaleInFunction() {
+        Controller.runL2ONOSScaleInFunction();
+    }
+
+    public void runL3ONOSScaleInFunction() {
+        Controller.runL3ONOSScaleInFunction();
+    }
+
+    public void runL1ONOSScaleOutFunction() {
+        Controller.runL1ONOSScaleOutFunction();
+    }
+
+    public void runL2ONOSScaleOutFunction() {
+        Controller.runL2ONOSScaleOutFunction();
+    }
+
+    public void runL3ONOSScaleOutFunction() {
+        Controller.runL3ONOSScaleOutFunction();
     }
 
     public void runCPManMastershipFunction() {
