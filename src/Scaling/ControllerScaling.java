@@ -80,18 +80,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         CPManMastership mastership = new CPManMastership();
-
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        ArrayList<ControllerBean> otherControllers = mastership.getActiveControllers();
-        otherControllers.remove(targetController);
-
-        // get switches
-        HashMap<String, ArrayList<String>> sortedSwitchesOverSub = new HashMap<>();
-        for (ControllerBean controller : activeControllers) {
-            sortedSwitchesOverSub.putIfAbsent(controller.getControllerId(), mastership.getSortedSwitchList(controller, state));
-        }
-
-        // distribute from other active controllers to target
+        mastership.runMastershipAlgorithm(state);
     }
 
     public void switchOffControllerForScaleIn() {
