@@ -103,15 +103,18 @@ public class Database {
                 } else {
                     tmp = resultNumOfMsgs.get(controller.getBeanKey()) + "\t" + 0;
                 }
-
                 resultNumOfMsgs.replace(controller.getBeanKey(), tmp);
 
                 // Bytes OF msgs
-                long tmpByteMsg = 0;
-                for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
-                    tmpByteMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficBytes();
+                if (controller.isActive()) {
+                    long tmpByteMsg = 0;
+                    for (String dpid : state.getControlPlaneTuples().get(controller.getBeanKey()).keySet()) {
+                        tmpByteMsg += state.getControlPlaneTuples().get(controller.getBeanKey()).get(dpid).totalControlTrafficBytes();
+                    }
+                    tmp = resultByteOfMsgs.get(controller.getBeanKey()) + "\t" + tmpByteMsg;
+                } else {
+                    tmp = resultByteOfMsgs.get(controller.getBeanKey()) + "\t" + 0;
                 }
-                tmp = resultByteOfMsgs.get(controller.getBeanKey()) + "\t" + tmpByteMsg;
                 resultByteOfMsgs.replace(controller.getBeanKey(), tmp);
 
                 // # CPUs
