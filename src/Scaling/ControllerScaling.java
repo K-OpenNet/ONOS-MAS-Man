@@ -1,5 +1,8 @@
 package Scaling;
 
+import Beans.ControllerBean;
+import Database.Tables.State;
+
 public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public ControllerScaling() {
@@ -24,11 +27,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     public void runL3ONOSScaleOut() {
     }
 
-    public void distributeMastershipForScaleIn() {
+    public void distributeMastershipForScaleIn(ControllerBean targetController, State state) {
 
     }
 
-    public void distributeMastershipForScaleOut() {
+    public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
 
     }
 
@@ -39,12 +42,21 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     public void switchOnControllerForScaleOut() {
 
     }
-    
+
     public void switchOffVMForScaleIn() {
 
     }
 
     public void switchOnVMForScaleOut() {
 
+    }
+}
+
+class L1TargetControllerSanityException extends RuntimeException {
+    public L1TargetControllerSanityException() {
+    }
+
+    public L1TargetControllerSanityException(String message) {
+        super(message);
     }
 }
