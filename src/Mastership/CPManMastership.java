@@ -22,6 +22,7 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         ArrayList<ControllerBean> activeControllers = getActiveControllers();
         ArrayList<ControllerBean> underSubControllers = getUnderSubControllers(activeControllers, state);
         ArrayList<ControllerBean> overSubControllers = getOverSubControllers(activeControllers, state);
+        long avgNumOFMsgs = getAverageNumOFMsgs(activeControllers, state);
 
         // initialize topology
         for (ControllerBean controller : activeControllers) {
@@ -29,9 +30,9 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         }
 
         // sort over-subscribed switch list
-        HashMap<String, ArrayList<String>> sortedSwitchesUnderSub = new HashMap<>();
-        for (ControllerBean controller : underSubControllers) {
-            sortedSwitchesUnderSub.putIfAbsent(controller.getControllerId(), getSortedSwitchList(controller, state));
+        HashMap<String, ArrayList<String>> sortedSwitchesOverSub = new HashMap<>();
+        for (ControllerBean controller : overSubControllers) {
+            sortedSwitchesOverSub.putIfAbsent(controller.getControllerId(), getSortedSwitchList(controller, state));
         }
 
         // Temporal hashmap having # OF msgs for each controller. It is used to estimate # OF msgs when switches are moved to other controller.
@@ -49,7 +50,33 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             estimatedOverSubControllerOFMsgs.putIfAbsent(overController, tmpNumOFMsgs);
         }
 
-        changeMultipleMastership(topology);
+        // Loop: Move a switch
+        // - traversal under sub controllers --> traversal over sub controllers for each under sub controllers
+        ArrayList<ControllerBean> tmpOverSubControllers = (ArrayList<ControllerBean>) overSubControllers.clone();
+        while (tmpOverSubControllers.size() == 0) {
+            ControllerBean mostController = getMostOFMsgsController(estimatedOverSubControllerOFMsgs);
+            ControllerBean leastController = getLeastOFMsgsController(estimatedUnderSubControllerOFMsgs);
+            ArrayList<String> tmpSwitchListInMostController = sortedSwitchesOverSub.get(mostController.getControllerId());
+            for (int index = 0; index < tmpSwitchListInMostController.size(); index++) {
+                String tmpDpid = tmpSwitchListInMostController.get(index);
+                long tmpSwitchOFMsgs = getNumOFMsgsForSingleSwitchInMasterController(mostController, tmpDpid, state);
+                long tmpMostControllerOFMsgs = estimatedOverSubControllerOFMsgs.get(mostController);
+                long tmpLeastControllerOFMsgs = estimatedUnderSubControllerOFMsgs.get(leastController);
+                // what if this switch is moved?
+                long tmpMostControllerOFMsgsChanged = tmpMostControllerOFMsgs - tmpSwitchOFMsgs;
+                long tmpLeastControllerOFMsgsChanged = tmpLeastControllerOFMsgs + tmpSwitchOFMsgs;
+                // can this switch be moved?
+                if (tmpMostControllerOFMsgsChanged > avgNumOFMsgs && tmpLeastControllerOFMsgsChanged < avgNumOFMsgs) {
+                    tmpSwitchListInMostController.remove(tmpDpid);
+                    topology.get(leastController.getControllerId()).add(tmpDpid);
+                    estimatedOverSubControllerOFMsgs.replace(mostController, tmpMostControllerOFMsgsChanged);
+                    estimatedUnderSubControllerOFMsgs.replace(leastController, tmpLeastControllerOFMsgsChanged);
+                    break;
+                }
+            }
+        }
+
+        //changeMultipleMastership(topology);
     }
 
     public ArrayList<ControllerBean> getActiveControllers() {
