@@ -65,6 +65,13 @@ public class CPManMastership extends AbstractMastership implements Mastership {
                 // what if this switch is moved?
                 long tmpMostControllerOFMsgsChanged = tmpMostControllerOFMsgs - tmpSwitchOFMsgs;
                 long tmpLeastControllerOFMsgsChanged = tmpLeastControllerOFMsgs + tmpSwitchOFMsgs;
+                // test code
+                System.out.println("@@@@@ average: " + avgNumOFMsgs);
+                System.out.println("@@@@@ " + tmpDpid + ": " + tmpSwitchOFMsgs);
+                System.out.println("@@@@@ Most - " + mostController.getControllerId() + ": " + tmpMostControllerOFMsgs + ", " + tmpMostControllerOFMsgsChanged);
+                System.out.println("@@@@@ Least - " + leastController.getControllerId() + ": " + tmpLeastControllerOFMsgs + ", " + tmpLeastControllerOFMsgsChanged);
+                System.out.println();
+
                 // can this switch be moved?
                 if (tmpMostControllerOFMsgsChanged > avgNumOFMsgs && tmpLeastControllerOFMsgsChanged < avgNumOFMsgs) {
                     tmpSwitchListInMostController.remove(tmpDpid);
