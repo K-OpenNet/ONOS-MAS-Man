@@ -81,6 +81,8 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         }
 
         // test code: should be removed
+        // print average value
+        System.out.println("@@ average: " + avgNumOFMsgs);
         // print topology
         for (String controller : topology.keySet()) {
             System.out.print("@@ " + controller + ":");
