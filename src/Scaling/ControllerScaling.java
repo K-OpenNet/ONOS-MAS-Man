@@ -18,10 +18,16 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         targetController.setActive(false);
     }
 
-    public void runL2ONOSScaleIn() {
+    public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
+        runL1ONOSScaleIn(targetController, state);
+        switchOffControllerForScaleIn();
+        targetController.setOnosAlive(false);
     }
 
-    public void runL3ONOSScaleIn() {
+    public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
+        runL2ONOSScaleIn(targetController, state);
+        switchOffVMForScaleIn();
+        targetController.setVmAlive(false);
     }
 
     public void runL1ONOSScaleOut(ControllerBean targetController, State state) {
@@ -29,10 +35,16 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         distributeMastershipForScaleOut(targetController, state);
     }
 
-    public void runL2ONOSScaleOut() {
+    public void runL2ONOSScaleOut(ControllerBean targetController, State state) {
+        targetController.setOnosAlive(true);
+        switchOnControllerForScaleOut();
+        runL1ONOSScaleOut(targetController, state);
     }
 
-    public void runL3ONOSScaleOut() {
+    public void runL3ONOSScaleOut(ControllerBean targetController, State state) {
+        targetController.setVmAlive(true);
+        switchOnVMForScaleOut();
+        runL2ONOSScaleOut(targetController, state);
     }
 
     public void distributeMastershipForScaleIn(ControllerBean targetController, State state) {
