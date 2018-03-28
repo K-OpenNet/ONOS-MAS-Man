@@ -1,7 +1,15 @@
 package Scaling;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import Database.Tables.State;
+import Database.Tuples.ControlPlaneTuple;
+import Database.Tuples.MastershipTuple;
+import Mastership.CPManMastership;
+import org.projectfloodlight.openflow.protocol.OFType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ControllerScaling extends AbstractScaling implements Scaling {
 
@@ -31,12 +39,59 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
+
+        CPManMastership mastership = new CPManMastership();
+
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        ArrayList<ControllerBean> otherControllers = mastership.getActiveControllers();
+        otherControllers.remove(targetController);
+
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        for (ControllerBean controller : otherControllers) {
+            topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
+        }
+
+        // get switches
+        ArrayList<String> switchesInTargetController = mastership.getSortedSwitchList(targetController, state);
+
+        // make estimated hashmap variable for other controllers
+        HashMap<ControllerBean, Long> estimatedOtherControllerOFMsgs = new HashMap<>();
+        for (ControllerBean controller : otherControllers) {
+            long tmpNumOFMsgs = mastership.getNumOFMsgsForSingleController(controller, state);
+            estimatedOtherControllerOFMsgs.putIfAbsent(controller, tmpNumOFMsgs);
+        }
+
+        // distribute from target to other active controllers
+        for (String dpid : switchesInTargetController) {
+            long tmpOFMsgs = mastership.getNumOFMsgsForSingleSwitchInMasterController(targetController, dpid, state);
+            ControllerBean leastController = mastership.getLeastOFMsgsController(estimatedOtherControllerOFMsgs);
+            long prevOFMsgs = estimatedOtherControllerOFMsgs.get(leastController);
+            long changedOFMsgs = prevOFMsgs + tmpOFMsgs;
+            estimatedOtherControllerOFMsgs.replace(leastController, changedOFMsgs);
+            topology.get(leastController.getControllerId()).add(dpid);
+        }
+
+        mastership.changeMultipleMastership(topology);
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
+
+        CPManMastership mastership = new CPManMastership();
+
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        ArrayList<ControllerBean> otherControllers = mastership.getActiveControllers();
+        otherControllers.remove(targetController);
+
+        // get switches
+        HashMap<String, ArrayList<String>> sortedSwitchesOverSub = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            sortedSwitchesOverSub.putIfAbsent(controller.getControllerId(), mastership.getSortedSwitchList(controller, state));
+        }
+
+        // distribute from other active controllers to target
     }
 
     public void switchOffControllerForScaleIn() {
