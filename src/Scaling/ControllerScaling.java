@@ -28,11 +28,15 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void distributeMastershipForScaleIn(ControllerBean targetController, State state) {
-
+        if (!targetController.isOnosAlive()) {
+            throw new L1TargetControllerSanityException();
+        }
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
-
+        if (!targetController.isOnosAlive()) {
+            throw new L1TargetControllerSanityException();
+        }
     }
 
     public void switchOffControllerForScaleIn() {
