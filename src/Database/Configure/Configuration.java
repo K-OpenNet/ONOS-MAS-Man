@@ -27,6 +27,7 @@ public class Configuration {
     public static int MONITORING_PERIOD = 3;
     public static int NOSCALING_CPMAN_PERIOD = 3;
     public static DecisionMaker.decisionMakerType DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
+    public static final String DEV_MACHINE_IP_ADDR = "141.223.84.9";
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
@@ -35,6 +36,9 @@ public class Configuration {
     public static final String CMD_RESUME_VM = "vboxmanage controlvm <controllerID> resume";
     public static final String CMD_DISABLE_CPU = "echo 0 > /sys/devices/system/cpu/cpu<index>/online";
     public static final String CMD_ENABLE_CPU = "echo 1 > /sys/devices/system/cpu/cpu<index>/online";
+    public static final String CMD_ONOS_SERVICE_STOP = "onos-service <controllerID> stop";
+    public static final String CMD_ONOS_SERVICE_START = "onos-service <controllerID> start";
+    public static final String CMD_CHECK_ONOS_SERVICE = "onos-secure-ssh <controllerID> | grep cpmanrt | awk \'{print $5}\'";
 
     // URLs for REST API
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";

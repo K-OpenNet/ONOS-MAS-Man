@@ -1,15 +1,17 @@
 package Scaling;
 
 import Beans.ControllerBean;
+import Beans.PMBean;
+import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
 import Utils.Connection.RESTConnection;
+import Utils.Connection.SSHConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static Database.Configure.Configuration.RESTURL_DOSCALEIN;
-import static Database.Configure.Configuration.RESTURL_DOSCALEOUT;
+import static Database.Configure.Configuration.*;
 
 public class ControllerScaling extends AbstractScaling implements Scaling {
 
@@ -99,15 +101,41 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
+        PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
+
         RESTConnection restConn = new RESTConnection();
+        SSHConnection sshConn = new SSHConnection();
+
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
         restConn.sendCommandToUser(targetController, url);
+        String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
+        sshConn.sendCommandToUser(pm, serviceStopCMD);
     }
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
+        PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
+
         RESTConnection restConn = new RESTConnection();
+        SSHConnection sshConn = new SSHConnection();
+
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
         restConn.sendCommandToUser(targetController, url);
+        String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
+        String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
+        sshConn.sendCommandToUser(pm, serviceStartCMD);
+
+        // check whether finish to run or not
+        while (true) {
+            String result = sshConn.sendCommandToUser(pm, checkServiceCMD);
+            if (result.equals("Deployed")) {
+                break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
