@@ -55,8 +55,15 @@ public class Database {
         for (State state : tmpDatabase) {
             for (ControllerBean controller : Configuration.getInstance().getControllers()) {
                 // Mastership
-                String tmp = resultMastership.get(controller.getBeanKey()) + "\t"
-                        + state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+
+                String tmp;
+                if (controller.isActive()) {
+                    tmp = resultMastership.get(controller.getBeanKey()) + "\t"
+                            + state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+                } else {
+                    tmp = resultMastership.get(controller.getBeanKey()) + "\t" + 0;
+                }
+
                 resultMastership.replace(controller.getBeanKey(), tmp);
 
                 // Computing Resource
