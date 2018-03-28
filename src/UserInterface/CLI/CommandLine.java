@@ -167,7 +167,7 @@ public class CommandLine {
     public void testFuncForDev () {
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
         SSHConnection sshConn = new SSHConnection();
-        System.out.println(sshConn.sendCommandToUser(pm, "onos-secure-ssh <controllerID> | grep cpmanrt | awk \'{print $5}\'"));
+        System.out.println(sshConn.sendCommandToUser(pm, "onos-secure-ssh 192.168.200.101 | grep cpmanrt | awk \'{print $5}\'"));
     }
 
     public void runL1ONOSScaleInFunction() {
