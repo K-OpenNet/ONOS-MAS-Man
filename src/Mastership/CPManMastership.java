@@ -34,6 +34,21 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             sortedSwitchesUnderSub.putIfAbsent(controller.getControllerId(), getSortedSwitchList(controller, state));
         }
 
+        // Temporal hashmap having # OF msgs for each controller. It is used to estimate # OF msgs when switches are moved to other controller.
+        HashMap<ControllerBean, Long> estimatedUnderSubControllerOFMsgs = new HashMap<>();
+        HashMap<ControllerBean, Long> estimatedOverSubControllerOFMsgs = new HashMap<>();
+
+        // make former hashmap
+        for (ControllerBean underController : underSubControllers) {
+            long tmpNumOFMsgs = getNumOFMsgsForSingleController(underController, state);
+            estimatedUnderSubControllerOFMsgs.putIfAbsent(underController, tmpNumOFMsgs);
+        }
+        // make later hashmap
+        for (ControllerBean overController : overSubControllers) {
+            long tmpNumOFMsgs = getNumOFMsgsForSingleController(overController, state);
+            estimatedOverSubControllerOFMsgs.putIfAbsent(overController, tmpNumOFMsgs);
+        }
+
         changeMultipleMastership(topology);
     }
 
