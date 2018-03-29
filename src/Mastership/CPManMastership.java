@@ -156,9 +156,14 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         long sumOFMsgs = 0;
 
         HashMap<String, ControlPlaneTuple> tmpCPTuple = state.getControlPlaneTuples().get(targetController.getControllerId());
-        for (String dpid : tmpCPTuple.keySet()) {
-            for (OFType ofType : OFType.values()) {
-                sumOFMsgs += tmpCPTuple.get(dpid).getControlTrafficResults().get(ofType);
+
+        if (tmpCPTuple == null) {
+            sumOFMsgs += 0;
+        } else {
+            for (String dpid : tmpCPTuple.keySet()) {
+                for (OFType ofType : OFType.values()) {
+                    sumOFMsgs += tmpCPTuple.get(dpid).getControlTrafficResults().get(ofType);
+                }
             }
         }
 
