@@ -27,14 +27,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
         runL1ONOSScaleIn(targetController, state);
-        switchOffControllerForScaleIn(targetController, state);
         targetController.setOnosAlive(false);
+        switchOffControllerForScaleIn(targetController, state);
     }
 
     public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
         runL2ONOSScaleIn(targetController, state);
-        switchOffVMForScaleIn(targetController, state);
         targetController.setVmAlive(false);
+        switchOffVMForScaleIn(targetController, state);
     }
 
     public void runL1ONOSScaleOut(ControllerBean targetController, State state) {
