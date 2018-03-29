@@ -219,10 +219,6 @@ public class CPManMastership extends AbstractMastership implements Mastership {
             }
         }
 
-        for (String dpid : result) {
-            System.out.println(masterController.getControllerId() + ": " + dpid);
-        }
-
         return result;
     }
 

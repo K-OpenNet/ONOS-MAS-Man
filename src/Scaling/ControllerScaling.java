@@ -108,6 +108,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         HashMap<String, ArrayList<String>> sortedSwitches = new HashMap<>();
         for (ControllerBean controller : otherControllers) {
             sortedSwitches.putIfAbsent(controller.getControllerId(), mastership.getSortedSwitchList(controller, state));
+            for (String dpid : sortedSwitches.get(controller.getControllerId())) {
+                System.out.println(controller.getControllerId() + ": " + dpid);
+            }
         }
 
         long totalOFMsgs = 0;
