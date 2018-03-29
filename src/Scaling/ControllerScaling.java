@@ -188,11 +188,20 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
+        PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
+        SSHConnection sshConn = new SSHConnection();
+
+        String cmd = CMD_PAUSE_VM.replace("<controllerName>", targetController.getName());
+        sshConn.sendCommandToUser(pm, cmd);
 
     }
 
     public void switchOnVMForScaleOut(ControllerBean targetController, State state) {
+        PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
+        SSHConnection sshConn = new SSHConnection();
 
+        String cmd = CMD_RESUME_VM.replace("<controllerName>", targetController.getName());
+        sshConn.sendCommandToUser(pm, cmd);
     }
 }
 
