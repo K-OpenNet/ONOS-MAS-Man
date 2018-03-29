@@ -68,28 +68,52 @@ public class Database {
 
                 // Computing Resource
                 // CPU load
-                tmp = resultCPULoad.get(controller.getBeanKey()) + "\t"
-                        + state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+                try {
+                    tmp = resultCPULoad.get(controller.getBeanKey()) + "\t"
+                            + state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+                } catch (NullPointerException e) {
+                    tmp = resultCPULoad.get(controller.getBeanKey()) + "\t" + 0;
+                }
                 resultCPULoad.replace(controller.getBeanKey(), tmp);
 
                 // MEM load
-                tmp = resultMemLoad.get(controller.getBeanKey()) + "\t"
-                        + state.getComputingResourceTuples().get(controller.getBeanKey()).avgRamUsage();
+                try {
+                    tmp = resultMemLoad.get(controller.getBeanKey()) + "\t"
+                            + state.getComputingResourceTuples().get(controller.getBeanKey()).avgRamUsage();
+
+                } catch (NullPointerException e) {
+                    tmp = resultMemLoad.get(controller.getBeanKey()) + "\t" + 0;
+                }
                 resultMemLoad.replace(controller.getBeanKey(), tmp);
 
                 // Net Rx load
-                tmp = resultNetRx.get(controller.getBeanKey()) + "\t"
-                        + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetRx();
+                try {
+                    tmp = resultNetRx.get(controller.getBeanKey()) + "\t"
+                            + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetRx();
+
+                } catch (NullPointerException e) {
+                    tmp = resultNetRx.get(controller.getBeanKey()) + "\t" + 0;
+                }
                 resultNetRx.replace(controller.getBeanKey(), tmp);
 
                 // Net Tx load
-                tmp = resultNetTx.get(controller.getBeanKey()) + "\t"
-                        + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetTx();
+                try {
+                    tmp = resultNetTx.get(controller.getBeanKey()) + "\t"
+                            + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetTx();
+
+                } catch (NullPointerException e) {
+                    tmp = resultNetTx.get(controller.getBeanKey()) + "\t" + 0;
+                }
                 resultNetTx.replace(controller.getBeanKey(), tmp);
 
                 // Net Bandwidth load
-                tmp = resultNetBandwidth.get(controller.getBeanKey()) + "\t"
-                        + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetBandwidth();
+                try {
+                    tmp = resultNetBandwidth.get(controller.getBeanKey()) + "\t"
+                            + state.getComputingResourceTuples().get(controller.getBeanKey()).avgNetBandwidth();
+
+                } catch (NullPointerException e) {
+                    tmp = resultNetBandwidth.get(controller.getBeanKey()) + "\t" + 0;
+                }
                 resultNetBandwidth.replace(controller.getBeanKey(), tmp);
 
                 // Control Plane
