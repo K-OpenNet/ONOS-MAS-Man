@@ -61,7 +61,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         CPManMastership mastership = new CPManMastership();
 
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         ArrayList<ControllerBean> otherControllers = mastership.getActiveControllers();
         otherControllers.remove(targetController);
 
@@ -97,8 +96,59 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
+
         CPManMastership mastership = new CPManMastership();
-        mastership.runMastershipAlgorithm(state);
+
+        ArrayList<ControllerBean> otherControllers = mastership.getActiveControllers();
+        otherControllers.remove(targetController);
+
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        topology.put(targetController.getControllerId(), new ArrayList<>());
+
+        HashMap<String, ArrayList<String>> sortedSwitches = new HashMap<>();
+        for (ControllerBean controller : otherControllers) {
+            sortedSwitches.putIfAbsent(controller.getControllerId(), mastership.getSortedSwitchList(controller, state));
+        }
+
+        long totalOFMsgs = 0;
+
+        HashMap<ControllerBean, Long> estimatedOtherControllerOFMsgs = new HashMap<>();
+        for (ControllerBean controller : otherControllers) {
+            long tmpNumOFMsgs = mastership.getNumOFMsgsForSingleController(controller, state);
+            totalOFMsgs += tmpNumOFMsgs;
+            estimatedOtherControllerOFMsgs.putIfAbsent(controller, tmpNumOFMsgs);
+        }
+
+        int numTotalControllers = 1 + otherControllers.size();
+        long avgOFMsgs = totalOFMsgs / numTotalControllers;
+        long targetControllerOFMsgs = 0;
+
+        while (otherControllers.size() != 0) {
+            ControllerBean mostController = mastership.getMostOFMsgsController(estimatedOtherControllerOFMsgs);
+            ArrayList<String> switches = sortedSwitches.get(mostController);
+            for (int index = 0; index < switches.size(); index++) {
+                String dpid = switches.get(index);
+                long tmpSwitchOFMsgs = mastership.getNumOFMsgsForSingleSwitchInMasterController(mostController, dpid, state);
+                long tmpMostControllerOFMsgs = estimatedOtherControllerOFMsgs.get(mostController);
+                long tmpTargetControllerOFMsgsChanged = targetControllerOFMsgs + tmpSwitchOFMsgs;
+                long tmpMostControllerOFMsgsChanged = tmpMostControllerOFMsgs - tmpSwitchOFMsgs;
+
+                if (tmpMostControllerOFMsgsChanged > avgOFMsgs && tmpTargetControllerOFMsgsChanged < avgOFMsgs) {
+                    switches.remove(dpid);
+                    topology.get(targetController).add(dpid);
+                    targetControllerOFMsgs = tmpTargetControllerOFMsgsChanged;
+                    estimatedOtherControllerOFMsgs.replace(mostController, tmpMostControllerOFMsgsChanged);
+                }
+
+                if (index == (switches.size() - 1)) {
+                    otherControllers.remove(mostController);
+                    estimatedOtherControllerOFMsgs.remove(mostController);
+                }
+            }
+        }
+
+        mastership.changeMultipleMastership(topology);
+
     }
 
     public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
@@ -131,7 +181,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
         try {
             restConn.sendCommandToUser(targetController, url);
-
         } catch (BadRequestException e) {
             System.out.println("BadRequestException");
         }
