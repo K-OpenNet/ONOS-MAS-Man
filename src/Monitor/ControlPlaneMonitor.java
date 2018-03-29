@@ -62,11 +62,16 @@ public class ControlPlaneMonitor extends AbstractMonitor implements Monitor {
     }
 
     public HashMap<String, ControlPlaneTuple> monitorControlPlaneForEachController(ControllerBean controller) {
-        String tmpRawResults = monitorRawControlPlane(controller);
 
-        JsonParser parser = new JsonParser();
+        if (controller.isOnosAlive()) {
+            String tmpRawResults = monitorRawControlPlane(controller);
 
-        return parser.parseControlPlaneMonitoringResult(controller, tmpRawResults);
+            JsonParser parser = new JsonParser();
+
+            return parser.parseControlPlaneMonitoringResult(controller, tmpRawResults);
+        } else {
+            return new HashMap<>();
+        }
     }
 
     private class ThreadGetMonitoringResultForControlPlane implements Runnable {
