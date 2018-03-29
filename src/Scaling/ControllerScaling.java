@@ -135,7 +135,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
                 if (tmpMostControllerOFMsgsChanged > avgOFMsgs && tmpTargetControllerOFMsgsChanged < avgOFMsgs) {
                     switches.remove(dpid);
-                    topology.get(targetController).add(dpid);
+                    topology.get(targetController.getControllerId()).add(dpid);
                     targetControllerOFMsgs = tmpTargetControllerOFMsgsChanged;
                     estimatedOtherControllerOFMsgs.replace(mostController, tmpMostControllerOFMsgsChanged);
                     break;
