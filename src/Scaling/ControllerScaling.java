@@ -123,6 +123,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         RESTConnection restConn = new RESTConnection();
         SSHConnection sshConn = new SSHConnection();
 
+        String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
+        String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
+        sshConn.sendCommandToUser(pm, serviceStartCMD);
+        System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
+
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
         try {
             restConn.sendCommandToUser(targetController, url);
@@ -130,10 +135,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (BadRequestException e) {
             System.out.println("BadRequestException");
         }
-        String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
-        String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
-        sshConn.sendCommandToUser(pm, serviceStartCMD);
-        System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
