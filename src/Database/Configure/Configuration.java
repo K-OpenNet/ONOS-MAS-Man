@@ -36,9 +36,12 @@ public class Configuration {
     public static final String CMD_RESUME_VM = "vboxmanage controlvm <controllerID> resume";
     public static final String CMD_DISABLE_CPU = "echo 0 > /sys/devices/system/cpu/cpu<index>/online";
     public static final String CMD_ENABLE_CPU = "echo 1 > /sys/devices/system/cpu/cpu<index>/online";
-    public static final String CMD_ONOS_SERVICE_STOP = "onos-service <controllerID> stop";
-    public static final String CMD_ONOS_SERVICE_START = "onos-service <controllerID> start";
-    public static final String CMD_CHECK_ONOS_SERVICE = "onos-secure-ssh <controllerID> | grep cpmanrt | awk \'{print $5}\'";
+//    public static final String CMD_ONOS_SERVICE_STOP = "onos-service <controllerID> stop";
+//    public static final String CMD_ONOS_SERVICE_START = "onos-service <controllerID> start";
+//    public static final String CMD_CHECK_ONOS_SERVICE = "onos-secure-ssh <controllerID> | grep cpmanrt | awk \'{print $5}\'";
+    public static final String CMD_ONOS_SERVICE_STOP = "/home/woojoong/workspace/AutoScalingONOS/stopONOS.sh <controllerID>";
+    public static final String CMD_ONOS_SERVICE_START = "/home/woojoong/workspace/AutoScalingONOS/startONOS.sh <controllerID>";
+    public static final String CMD_CHECK_ONOS_SERVICE = "/home/woojoong/workspace/AutoScalingONOS/checkONOS.sh <controllerID>";
 
     // URLs for REST API
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";
