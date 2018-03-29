@@ -202,6 +202,12 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         String cmd = CMD_RESUME_VM.replace("<controllerName>", targetController.getName());
         sshConn.sendCommandToUser(pm, cmd);
+
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
