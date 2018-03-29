@@ -187,7 +187,9 @@ public class CPManMastership extends AbstractMastership implements Mastership {
         HashMap<String, Long> tmpRawOFMsgsForEachSwitch = new HashMap<>();
         HashMap<String, Long> tmpOFMsgsForEachSwitch = new HashMap<>();
 
+        System.out.println(masterController.getControllerId());
         for (String dpid : tmpControlPlaneTuples.keySet()) {
+            System.out.println(dpid);
             long tmpNumOFMsgs = getNumOFMsgsForSingleSwitchInMasterController(masterController, dpid, state);
             tmpRawOFMsgsForEachSwitch.putIfAbsent(dpid, tmpNumOFMsgs);
         }
