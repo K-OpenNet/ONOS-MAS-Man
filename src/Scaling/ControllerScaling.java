@@ -125,7 +125,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         while (otherControllers.size() != 0) {
             ControllerBean mostController = mastership.getMostOFMsgsController(estimatedOtherControllerOFMsgs);
-            ArrayList<String> switches = sortedSwitches.get(mostController.getControllerId()s);
+            ArrayList<String> switches = sortedSwitches.get(mostController.getControllerId());
             for (int index = 0; index < switches.size(); index++) {
                 String dpid = switches.get(index);
                 long tmpSwitchOFMsgs = mastership.getNumOFMsgsForSingleSwitchInMasterController(mostController, dpid, state);
