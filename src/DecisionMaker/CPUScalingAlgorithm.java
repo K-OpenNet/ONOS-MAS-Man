@@ -1,5 +1,6 @@
 package DecisionMaker;
 
+import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
 
@@ -14,6 +15,27 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 
+        if (currentTimeIndex == 0) {
+            return;
+        }
+
+        ArrayList<State> targetStates = new ArrayList<>();
+
+        int startPoint = currentTimeIndex - Configuration.NOSCALING_CPMAN_PERIOD + 1;
+        int endPoint = currentTimeIndex;
+
+        for (int index = startPoint; index <= endPoint; index++) {
+            targetStates.add(dbDump.get(index));
+        }
+
+        State state = mergeStates(targetStates);
+
+
+        // decision making: does it need to scale out?
+
+        // decision making: does it need to balance switch, only?
+
+        // decision making: does it need to scale in?
     }
 
     public void runCPManMastershipAlgorithm(State state) {
