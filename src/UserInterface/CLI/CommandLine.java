@@ -239,6 +239,9 @@ public class CommandLine {
         System.out.println("The type of Decision maker algorithm: " + DECISIONMAKER_TYPE);
         System.out.println("Monitoring period: " + MONITORING_PERIOD);
         System.out.println("Noscaling CPMan period: " + NOSCALING_CPMAN_PERIOD);
+        System.out.println("Scaling level: " + SCALING_LEVEL);
+        System.out.println("Scaling upper threshold: " + SCALING_THRESHOLD_UPPER);
+        System.out.println("Scaling lower threshold: " + SCALING_THRESHOLD_LOWER);
     }
 
     public void changeExperimentalParams() {
@@ -276,5 +279,11 @@ public class CommandLine {
         MONITORING_PERIOD = sc1.nextInt();
         System.out.print("Noscaling CPMan period: ");
         NOSCALING_CPMAN_PERIOD = sc1.nextInt();
+        System.out.print("Scaling level: ");
+        SCALING_LEVEL = sc1.nextInt();
+        System.out.print("Scaling upper threshold: ");
+        SCALING_THRESHOLD_UPPER = sc1.nextInt();
+        System.out.print("Scaling lower threshold: ");
+        SCALING_THRESHOLD_LOWER = sc1.nextInt();
     }
 }
