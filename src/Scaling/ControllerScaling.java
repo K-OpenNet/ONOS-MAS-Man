@@ -21,14 +21,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void runL1ONOSScaleIn(ControllerBean targetController, State state) {
-        distributeMastershipForScaleIn(targetController, state);
+        distributeMastershipForScaleInAES(targetController, state);
         targetController.setActive(false);
     }
 
     public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
         runL1ONOSScaleIn(targetController, state);
         targetController.setOnosAlive(false);
-        switchOffControllerForScaleIn(targetController, state);
+        switchOffControllerForScaleInAES(targetController, state);
     }
 
     public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
@@ -54,7 +54,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         runL2ONOSScaleOut(targetController, state);
     }
 
-    public void distributeMastershipForScaleIn(ControllerBean targetController, State state) {
+    public void distributeMastershipForScaleInAES(ControllerBean targetController, State state) {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
@@ -90,6 +90,10 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         mastership.changeMultipleMastership(topology);
+    }
+
+    public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
+
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
@@ -152,7 +156,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     }
 
-    public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
+    public void distributeMastershipForScaleOutElastiCon(ControllerBean targetController, State state) {
+
+    }
+
+    public void switchOffControllerForScaleInAES(ControllerBean targetController, State state) {
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();

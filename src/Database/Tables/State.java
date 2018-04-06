@@ -1,10 +1,12 @@
 package Database.Tables;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import Database.Tuples.ComputingResourceTuple;
 import Database.Tuples.ControlPlaneTuple;
 import Database.Tuples.MastershipTuple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class State {
@@ -95,6 +97,25 @@ public class State {
 
     public void setActiveFlags(HashMap<String, String> activeFlags) {
         this.activeFlags = activeFlags;
+    }
+
+    public int getNumActiveControllers() {
+
+        return getActiveControllerList().size();
+    }
+
+    public ArrayList<ControllerBean> getActiveControllerList() {
+
+        ArrayList<ControllerBean> controllerList = new ArrayList<>();
+
+        for (String controllerId : activeFlags.keySet()) {
+            if (activeFlags.get(controllerId).equals("A")) {
+                ControllerBean tmpController = Configuration.getInstance().getControllerBeanWithId(controllerId);
+                controllerList.add(tmpController);
+            }
+        }
+
+        return controllerList;
     }
 }
 

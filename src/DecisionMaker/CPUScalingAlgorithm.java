@@ -1,8 +1,10 @@
 package DecisionMaker;
 
+import Beans.ControllerBean;
 import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
+import Scaling.ControllerScaling;
 
 import java.util.ArrayList;
 
@@ -29,7 +31,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         State state = mergeStates(targetStates);
-
+        ControllerScaling scaling = new ControllerScaling();
 
         // decision making: does it need to scale out?
 
@@ -42,4 +44,5 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         CPManMastership mastership = new CPManMastership();
         mastership.runMastershipAlgorithm(state);
     }
+
 }
