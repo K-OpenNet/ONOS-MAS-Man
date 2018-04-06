@@ -30,6 +30,7 @@ public class Configuration {
     public static final String DEV_MACHINE_IP_ADDR = "192.168.200.31";
     public static int SCALING_THRESHOLD_MEAN = 50;
     public static int SCALING_THRESHOLD_MARGIN = 30;
+    public static int SCALING_LEVEL = 1;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
