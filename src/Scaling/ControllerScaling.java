@@ -93,6 +93,10 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
+        if (!targetController.isOnosAlive()) {
+            throw new L1TargetControllerSanityException();
+        }
+
 
     }
 
@@ -157,7 +161,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void distributeMastershipForScaleOutElastiCon(ControllerBean targetController, State state) {
-
+        if (!targetController.isOnosAlive()) {
+            throw new L1TargetControllerSanityException();
+        }
     }
 
     public void switchOffControllerForScaleInAES(ControllerBean targetController, State state) {
