@@ -28,6 +28,8 @@ public class Configuration {
     public static int NOSCALING_CPMAN_PERIOD = 3;
     public static DecisionMaker.decisionMakerType DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING;
     public static final String DEV_MACHINE_IP_ADDR = "192.168.200.31";
+    public static int SCALING_THRESHOLD_MEAN = 50;
+    public static int SCALING_THRESHOLD_MARGIN = 30;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
