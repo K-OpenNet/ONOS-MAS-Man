@@ -134,7 +134,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         ControllerBean resultController = null;
 
         for (ControllerBean controller : estResult.keySet()) {
-            if (lowestCPULoad > estResult.get(controller)) {
+            if (resultController == null) {
+                resultController = controller;
+            } else if (lowestCPULoad > estResult.get(controller)) {
                 lowestCPULoad = estResult.get(controller);
                 resultController = controller;
             }
