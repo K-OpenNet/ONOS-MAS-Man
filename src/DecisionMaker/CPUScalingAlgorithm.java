@@ -33,6 +33,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         State state = mergeStates(targetStates);
+        System.out.println(state.getComputingResourceTuples().keySet().size());
 
         boolean scaleInFlag = false;
         boolean scaleOutFlag = false;
