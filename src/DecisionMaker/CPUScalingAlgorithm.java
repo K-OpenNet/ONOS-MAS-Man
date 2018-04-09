@@ -50,6 +50,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
 
+            //debugging code
             System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
 
             if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
@@ -64,6 +65,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+            //debugging code
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
 
             if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
@@ -72,6 +75,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 break;
             }
         }
+
+        //debugging code
+        System.out.println("ScaleIn: " + scaleInFlag);
+        System.out.println("Scaleout: " + scaleOutFlag);
 
         if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
             scaleInFlag = false;
