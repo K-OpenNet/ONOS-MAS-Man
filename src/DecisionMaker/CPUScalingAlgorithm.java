@@ -33,7 +33,6 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         State state = mergeStates(targetStates);
-        System.out.println(state.getComputingResourceTuples().keySet().size());
 
         boolean scaleInFlag = false;
         boolean scaleOutFlag = false;
@@ -47,7 +46,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         // check scaling out first
         for (ControllerBean controller : activeControllers) {
-            double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
 
@@ -62,7 +61,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         // check scaling in next
         for (ControllerBean controller : activeControllers) {
-            double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
