@@ -334,8 +334,8 @@ class ThreadRunRESTAPI implements Runnable {
             //Thread.sleep(3000);
         } catch (BadRequestException e) {
             System.out.println("BadRequestException");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } //catch (InterruptedException e) {
+          //  e.printStackTrace();
+       // }
     }
 }
