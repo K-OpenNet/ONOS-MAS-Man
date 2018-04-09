@@ -60,9 +60,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void distributeMastershipForScaleInAES(ControllerBean targetController, State state) {
-        if (!targetController.isOnosAlive()) {
-            throw new L1TargetControllerSanityException();
-        }
 
         CPManMastership mastership = new CPManMastership();
 
@@ -98,9 +95,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
-        if (!targetController.isOnosAlive()) {
-            throw new L1TargetControllerSanityException();
-        }
 
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
