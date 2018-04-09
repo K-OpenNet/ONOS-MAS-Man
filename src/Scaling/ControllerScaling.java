@@ -330,8 +330,8 @@ class ThreadRunRESTAPI implements Runnable {
 
         try {
             RESTConnection restConn = new RESTConnection();
-            restConn.sendCommandToUser(targetController, url);
-            Thread.sleep(3000);
+            //restConn.sendCommandToUser(targetController, url);
+            //Thread.sleep(3000);
         } catch (BadRequestException e) {
             System.out.println("BadRequestException");
         } catch (InterruptedException e) {
