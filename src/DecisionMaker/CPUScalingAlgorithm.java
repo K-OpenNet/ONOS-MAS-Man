@@ -44,43 +44,42 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         int numActiveControllers = activeControllers.size();
 
+        // check scaling out first
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+            System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
+
+            if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
+                targetControllerScaleOut = getTargetControllerForScaleOut();
+                scaleOutFlag = true;
+                break;
+            }
+        }
+
+        // check scaling in next
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+            System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
+
+            if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
+                targetControllerScaleIn = controller;
+                scaleInFlag = true;
+                break;
+            }
+        }
+
         if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
             scaleInFlag = false;
             scaleOutFlag = false;
         } else if (numActiveControllers == MIN_NUM_CONTROLLERS) {
             scaleInFlag = false;
             scaleOutFlag = false;
-        } else {
-            // check scaling out first
-            for (ControllerBean controller : activeControllers) {
-                double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
-                double cpuNormalizingFactor = 40 / controller.getNumCPUs();
-                tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
-
-                System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
-
-                if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
-                    targetControllerScaleOut = getTargetControllerForScaleOut();
-                    scaleOutFlag = true;
-                    break;
-                }
-            }
-
-            // check scaling in next
-            for (ControllerBean controller : activeControllers) {
-                double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
-                double cpuNormalizingFactor = 40 / controller.getNumCPUs();
-                tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
-                System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
-
-                if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
-                    targetControllerScaleIn = controller;
-                    scaleInFlag = true;
-                    break;
-                }
-            }
         }
-
 
         if (scaleOutFlag) {
             // decision making: does it need to scale out?
