@@ -123,6 +123,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             ControllerBean lowestCPULoadController = getLowestCPULoadController(estimatedControllersCPULoad);
             double tmpCPULoad = estimatedControllersCPULoad.get(lowestCPULoadController) + cpuLoadForEachSwitch;
             estimatedControllersCPULoad.replace(lowestCPULoadController, tmpCPULoad);
+            System.out.println(lowestCPULoadController.getControllerId());
             topology.get(lowestCPULoadController).add(masterSwitchListInTargetController.get(index));
         }
 
