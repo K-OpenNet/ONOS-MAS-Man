@@ -105,9 +105,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         activeControllers.remove(targetController);
-        int numSwitchesInTarget = state.getMastershipTuples().get(targetController).getSwitchList().size();
+        int numSwitchesInTarget = state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().size();
         double cpuLoadForEachSwitch = state.getComputingResourceTuples().get(targetController).avgCpuUsage()/numSwitchesInTarget;
-        ArrayList<String> masterSwitchListInTargetController = (ArrayList<String>) state.getMastershipTuples().get(targetController).getSwitchList().clone();
+        ArrayList<String> masterSwitchListInTargetController = (ArrayList<String>) state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().clone();
 
         HashMap<ControllerBean, Double> estimatedControllersCPULoad = new HashMap<>();
         for (ControllerBean controller : activeControllers) {
