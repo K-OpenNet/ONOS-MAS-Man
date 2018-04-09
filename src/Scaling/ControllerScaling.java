@@ -213,14 +213,27 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         SSHConnection sshConn = new SSHConnection();
 
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
-        try {
-            restConn.sendCommandToUser(targetController, url);
-            Thread.sleep(3000);
-        } catch (BadRequestException e) {
-            System.out.println("BadRequestException");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (!controller.isActive()) {
+                continue;
+            }
+
+            ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
+            Thread thread = new Thread(runnableObj);
+            threads.add(thread);
+            thread.run();
         }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStopCMD);
     }
@@ -237,13 +250,25 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
 
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
-        try {
-            restConn.sendCommandToUser(targetController, url);
-            Thread.sleep(3000);
-        } catch (BadRequestException e) {
-            System.out.println("BadRequestException");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (!controller.isActive()) {
+                continue;
+            }
+
+            ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
+            Thread thread = new Thread(runnableObj);
+            threads.add(thread);
+            thread.run();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -277,5 +302,29 @@ class L1TargetControllerSanityException extends RuntimeException {
 
     public L1TargetControllerSanityException(String message) {
         super(message);
+    }
+}
+
+class ThreadRunRESTAPI implements Runnable {
+
+    String url;
+    ControllerBean targetController;
+
+    public ThreadRunRESTAPI(String url, ControllerBean targetController) {
+        this.url = url;
+        this.targetController = targetController;
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            RESTConnection restConn = new RESTConnection();
+            Thread.sleep(3000);
+        } catch (BadRequestException e) {
+            System.out.println("BadRequestException");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
