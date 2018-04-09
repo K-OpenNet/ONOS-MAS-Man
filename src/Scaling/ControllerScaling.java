@@ -97,6 +97,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             throw new L1TargetControllerSanityException();
         }
 
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
 
     }
 
