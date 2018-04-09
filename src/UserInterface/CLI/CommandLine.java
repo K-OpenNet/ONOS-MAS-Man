@@ -242,6 +242,7 @@ public class CommandLine {
         System.out.println("Scaling level: " + SCALING_LEVEL);
         System.out.println("Scaling upper threshold: " + SCALING_THRESHOLD_UPPER);
         System.out.println("Scaling lower threshold: " + SCALING_THRESHOLD_LOWER);
+        System.out.println("Minimum number of controllers: " + MIN_NUM_CONTROLLERS);
     }
 
     public void changeExperimentalParams() {
@@ -285,5 +286,7 @@ public class CommandLine {
         SCALING_THRESHOLD_UPPER = sc1.nextInt();
         System.out.print("Scaling lower threshold: ");
         SCALING_THRESHOLD_LOWER = sc1.nextInt();
+        System.out.print("Minimum number of controllers: ");
+        MIN_NUM_CONTROLLERS = sc1.nextInt();
     }
 }
