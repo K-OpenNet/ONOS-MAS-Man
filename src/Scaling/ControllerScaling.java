@@ -202,6 +202,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
+
+        switchOffControllerForScaleInAES(targetController, state);
     }
 
     public void switchOffControllerForScaleInAES(ControllerBean targetController, State state) {
