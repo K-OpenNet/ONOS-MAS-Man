@@ -238,6 +238,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStopCMD);
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
@@ -252,6 +257,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
 
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         ArrayList<Thread> threads = new ArrayList<>();
 
