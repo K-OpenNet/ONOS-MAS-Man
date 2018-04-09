@@ -4,6 +4,7 @@ import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
 import Database.Tables.State;
+import DecisionMaker.DecisionMaker;
 import Mastership.CPManMastership;
 import Utils.Connection.RESTConnection;
 import Utils.Connection.SSHConnection;
@@ -21,14 +22,18 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void runL1ONOSScaleIn(ControllerBean targetController, State state) {
-        distributeMastershipForScaleInAES(targetController, state);
+        if (DECISIONMAKER_TYPE == DecisionMaker.decisionMakerType.SCALING_CPU) {
+            distributeMastershipForScaleInElastiCon(targetController, state);
+        } else {
+            distributeMastershipForScaleInAES(targetController, state);
+        }
         targetController.setActive(false);
     }
 
     public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
         runL1ONOSScaleIn(targetController, state);
         targetController.setOnosAlive(false);
-        switchOffControllerForScaleInAES(targetController, state);
+        switchOffControllerForScaleIn(targetController, state);
     }
 
     public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
@@ -198,15 +203,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     }
 
-    public void distributeMastershipForScaleOutElastiCon(ControllerBean targetController, State state) {
-        if (!targetController.isOnosAlive()) {
-            throw new L1TargetControllerSanityException();
-        }
-
-        switchOffControllerForScaleInAES(targetController, state);
-    }
-
-    public void switchOffControllerForScaleInAES(ControllerBean targetController, State state) {
+    public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();
