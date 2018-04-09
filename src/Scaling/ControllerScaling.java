@@ -215,6 +215,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
 
         ArrayList<Thread> threads = new ArrayList<>();
+
+        ThreadRunRESTAPI mainRunnableObj = new ThreadRunRESTAPI(url, targetController);
+        Thread mainThread = new Thread(mainRunnableObj);
+        threads.add(mainThread);
+
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             if (!controller.isActive()) {
                 continue;
@@ -223,6 +228,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
             Thread thread = new Thread(runnableObj);
             threads.add(thread);
+        }
+
+        for (Thread thread : threads) {
             thread.run();
         }
 
@@ -252,6 +260,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
 
         ArrayList<Thread> threads = new ArrayList<>();
+
+        ThreadRunRESTAPI mainRunnableObj = new ThreadRunRESTAPI(url, targetController);
+        Thread mainThread = new Thread(mainRunnableObj);
+        threads.add(mainThread);
+
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             if (!controller.isActive()) {
                 continue;
@@ -260,6 +273,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
             Thread thread = new Thread(runnableObj);
             threads.add(thread);
+        }
+
+        for (Thread thread : threads) {
             thread.run();
         }
 
