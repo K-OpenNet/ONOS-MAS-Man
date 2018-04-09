@@ -124,7 +124,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPULoad = estimatedControllersCPULoad.get(lowestCPULoadController) + cpuLoadForEachSwitch;
             estimatedControllersCPULoad.replace(lowestCPULoadController, tmpCPULoad);
             System.out.println(masterSwitchListInTargetController.size());
-            topology.get(lowestCPULoadController).add(masterSwitchListInTargetController.get(index));
+            topology.get(lowestCPULoadController.getControllerId()).add(masterSwitchListInTargetController.get(index));
         }
 
         mastership.changeMultipleMastership(topology);
