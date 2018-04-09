@@ -76,17 +76,19 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
         }
 
-        //debugging code
-        System.out.println("ScaleIn: " + scaleInFlag);
-        System.out.println("Scaleout: " + scaleOutFlag);
 
-        if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
+
+        if ((scaleOutFlag == true) && (numActiveControllers == Configuration.getInstance().getControllers().size())) {
             scaleInFlag = false;
             scaleOutFlag = false;
-        } else if (numActiveControllers == MIN_NUM_CONTROLLERS) {
+        } else if ((scaleInFlag == true) && (numActiveControllers == MIN_NUM_CONTROLLERS)) {
             scaleInFlag = false;
             scaleOutFlag = false;
         }
+
+        //debugging code
+        System.out.println("ScaleIn: " + scaleInFlag);
+        System.out.println("Scaleout: " + scaleOutFlag);
 
         if (scaleOutFlag) {
             // decision making: does it need to scale out?
