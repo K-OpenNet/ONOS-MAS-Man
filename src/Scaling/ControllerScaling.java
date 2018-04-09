@@ -99,7 +99,43 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        activeControllers.remove(targetController);
+        int numSwitchesInTarget = state.getMastershipTuples().get(targetController).getSwitchList().size();
+        double cpuLoadForEachSwitch = state.getComputingResourceTuples().get(targetController).avgCpuUsage()/numSwitchesInTarget;
+        ArrayList<String> masterSwitchListInTargetController = (ArrayList<String>) state.getMastershipTuples().get(targetController).getSwitchList().clone();
 
+        HashMap<ControllerBean, Double> estimatedControllersCPULoad = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            estimatedControllersCPULoad.put(controller, state.getComputingResourceTuples().get(controller).avgCpuUsage());
+        }
+
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
+        }
+
+        for (int index = 0; index < numSwitchesInTarget; index++) {
+            ControllerBean lowestCPULoadController = getLowestCPULoadController(estimatedControllersCPULoad);
+            double tmpCPULoad = estimatedControllersCPULoad.get(lowestCPULoadController) + cpuLoadForEachSwitch;
+            estimatedControllersCPULoad.replace(lowestCPULoadController, tmpCPULoad);
+            topology.get(lowestCPULoadController).add(masterSwitchListInTargetController.get(index));
+        }
+
+        mastership.changeMultipleMastership(topology);
+    }
+
+    public ControllerBean getLowestCPULoadController(HashMap<ControllerBean, Double> estResult) {
+        double lowestCPULoad = 0.0;
+        ControllerBean resultController = null;
+
+        for (ControllerBean controller : estResult.keySet()) {
+            if (lowestCPULoad > estResult.get(controller)) {
+                lowestCPULoad = estResult.get(controller);
+                resultController = controller;
+            }
+        }
+
+        return resultController;
     }
 
     public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
