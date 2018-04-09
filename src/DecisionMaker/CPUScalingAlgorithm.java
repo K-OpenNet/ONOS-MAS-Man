@@ -8,7 +8,7 @@ import Scaling.ControllerScaling;
 
 import java.util.ArrayList;
 
-import static Database.Configure.Configuration.SCALING_LEVEL;
+import static Database.Configure.Configuration.*;
 
 public class CPUScalingAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
 
@@ -37,15 +37,54 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         boolean scaleInFlag = false;
         boolean scaleOutFlag = false;
 
-        ControllerBean targetController = null;
+        ControllerBean targetControllerScaleIn = null;
+        ControllerBean targetControllerScaleOut = null;
+
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+
+        if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
+            scaleInFlag = false;
+            scaleOutFlag = false;
+        } else if (numActiveControllers == MIN_NUM_CONTROLLERS) {
+            scaleInFlag = false;
+            scaleOutFlag = false;
+        } else {
+            // check scaling out first
+            for (ControllerBean controller : activeControllers) {
+                double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+                double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+                tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+                if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
+                    targetControllerScaleOut = getTargetControllerForScaleOut();
+                    scaleOutFlag = true;
+                    break;
+                }
+            }
+
+            // check scaling in next
+            for (ControllerBean controller : activeControllers) {
+                double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
+                double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+                tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+                if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
+                    targetControllerScaleIn = controller;
+                    scaleInFlag = true;
+                    break;
+                }
+            }
+        }
 
 
         if (scaleOutFlag) {
             // decision making: does it need to scale out?
-            runScaleOut(targetController, state);
+            runScaleOut(targetControllerScaleOut, state);
         } else if (scaleInFlag) {
             // decision making: does it need to scale in?
-            runScaleIn(targetController, state);
+            runScaleIn(targetControllerScaleIn, state);
         } else {
             // decision making: does it need to balance switch, only?
             runBalancingOnly(state);
@@ -56,6 +95,17 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
     public void runCPManMastershipAlgorithm(State state) {
         CPManMastership mastership = new CPManMastership();
         mastership.runMastershipAlgorithm(state);
+    }
+
+    public ControllerBean getTargetControllerForScaleOut() {
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isActive() == false) {
+                return controller;
+            }
+        }
+
+        throw new WrongScalingNumberControllers();
     }
 
     public void runScaleOut(ControllerBean targetController, State state) {
@@ -120,6 +170,15 @@ class WrongScalingLevelException extends RuntimeException {
     }
 
     public WrongScalingLevelException(String message) {
+        super(message);
+    }
+}
+
+class WrongScalingNumberControllers extends RuntimeException {
+    public WrongScalingNumberControllers() {
+    }
+
+    public WrongScalingNumberControllers(String message) {
         super(message);
     }
 }
