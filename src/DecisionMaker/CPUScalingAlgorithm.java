@@ -57,6 +57,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 double cpuNormalizingFactor = 40 / controller.getNumCPUs();
                 tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
 
+                System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
+
                 if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
                     targetControllerScaleOut = getTargetControllerForScaleOut();
                     scaleOutFlag = true;
@@ -69,6 +71,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 double tmpCPULoad = state.getComputingResourceTuples().get(controller).avgCpuUsage();
                 double cpuNormalizingFactor = 40 / controller.getNumCPUs();
                 tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+                System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
 
                 if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
                     targetControllerScaleIn = controller;
