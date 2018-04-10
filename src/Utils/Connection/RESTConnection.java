@@ -35,6 +35,8 @@ public class RESTConnection extends AbstractConnection implements Connection {
             System.out.println(((ControllerBean) targetMachine).getControllerId());
             e.printStackTrace();
         }
+
+        return null;
     }
 
     public void putCommandToUser(Bean targetMachine, String cmd, JsonObject json) {
