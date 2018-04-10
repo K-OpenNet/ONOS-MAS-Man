@@ -5,6 +5,7 @@ import Beans.ControllerBean;
 import com.eclipsesource.json.JsonObject;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -25,7 +26,15 @@ public class RESTConnection extends AbstractConnection implements Connection {
 
         Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
 
-        return builder.get(String.class);
+        //try catch: for debugging
+        try {
+            return builder.get(String.class);
+        } catch (NotFoundException e) {
+            System.out.println("********");
+            System.out.println(cmd);
+            System.out.println(((ControllerBean) targetMachine).getControllerId());
+            e.printStackTrace();
+        }
     }
 
     public void putCommandToUser(Bean targetMachine, String cmd, JsonObject json) {
