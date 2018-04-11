@@ -208,32 +208,13 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
 
-        ArrayList<Thread> threads = new ArrayList<>();
-
-        ThreadRunRESTAPI mainRunnableObj = new ThreadRunRESTAPI(url, targetController);
-        Thread mainThread = new Thread(mainRunnableObj);
-        threads.add(mainThread);
-
-//        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-//            if (!controller.isActive()) {
-//                continue;
-//            }
-//
-//            ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
-//            Thread thread = new Thread(runnableObj);
-//            threads.add(thread);
-//        }
-
-        for (Thread thread : threads) {
-            thread.run();
-        }
-
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            restConn.sendCommandToUser(targetController, url);
+            Thread.sleep(3000);
+        } catch (BadRequestException e) {
+            System.out.println("BadRequestException");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
@@ -263,32 +244,21 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             e.printStackTrace();
         }
 
-        ArrayList<Thread> threads = new ArrayList<>();
-
-        ThreadRunRESTAPI mainRunnableObj = new ThreadRunRESTAPI(url, targetController);
-        Thread mainThread = new Thread(mainRunnableObj);
-        threads.add(mainThread);
-
-//        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-//            if (!controller.isActive()) {
-//                continue;
-//            }
-//
-//            ThreadRunRESTAPI runnableObj = new ThreadRunRESTAPI(url, controller);
-//            Thread thread = new Thread(runnableObj);
-//            threads.add(thread);
-//        }
-
-        for (Thread thread : threads) {
-            thread.run();
+        try {
+            restConn.sendCommandToUser(targetController, url);
+            Thread.sleep(3000);
+        } catch (BadRequestException e) {
+            System.out.println("BadRequestException");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
+        sshConn.sendCommandToUser(pm, serviceStopCMD);
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
