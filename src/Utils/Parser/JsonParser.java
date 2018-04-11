@@ -126,7 +126,11 @@ public class JsonParser extends AbstractParser implements Parser {
         JsonObject parser = JsonObject.readFrom(rawResults);
         JsonArray switches = parser.get("deviceIds").asArray();
         for (int index = 0; index < switches.size(); index++) {
-            result.addSwitch(switches.get(index).asString());
+            String tmpDpid = switches.get(index).asString();
+            if (tmpDpid.contains("ovsdb")) {
+                continue;
+            }
+            result.addSwitch(tmpDpid);
         }
 
         return result;
