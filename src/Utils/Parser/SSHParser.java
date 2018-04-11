@@ -84,6 +84,7 @@ public class SSHParser extends AbstractParser implements Parser {
                     }
                     break;
                 default:
+                    System.out.println(splittedResultsForEachLine[1]);
                     throw new WrongMetricIndexException();
             }
 
