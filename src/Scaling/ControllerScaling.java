@@ -252,14 +252,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
-        sshConn.sendCommandToUser(pm, serviceStopCMD);
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
