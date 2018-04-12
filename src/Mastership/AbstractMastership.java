@@ -3,6 +3,7 @@ package Mastership;
 import Beans.ControllerBean;
 import Database.Configure.Configuration;
 import Utils.Connection.RESTConnection;
+import Utils.Parser.JsonParser;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.ArrayList;
@@ -116,8 +117,10 @@ class ThreadChangeSingleMastership implements Runnable {
         String url = RESTURL_CHECKMASTERSHIP.replace("<deviceID>", dpid);
         RESTConnection restConn = new RESTConnection();
         String tmpResult = restConn.sendCommandToUser(tmpControllerBean, url);
+        JsonParser parser = new JsonParser();
+        String result = parser.parseMasterController(tmpResult);
 
-        System.out.println(controllerId + " -> " + tmpResult);
+        System.out.println(controllerId + " -> " + result);
 
         return true;
     }
