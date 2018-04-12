@@ -22,13 +22,14 @@ abstract class AbstractMastership implements Mastership{
     }
 
     public void changeMastership(String dpid, ControllerBean targetController) {
-        JsonObject rootObj = new JsonObject();
-        rootObj.add("deviceId", dpid);
-        rootObj.add("nodeId", targetController.getControllerId());
-        rootObj.add("role", "MASTER");
-
-        RESTConnection restConn = new RESTConnection();
-        restConn.putCommandToUser(targetController, RESTURL_DOMASTERSHIP, rootObj);
+        ThreadChangeSingleMastership runnableObj = new ThreadChangeSingleMastership(dpid, targetController.getControllerId());
+        Thread thread = new Thread(runnableObj);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void changeMultipleMastership(HashMap<String, ArrayList<String>> topology) {
@@ -64,20 +65,47 @@ class ThreadChangeMultipleMastership implements Runnable {
 
     @Override
     public void run() {
-        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
+        ArrayList<Thread> threads = new ArrayList<>();
         for (String dpid : switches) {
-            changeMastership(dpid, tmpControllerBean);
+            ThreadChangeSingleMastership runnableObj = new ThreadChangeSingleMastership(controllerId, dpid);
+            Thread thread = new Thread(runnableObj);
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void changeMastership(String dpid, ControllerBean targetController) {
+}
+
+class ThreadChangeSingleMastership implements Runnable {
+    private String controllerId;
+    private String dpid;
+
+    public ThreadChangeSingleMastership(String controllerId, String dpid) {
+        this.controllerId = controllerId;
+        this.dpid = dpid;
+    }
+
+    @Override
+    public void run() {
+        changeMastership(dpid, controllerId);
+    }
+
+    public void changeMastership(String dpid, String controllerId) {
+        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
         JsonObject rootObj = new JsonObject();
         rootObj.add("deviceId", dpid);
-        rootObj.add("nodeId", targetController.getControllerId());
+        rootObj.add("nodeId", tmpControllerBean.getControllerId());
         rootObj.add("role", "MASTER");
 
         RESTConnection restConn = new RESTConnection();
-        restConn.putCommandToUser(targetController, RESTURL_DOMASTERSHIP, rootObj);
+        restConn.putCommandToUser(tmpControllerBean, RESTURL_DOMASTERSHIP, rootObj);
     }
-
 }
