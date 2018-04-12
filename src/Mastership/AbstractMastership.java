@@ -97,8 +97,15 @@ class ThreadChangeSingleMastership implements Runnable {
 
     @Override
     public void run() {
-        changeMastership(dpid, controllerId);
-        verifyMastership(dpid, controllerId);
+
+        while (verifyMastership(dpid, controllerId)) {
+            changeMastership(dpid, controllerId);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void changeMastership(String dpid, String controllerId) {
@@ -122,6 +129,11 @@ class ThreadChangeSingleMastership implements Runnable {
 
         System.out.println(controllerId + " -> " + result);
 
-        return true;
+        if (controllerId.equals(result)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
