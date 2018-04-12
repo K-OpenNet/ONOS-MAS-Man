@@ -127,7 +127,7 @@ class ThreadChangeSingleMastership implements Runnable {
         JsonParser parser = new JsonParser();
         String result = parser.parseMasterController(tmpResult);
 
-        System.out.println(controllerId + " -> " + result);
+        //System.out.println(controllerId + " -> " + result);
 
         if (controllerId.equals(result)) {
             return true;
