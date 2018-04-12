@@ -166,6 +166,15 @@ public class JsonParser extends AbstractParser implements Parser {
 
         return results;
     }
+
+    public String parseMasterController(String rawResult) {
+        if(rawResult == null || rawResult == "") {
+            throw new NullPointerException();
+        }
+
+        JsonObject parser = JsonObject.readFrom(rawResult);
+        return parser.get("master").asString();
+    }
 }
 
 class ControlPlaneMonitoringSanityException extends RuntimeException {

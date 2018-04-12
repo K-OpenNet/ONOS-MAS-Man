@@ -8,6 +8,7 @@ import com.eclipsesource.json.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static Database.Configure.Configuration.RESTURL_CHECKMASTERSHIP;
 import static Database.Configure.Configuration.RESTURL_DOMASTERSHIP;
 
 abstract class AbstractMastership implements Mastership{
@@ -96,6 +97,7 @@ class ThreadChangeSingleMastership implements Runnable {
     @Override
     public void run() {
         changeMastership(dpid, controllerId);
+        verifyMastership(dpid, controllerId);
     }
 
     public void changeMastership(String dpid, String controllerId) {
@@ -107,5 +109,16 @@ class ThreadChangeSingleMastership implements Runnable {
 
         RESTConnection restConn = new RESTConnection();
         restConn.putCommandToUser(tmpControllerBean, RESTURL_DOMASTERSHIP, rootObj);
+    }
+
+    public boolean verifyMastership(String dpid, String controllerId) {
+        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
+        String url = RESTURL_CHECKMASTERSHIP.replace("<deviceID>", dpid);
+        RESTConnection restConn = new RESTConnection();
+        String tmpResult = restConn.sendCommandToUser(tmpControllerBean, url);
+
+        System.out.println(controllerId + " -> " + tmpResult);
+
+        return true;
     }
 }
