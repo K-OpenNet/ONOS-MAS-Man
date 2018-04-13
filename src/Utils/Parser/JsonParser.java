@@ -100,13 +100,6 @@ public class JsonParser extends AbstractParser implements Parser {
                 config.getMininets().get(mininetIp).add(new MininetBean(dpid, id));
             }
         }
-
-        //for debugging
-        for (String ip : config.getMininets().keySet()) {
-            for (MininetBean bean : config.getMininets().get(ip)) {
-                System.out.println(ip + " " + bean.getId() + " " + bean.getDpid());
-            }
-        }
     }
 
     // Key: controllerId, value: DPID
