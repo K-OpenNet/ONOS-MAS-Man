@@ -206,6 +206,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         RESTConnection restConn = new RESTConnection();
         SSHConnection sshConn = new SSHConnection();
 
+        // Remove target controller from OVS
+
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
 
         try {
@@ -252,6 +254,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Add target controller from OVS
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
@@ -309,5 +313,21 @@ class ThreadRunRESTAPI implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+}
+
+class ThreadRunRootSSH implements Runnable {
+    String cmd;
+    PMBean pm;
+
+    public ThreadRunRootSSH(String cmd, PMBean pm) {
+        this.cmd = cmd;
+        this.pm = pm;
+    }
+
+    @Override
+    public void run() {
+        SSHConnection sshConn = new SSHConnection();
+        sshConn.sendCommandToRoot(pm, cmd);
     }
 }

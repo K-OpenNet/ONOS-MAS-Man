@@ -43,6 +43,18 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         int numActiveControllers = activeControllers.size();
+        double averageCPULoad = 0.0;
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+            averageCPULoad += tmpCPULoad;
+        }
+
+        averageCPULoad = averageCPULoad / numActiveControllers;
+
+        System.out.println("Scaling -- average CPU load: " + averageCPULoad);
+
 
         // check scaling out first
         for (ControllerBean controller : activeControllers) {
@@ -53,8 +65,14 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             //debugging code
             System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
 
-            if (tmpCPULoad > SCALING_THRESHOLD_UPPER) {
-                targetControllerScaleOut = getTargetControllerForScaleOut();
+            if (averageCPULoad > SCALING_THRESHOLD_UPPER && tmpCPULoad > SCALING_THRESHOLD_UPPER) {
+
+                try {
+                    targetControllerScaleOut = getTargetControllerForScaleOut();
+                } catch (WrongScalingNumberControllers e) {
+                    scaleOutFlag = false;
+                    break;
+                }
                 scaleOutFlag = true;
                 break;
             }
@@ -69,7 +87,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             //debugging code
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
 
-            if (tmpCPULoad < SCALING_THRESHOLD_LOWER) {
+            if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
                 targetControllerScaleIn = controller;
                 scaleInFlag = true;
                 break;
