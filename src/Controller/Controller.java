@@ -85,6 +85,7 @@ public class Controller {
             ThreadPMSSHSessionAssignment pmRunnableObj = new ThreadPMSSHSessionAssignment(tmpPm);
             Thread thread = new Thread(pmRunnableObj);
             threads.add(thread);
+            thread.start();
         }
 
         for (Thread thread : threads) {
