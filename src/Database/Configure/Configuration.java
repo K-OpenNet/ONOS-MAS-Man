@@ -1,6 +1,7 @@
 package Database.Configure;
 
 import Beans.ControllerBean;
+import Beans.MininetBean;
 import Beans.PMBean;
 import DecisionMaker.DecisionMaker;
 
@@ -18,6 +19,7 @@ public class Configuration {
         controllers = new ArrayList<>();
         pms = new ArrayList<>();
         relationships = new HashMap<>();
+        mininets = new HashMap<>();
     }
 
     // System variables
@@ -65,6 +67,7 @@ public class Configuration {
     private ArrayList<ControllerBean> controllers;
     private ArrayList<PMBean> pms;
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;
+    private HashMap<String, ArrayList<MininetBean>> mininets;
 
     public ControllerBean getControllerBean (String name) {
         for (int index = 0; index < controllers.size(); index++) {
@@ -94,6 +97,14 @@ public class Configuration {
         }
 
         throw new NullPointerException();
+    }
+
+    public HashMap<String, ArrayList<MininetBean>> getMininets() {
+        return mininets;
+    }
+
+    public void setMininets(HashMap<String, ArrayList<MininetBean>> mininets) {
+        this.mininets = mininets;
     }
 
     public ArrayList<ControllerBean> getControllers() {

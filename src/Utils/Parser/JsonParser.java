@@ -1,6 +1,7 @@
 package Utils.Parser;
 
 import Beans.ControllerBean;
+import Beans.MininetBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
 import Database.Tuples.ControlPlaneTuple;
@@ -28,6 +29,7 @@ public class JsonParser extends AbstractParser implements Parser {
         JsonArray controllersArray = parser.get("Controllers").asArray();
         JsonArray pmsArray = parser.get("PMs").asArray();
         JsonArray relationshipArray = parser.get("Relationships").asArray();
+        JsonArray mininetArray = parser.get("Mininet").asArray();
 
         // For Controllers
         for (int index = 0; index < controllersArray.size(); index++) {
@@ -82,6 +84,27 @@ public class JsonParser extends AbstractParser implements Parser {
 
                 ControllerBean tmpControllerBean = config.getControllerBean(tmpControllerName);
                 config.getRelationships().get(tmpPMBean).add(tmpControllerBean);
+            }
+        }
+
+        // For Mininets
+        for (int index1 = 0; index1 < mininetArray.size(); index1++) {
+            JsonObject tmpObj = mininetArray.get(index1).asObject();
+            String mininetIp = tmpObj.get("ipAddr").asString();
+            config.getMininets().putIfAbsent(mininetIp, new ArrayList<>());
+
+            JsonArray switches = tmpObj.get("switches").asArray();
+            for (int index2 = 0; index2 < switches.size(); index2++) {
+                String dpid = switches.get(index2).asObject().get("dpid").asString();
+                String id = switches.get(index2).asObject().get("id").asString();
+                config.getMininets().get(mininetIp).add(new MininetBean(dpid, id));
+            }
+        }
+
+        //for debugging
+        for (String ip : config.getMininets().keySet()) {
+            for (MininetBean bean : config.getMininets().get(ip)) {
+                System.out.println(ip + " " + bean.getId() + " " + bean.getDpid());
             }
         }
     }
