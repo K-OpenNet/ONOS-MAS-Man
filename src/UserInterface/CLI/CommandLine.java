@@ -217,6 +217,7 @@ public class CommandLine {
         SSHConnection sshConn = new SSHConnection();
         PMBean pm = Configuration.getInstance().getMininetMachines().get(mininetIp);
         String cmd = CMD_GET_CONTROLLER.replace("<switchID>", id);
+        System.out.println(cmd); //debugging
         String result = sshConn.sendCommandToRoot(pm, cmd);
         System.out.println(result);
 
@@ -233,6 +234,7 @@ public class CommandLine {
         String cmd = CMD_SET_CONTROLLER.replace("<switchID>", id).replace("controllerIDs>", input1);
         PMBean pm = Configuration.getInstance().getMininetMachines().get(mininetIp);
         SSHConnection sshConn = new SSHConnection();
+        System.out.println(cmd); //debugging
         sshConn.sendCommandToRoot(pm, cmd);
     }
 
