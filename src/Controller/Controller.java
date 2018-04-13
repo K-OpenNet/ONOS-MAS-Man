@@ -79,6 +79,14 @@ public class Controller {
             thread.start();
         }
 
+        // assign SSH session for each Mininet
+        for (String mininetIp : config.getMininetMachines().keySet()) {
+            PMBean tmpPm = config.getMininetMachines().get(mininetIp);
+            ThreadPMSSHSessionAssignment pmRunnableObj = new ThreadPMSSHSessionAssignment(tmpPm);
+            Thread thread = new Thread(pmRunnableObj);
+            threads.add(thread);
+        }
+
         for (Thread thread : threads) {
             try {
                 thread.join();

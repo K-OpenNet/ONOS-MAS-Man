@@ -128,6 +128,14 @@ public class CommandLine {
                     runL3ONOSScaleOutFunction();
                     // L3 scale-out, onetime
                     break;
+                case 21:
+                    // get controllers
+                    getControllers();
+                    break;
+                case 22:
+                    // set controllers
+                    setController();
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -158,6 +166,8 @@ public class CommandLine {
         System.out.println("18: Run L1 ONOS scale-out function, onetime");
         System.out.println("19: Run L2 ONOS scale-out function, onetime");
         System.out.println("20: Run L3 ONOS scale-out function, onetime");
+        System.out.println("21: Get controllers with given dpid");
+        System.out.println("22: Set controllers with given dpid and controllers");
     }
 
     public void printConfigMessage () {
@@ -196,6 +206,34 @@ public class CommandLine {
 
     public void runCPManMastershipFunction() {
         Controller.runCPManMastershipFunction();
+    }
+
+    public void getControllers() {
+        Scanner sc1 = new Scanner(System.in);
+        System.out.println("DPID: ");
+        String input1 = sc1.nextLine();
+        String id = Configuration.getInstance().getId(input1);
+        String mininetIp = Configuration.getInstance().getIpWithDpid(input1);
+        SSHConnection sshConn = new SSHConnection();
+        PMBean pm = Configuration.getInstance().getMininetMachines().get(mininetIp);
+        String cmd = CMD_GET_CONTROLLER.replace("<switchID>", id);
+        String result = sshConn.sendCommandToRoot(pm, cmd);
+        System.out.println(result);
+
+    }
+
+    public void setController() {
+        Scanner sc1 = new Scanner(System.in);
+        System.out.println("DPID: ");
+        String input1 = sc1.nextLine();
+        String id = Configuration.getInstance().getId(input1);
+        String mininetIp = Configuration.getInstance().getIpWithDpid(input1);
+        System.out.println("Controllers: ");
+        input1 = sc1.nextLine();
+        String cmd = CMD_SET_CONTROLLER.replace("<switchID>", id).replace("controllerIDs>", input1);
+        PMBean pm = Configuration.getInstance().getMininetMachines().get(mininetIp);
+        SSHConnection sshConn = new SSHConnection();
+        sshConn.sendCommandToRoot(pm, cmd);
     }
 
     public void mergeMultipleStates() {

@@ -91,6 +91,10 @@ public class JsonParser extends AbstractParser implements Parser {
         for (int index1 = 0; index1 < mininetArray.size(); index1++) {
             JsonObject tmpObj = mininetArray.get(index1).asObject();
             String mininetIp = tmpObj.get("ipAddr").asString();
+            String mininetSshId = tmpObj.get("sshId").asString();
+            String mininetSshPw = tmpObj.get("sshPw").asString();
+            String mininetRootId = tmpObj.get("sshRootId").asString();
+            String mininetRootPw = tmpObj.get("sshRootPw").asString();
             config.getMininets().putIfAbsent(mininetIp, new ArrayList<>());
 
             JsonArray switches = tmpObj.get("switches").asArray();
@@ -99,6 +103,15 @@ public class JsonParser extends AbstractParser implements Parser {
                 String id = switches.get(index2).asObject().get("id").asString();
                 config.getMininets().get(mininetIp).add(new MininetBean(dpid, id));
             }
+
+            PMBean pm = new PMBean(mininetIp);
+            pm.setSshPort("22");
+            pm.setSshId(mininetSshId);
+            pm.setSshPw(mininetSshPw);
+            pm.setSshRootId(mininetRootId);
+            pm.setSshRootPw(mininetRootPw);
+            config.getMininetMachines().putIfAbsent(pm.getIpAddr(), pm);
+
         }
     }
 

@@ -20,6 +20,7 @@ public class Configuration {
         pms = new ArrayList<>();
         relationships = new HashMap<>();
         mininets = new HashMap<>();
+        mininetMachines = new HashMap<>();
     }
 
     // System variables
@@ -50,6 +51,8 @@ public class Configuration {
     public static final String CMD_ONOS_SERVICE_STOP = "/home/woojoong/workspace/AutoScalingONOS/stopONOS.sh <controllerID>";
     public static final String CMD_ONOS_SERVICE_START = "/home/woojoong/workspace/AutoScalingONOS/startONOS.sh <controllerID>";
     public static final String CMD_CHECK_ONOS_SERVICE = "/home/woojoong/workspace/AutoScalingONOS/checkONOS.sh <controllerID>";
+    public static final String CMD_SET_CONTROLLER = "ovs-vsctl set-controller <switchID> <controllerIDs>";
+    public static final String CMD_GET_CONTROLLER = "ovs-vsctl get-controller <switchID>";
 
     // URLs for REST API
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";
@@ -68,6 +71,7 @@ public class Configuration {
     private ArrayList<PMBean> pms;
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;
     private HashMap<String, ArrayList<MininetBean>> mininets;
+    private HashMap<String, PMBean> mininetMachines;
 
     public ControllerBean getControllerBean (String name) {
         for (int index = 0; index < controllers.size(); index++) {
@@ -105,6 +109,74 @@ public class Configuration {
 
     public void setMininets(HashMap<String, ArrayList<MininetBean>> mininets) {
         this.mininets = mininets;
+    }
+
+    public String getDpidWithMininetIP(String ip, String id) {
+        for (MininetBean bean : mininets.get(ip)) {
+            if (bean.getId().equals(id)) {
+                return bean.getDpid();
+            }
+        }
+
+        return null;
+    }
+
+    public String getIdWithMininetIP(String ip, String dpid) {
+        for (MininetBean bean : mininets.get(ip)) {
+            if (bean.getDpid().equals(dpid)) {
+                return bean.getId();
+            }
+        }
+
+        return null;
+    }
+
+    public String getDpid(String id) {
+        for (String mininetIp : mininets.keySet()) {
+            if (getDpidWithMininetIP(mininetIp, id) != null) {
+                return getDpidWithMininetIP(mininetIp, id);
+            }
+        }
+
+        return null;
+    }
+
+    public String getId(String dpid) {
+        for (String mininetIp : mininets.keySet()) {
+            if (getIdWithMininetIP(mininetIp, dpid) != null) {
+                return getIdWithMininetIP(mininetIp, dpid);
+            }
+        }
+
+        return null;
+    }
+
+    public String getIpWithDpid(String dpid) {
+        for (String mininetIp : mininets.keySet()) {
+            if (getIdWithMininetIP(mininetIp, dpid) != null) {
+                return mininetIp;
+            }
+        }
+
+        return null;
+    }
+
+    public String getIpWithId(String id) {
+        for (String mininetIp : mininets.keySet()) {
+            if (getDpidWithMininetIP(mininetIp, id) != null) {
+                return mininetIp;
+            }
+        }
+
+        return null;
+    }
+
+    public HashMap<String, PMBean> getMininetMachines() {
+        return mininetMachines;
+    }
+
+    public void setMininetMachines(HashMap<String, PMBean> mininetMachines) {
+        this.mininetMachines = mininetMachines;
     }
 
     public ArrayList<ControllerBean> getControllers() {
