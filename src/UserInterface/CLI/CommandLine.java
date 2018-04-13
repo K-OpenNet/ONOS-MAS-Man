@@ -231,7 +231,7 @@ public class CommandLine {
         String mininetIp = Configuration.getInstance().getIpWithDpid(input1);
         System.out.println("Controllers: ");
         input1 = sc1.nextLine();
-        String cmd = CMD_SET_CONTROLLER.replace("<switchID>", id).replace("controllerIDs>", input1);
+        String cmd = CMD_SET_CONTROLLER.replace("<switchID>", id).replace("<controllerIDs>", input1);
         PMBean pm = Configuration.getInstance().getMininetMachines().get(mininetIp);
         SSHConnection sshConn = new SSHConnection();
         System.out.println(cmd); //debugging
