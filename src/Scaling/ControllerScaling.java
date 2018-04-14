@@ -203,12 +203,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
+
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();
         SSHConnection sshConn = new SSHConnection();
 
         // Remove target controller from OVS
+        removeControllerToOVS(targetController, state);
 
         String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
 
@@ -258,6 +260,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         // Add target controller from OVS
+        addControllerToOVS(targetController, state);
     }
 
     public void switchOffVMForScaleIn(ControllerBean targetController, State state) {
