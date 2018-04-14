@@ -301,24 +301,25 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String controllerLists = " ";
 
         for (ControllerBean controller : activeControllers) {
-            String tmpController = "tcp:" + controller.getControllerId() + "6653";
+            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
             controllerLists = controllerLists + tmpController + " ";
         }
 
         String cmd = CMD_SET_CONTROLLER.replace("<controllerIDs>", controllerLists);
         ArrayList<Thread> threads = new ArrayList<>();
 
+
         for (PMBean mininetPM : mininetMachines) {
+            String totalCmd = " ";
             ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
             for (MininetBean sw : swes) {
-                String tmpCmd = cmd.replace("<switchID>", sw.getId());
-                ThreadRunRootSSH runnableObj = new ThreadRunRootSSH(tmpCmd, mininetPM);
-                Thread thread = new Thread(runnableObj);
-                threads.add(thread);
+                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
             }
-        }
+            totalCmd = totalCmd + "echo end";
 
-        for (Thread thread : threads) {
+            ThreadRunRootSSH runObj = new ThreadRunRootSSH(mininetPM, totalCmd);
+            Thread thread = new Thread(runObj);
+            threads.add(thread);
             thread.start();
         }
 
@@ -329,6 +330,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 e.printStackTrace();
             }
         }
+
 
     }
 
@@ -355,16 +357,16 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         ArrayList<Thread> threads = new ArrayList<>();
 
         for (PMBean mininetPM : mininetMachines) {
+            String totalCmd = " ";
             ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
             for (MininetBean sw : swes) {
-                String tmpCmd = cmd.replace("<switchID>", sw.getId());
-                ThreadRunRootSSH runnableObj = new ThreadRunRootSSH(tmpCmd, mininetPM);
-                Thread thread = new Thread(runnableObj);
-                threads.add(thread);
+                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
             }
-        }
+            totalCmd = totalCmd + "echo end";
 
-        for (Thread thread : threads) {
+            ThreadRunRootSSH runObj = new ThreadRunRootSSH(mininetPM, totalCmd);
+            Thread thread = new Thread(runObj);
+            threads.add(thread);
             thread.start();
         }
 
@@ -375,6 +377,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 e.printStackTrace();
             }
         }
+
+
     }
 }
 
