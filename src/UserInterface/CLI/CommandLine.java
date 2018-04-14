@@ -283,6 +283,7 @@ public class CommandLine {
         System.out.println("Scaling upper threshold: " + SCALING_THRESHOLD_UPPER);
         System.out.println("Scaling lower threshold: " + SCALING_THRESHOLD_LOWER);
         System.out.println("Minimum number of controllers: " + MIN_NUM_CONTROLLERS);
+        System.out.println("Number of Mininet machines: " + NUM_MININET_MACHINE);
     }
 
     public void changeExperimentalParams() {
@@ -328,5 +329,7 @@ public class CommandLine {
         SCALING_THRESHOLD_LOWER = sc1.nextInt();
         System.out.print("Minimum number of controllers: ");
         MIN_NUM_CONTROLLERS = sc1.nextInt();
+        System.out.print("Number of Mininet machines: ");
+        NUM_MININET_MACHINE = sc1.nextInt();
     }
 }

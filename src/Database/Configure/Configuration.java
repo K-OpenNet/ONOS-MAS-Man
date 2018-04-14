@@ -35,6 +35,7 @@ public class Configuration {
     public static int SCALING_THRESHOLD_LOWER = 20;
     public static int SCALING_LEVEL = 1;
     public static int MIN_NUM_CONTROLLERS = 3;
+    public static int NUM_MININET_MACHINE = 1;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";

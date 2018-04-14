@@ -4,6 +4,7 @@ import Beans.ControllerBean;
 import Beans.PMBean;
 import Database.Configure.Configuration;
 import Database.Tables.State;
+import Database.Tuples.MastershipTuple;
 import DecisionMaker.DecisionMaker;
 import Mastership.CPManMastership;
 import Utils.Connection.RESTConnection;
@@ -279,6 +280,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void removeControllerToOVS(ControllerBean targetController, State state) {
+
+    }
+
+    public void addControllerToOVS(ControllerBean targetController, State state) {
+
     }
 }
 
