@@ -317,7 +317,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             }
             totalCmd = totalCmd + "echo end";
 
-            ThreadRunRootSSH runObj = new ThreadRunRootSSH(mininetPM, totalCmd);
+            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
             Thread thread = new Thread(runObj);
             threads.add(thread);
             thread.start();
@@ -364,7 +364,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             }
             totalCmd = totalCmd + "echo end";
 
-            ThreadRunRootSSH runObj = new ThreadRunRootSSH(mininetPM, totalCmd);
+            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
             Thread thread = new Thread(runObj);
             threads.add(thread);
             thread.start();
