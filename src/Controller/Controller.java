@@ -222,6 +222,12 @@ public class Controller {
         scaling.runL3ONOSScaleOut(targetController, state);
     }
 
+    public static void runCPUBasedMasstership() {
+        State state = Database.getDatabase().get(timeIndex);
+        CPUScalingAlgorithm scaling = new CPUScalingAlgorithm();
+        scaling.runCPULoadMastershipAlgorithm(state);
+    }
+
     public static void main (String[] args) {
         CommandLine cli = new CommandLine();
         cli.startCLI();

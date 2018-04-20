@@ -136,6 +136,10 @@ public class CommandLine {
                     // set controllers
                     setController();
                     break;
+                case 23:
+                    // run CPU-based Mastership
+                    Controller.runCPUBasedMasstership();
+                    break;
                 default:
                     flag_end = true;
                     break;
@@ -168,6 +172,7 @@ public class CommandLine {
         System.out.println("20: Run L3 ONOS scale-out function, onetime");
         System.out.println("21: Get controllers with given dpid");
         System.out.println("22: Set controllers with given dpid and controllers");
+        System.out.println("23: Run CPU-based Mastership");
     }
 
     public void printConfigMessage () {
