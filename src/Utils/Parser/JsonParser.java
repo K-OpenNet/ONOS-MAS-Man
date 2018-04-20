@@ -188,6 +188,10 @@ public class JsonParser extends AbstractParser implements Parser {
 
             resultTuple.setDpid(tmpDpid);
             for (OFType type : OFType.values()) {
+                if (type.equals(OFType.CONTROLLER_STATUS)) {
+                    resultTuple.getControlTrafficByteResults().put(type, (long) 0);
+                    resultTuple.getControlTrafficResults().put(type, (long) 0);
+                }
                 resultTuple.getControlTrafficResults().put(type, Long.valueOf(elemSwitch.get(type.toString()).asString()));
                 resultTuple.getControlTrafficByteResults().put(type, Long.valueOf(elemSwitch.get(type.toString()+"[bytes]").asString()));
             }
