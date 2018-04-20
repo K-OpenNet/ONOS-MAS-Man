@@ -223,6 +223,8 @@ public class Controller {
     }
 
     public static void runCPUBasedMasstership() {
+        //debugging
+        System.out.println("***" + timeIndex);
         State state = Database.getDatabase().get(timeIndex);
         CPUScalingAlgorithm scaling = new CPUScalingAlgorithm();
         scaling.runCPULoadMastershipAlgorithm(state);
