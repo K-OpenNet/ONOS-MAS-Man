@@ -172,11 +172,21 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             dpidsOverSubControllers.put(controllerId, dpids);
         }
 
+        //debugging code
+        System.out.println("Under subscriber controllers");
+        for (String underControllerId : undersubControllers.keySet()) {
+            System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
+        }
+
         // make topology
         while (oversubControllers.size() == 0) {
             String highestOverSubController = getHighestCPULoadController(oversubControllers);
             int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
             double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(highestOverSubController);
+
+            //debugging code
+            System.out.println("Over subscriber controllers");
+            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
 
             for (String undersubControllerId : undersubControllers.keySet()) {
                 double undersubControllerLoad = undersubControllers.get(undersubControllerId);
@@ -214,6 +224,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         // debugging code
+        System.out.println("Topology");
         for (String controllerId : topology.keySet()) {
             System.out.print(controllerId + ": ");
             for (String dpid : topology.get(controllerId)) {
