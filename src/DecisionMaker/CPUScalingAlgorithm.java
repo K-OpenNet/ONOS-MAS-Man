@@ -176,7 +176,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         while (oversubControllers.size() == 0) {
             String highestOverSubController = getHighestCPULoadController(oversubControllers);
             int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
-            double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(oversubControllers);
+            double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(highestOverSubController);
 
             for (String undersubControllerId : undersubControllers.keySet()) {
                 double undersubControllerLoad = undersubControllers.get(undersubControllerId);
@@ -211,6 +211,15 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 }
             }
             oversubControllers.remove(highestOverSubController);
+        }
+
+        // debugging code
+        for (String controllerId : topology.keySet()) {
+            System.out.print(controllerId + ": ");
+            for (String dpid : topology.get(controllerId)) {
+                System.out.print(dpid + " ");
+            }
+            System.out.println();
         }
 
         mastership.changeMultipleMastership(topology);
