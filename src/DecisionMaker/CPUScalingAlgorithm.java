@@ -87,6 +87,12 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             //debugging code
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
 
+            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                continue;
+            }
+
             if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
                 targetControllerScaleIn = controller;
                 scaleInFlag = true;
