@@ -7,6 +7,7 @@ import Mastership.CPManMastership;
 import Scaling.ControllerScaling;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static Database.Configure.Configuration.*;
 
@@ -43,15 +44,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         int numActiveControllers = activeControllers.size();
-        double averageCPULoad = 0.0;
-        for (ControllerBean controller : activeControllers) {
-            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
-            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
-            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
-            averageCPULoad += tmpCPULoad;
-        }
-
-        averageCPULoad = averageCPULoad / numActiveControllers;
+        double averageCPULoad = averageCPULoadAllControllers(state);
 
         System.out.println("Scaling -- average CPU load: " + averageCPULoad);
 
@@ -132,6 +125,133 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         mastership.runMastershipAlgorithm(state);
     }
 
+    public void runCPULoadMastershipAlgorithm(State state) {
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        HashMap<String, ArrayList<String>> dpidsOverSubControllers = new HashMap<>();
+
+        CPManMastership mastership = new CPManMastership();
+        double averageCPULoad = averageCPULoadAllControllers(state);
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        HashMap<String, Double> oversubControllers = new HashMap<>();
+        HashMap<String, Double> undersubControllers = new HashMap<>();
+
+        // Key: Controller Id, Value: CPU usage / switch
+        HashMap<String, Double> estimatedSwitchCPULoad = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+            int numSwitches = state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+
+            double tmpCPULoadEachSwitch = 0;
+            if (numSwitches != 0) {
+                tmpCPULoadEachSwitch = tmpCPULoad / numSwitches;
+            }
+
+
+            if (tmpCPULoad < averageCPULoad) {
+                undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            } else if (tmpCPULoad > averageCPULoad) {
+                oversubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            }
+
+            estimatedSwitchCPULoad.put(controller.getBeanKey(), tmpCPULoadEachSwitch);
+        }
+
+        // initialize topology
+        for (String controllerId : undersubControllers.keySet()) {
+            topology.put(controllerId, new ArrayList<>());
+        }
+
+        // cloning mastership monitoring result
+        for (String controllerId : oversubControllers.keySet()) {
+            ArrayList<String> dpids = new ArrayList<>();
+            for (String dpid : state.getMastershipTuples().get(controllerId).getSwitchList()) {
+                dpids.add(dpid);
+            }
+            dpidsOverSubControllers.put(controllerId, dpids);
+        }
+
+        // make topology
+        while (oversubControllers.size() == 0) {
+            String highestOverSubController = getHighestCPULoadController(oversubControllers);
+            int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
+            double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(oversubControllers);
+
+            for (String undersubControllerId : undersubControllers.keySet()) {
+                double undersubControllerLoad = undersubControllers.get(undersubControllerId);
+                double oversubControllerLoad = oversubControllers.get(highestOverSubController);
+
+                if (numSwitches < 1) {
+                    break;
+                } else if (oversubControllerLoad <= averageCPULoad) {
+                    break;
+                } else if (undersubControllerLoad + tmpCPULoadSwitch > averageCPULoad) {
+                    continue;
+                } else if (oversubControllerLoad - tmpCPULoadSwitch < averageCPULoad) {
+                    break;
+                }
+
+                int maxNumSwitches = dpidsOverSubControllers.get(highestOverSubController).size();
+                for (int index1 = 0; index1 < maxNumSwitches; index1++) {
+                    String dpid = dpidsOverSubControllers.get(highestOverSubController).get(index1);
+
+                    if (undersubControllerLoad + tmpCPULoadSwitch <= averageCPULoad &&
+                            oversubControllerLoad - tmpCPULoadSwitch >= averageCPULoad &&
+                            dpidsOverSubControllers.get(highestOverSubController).size() > 0) {
+                        oversubControllerLoad -= tmpCPULoadSwitch;
+                        undersubControllerLoad += tmpCPULoadSwitch;
+                        dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                        topology.get(undersubControllerId).add(dpid);
+                    } else {
+                        oversubControllers.replace(highestOverSubController, oversubControllerLoad);
+                        undersubControllers.replace(undersubControllerId, undersubControllerLoad);
+                        break;
+                    }
+                }
+            }
+            oversubControllers.remove(highestOverSubController);
+        }
+
+        mastership.changeMultipleMastership(topology);
+    }
+
+    public String getHighestCPULoadController(HashMap<String, Double> rawResult) {
+
+        String result = null;
+        double highestCPULoad = 0;
+
+        for (String controllerId :rawResult.keySet()) {
+
+            if (result == null) {
+                result = controllerId;
+                highestCPULoad = rawResult.get(controllerId);
+            } else if (highestCPULoad < rawResult.get(controllerId)) {
+                result = controllerId;
+                highestCPULoad = rawResult.get(controllerId);
+            }
+        }
+
+        return result;
+    }
+
+    public double averageCPULoadAllControllers(State state) {
+        double result = 0.0;
+
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+            result += tmpCPULoad;
+        }
+
+        return result / numActiveControllers;
+    }
+
     public ControllerBean getTargetControllerForScaleOut() {
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
@@ -149,7 +269,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         // Maximum number of controllers
         if (mastership.getActiveControllers().size() == Configuration.getInstance().getControllers().size()) {
-            runCPManMastershipAlgorithm(state);
+            //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+            runCPULoadMastershipAlgorithm(state);
             return;
         }
 
@@ -171,7 +292,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
     }
 
     public void runBalancingOnly(State state) {
-        runCPManMastershipAlgorithm(state);
+        //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+        runCPULoadMastershipAlgorithm(state);
     }
 
     public void runScaleIn(ControllerBean targetController, State state) {
@@ -179,7 +301,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         ControllerScaling scaling = new ControllerScaling();
 
         if (mastership.getActiveControllers().size() == 3) {
-            runCPManMastershipAlgorithm(state);
+            //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+            runCPULoadMastershipAlgorithm(state);
             return;
         }
 
