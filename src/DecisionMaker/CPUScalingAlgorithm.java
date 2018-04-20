@@ -179,7 +179,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         // make topology
-        while (oversubControllers.size() == 0) {
+        while (oversubControllers.size() != 0) {
             String highestOverSubController = getHighestCPULoadController(oversubControllers);
             int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
             double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(highestOverSubController);
