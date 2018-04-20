@@ -24,6 +24,12 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void runL1ONOSScaleIn(ControllerBean targetController, State state) {
+        if (targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_1) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_2) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
+            throw new TurnOffFixedControllerException();
+        }
+
         if (DECISIONMAKER_TYPE == DecisionMaker.decisionMakerType.SCALING_CPU) {
             distributeMastershipForScaleInElastiCon(targetController, state);
         } else {
@@ -33,12 +39,24 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void runL2ONOSScaleIn(ControllerBean targetController, State state) {
+        if (targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_1) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_2) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
+            throw new TurnOffFixedControllerException();
+        }
+
         targetController.setOnosAlive(false);
         runL1ONOSScaleIn(targetController, state);
         switchOffControllerForScaleIn(targetController, state);
     }
 
     public void runL3ONOSScaleIn(ControllerBean targetController, State state) {
+        if (targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_1) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_2) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
+            throw new TurnOffFixedControllerException();
+        }
+        
         targetController.setVmAlive(false);
         runL2ONOSScaleIn(targetController, state);
         switchOffVMForScaleIn(targetController, state);
@@ -387,6 +405,15 @@ class L1TargetControllerSanityException extends RuntimeException {
     }
 
     public L1TargetControllerSanityException(String message) {
+        super(message);
+    }
+}
+
+class TurnOffFixedControllerException extends RuntimeException {
+    public TurnOffFixedControllerException() {
+    }
+
+    public TurnOffFixedControllerException(String message) {
         super(message);
     }
 }

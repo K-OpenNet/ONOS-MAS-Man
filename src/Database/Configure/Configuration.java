@@ -36,6 +36,9 @@ public class Configuration {
     public static int SCALING_LEVEL = 1;
     public static int MIN_NUM_CONTROLLERS = 3;
     public static int NUM_MININET_MACHINE = 1;
+    public static String FIXED_CONTROLLER_ID_1 = "192.168.200.107";
+    public static String FIXED_CONTROLLER_ID_2 = "192.168.200.108";
+    public static String FIXED_CONTROLLER_ID_3 = "192.168.200.109";
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
