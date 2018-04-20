@@ -56,7 +56,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
             throw new TurnOffFixedControllerException();
         }
-        
+
         targetController.setVmAlive(false);
         runL2ONOSScaleIn(targetController, state);
         switchOffVMForScaleIn(targetController, state);
@@ -230,21 +230,21 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         // Remove target controller from OVS
         removeControllerToOVS(targetController, state);
 
-        String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
-
-        try {
-            restConn.sendCommandToUser(targetController, url);
-            Thread.sleep(3000);
-        } catch (BadRequestException e) {
-            System.out.println("BadRequestException");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
+//
+//        try {
+//            restConn.sendCommandToUser(targetController, url);
+//            Thread.sleep(3000);
+//        } catch (BadRequestException e) {
+//            System.out.println("BadRequestException");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         String serviceStopCMD = CMD_ONOS_SERVICE_STOP.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStopCMD);
         try {
-            Thread.sleep(6000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -261,18 +261,24 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         sshConn.sendCommandToUser(pm, serviceStartCMD);
         System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
 
-        String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
+//        try {
+//            Thread.sleep(6000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            restConn.sendCommandToUser(targetController, url);
+//            Thread.sleep(3000);
+//        } catch (BadRequestException e) {
+//            System.out.println("BadRequestException");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         try {
-            restConn.sendCommandToUser(targetController, url);
-            Thread.sleep(3000);
-        } catch (BadRequestException e) {
-            System.out.println("BadRequestException");
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
