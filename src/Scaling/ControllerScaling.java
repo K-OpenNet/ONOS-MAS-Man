@@ -477,6 +477,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
 
+        // Add target controller from OVS
+        addControllerToOVS(targetController, state);
+
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();
@@ -508,9 +511,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        // Add target controller from OVS
-        addControllerToOVS(targetController, state);
 
     }
 
