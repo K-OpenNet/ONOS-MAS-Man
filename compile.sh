@@ -8,12 +8,12 @@ then
     mkdir -p $RESULT_DIR/$EXP_INDEX
 fi
 
-if [ -e ./*.csv ]
+if [ -e ./*.txt ]
 then
-    cp ./*.csv $RESULT_DIR/$EXP_INDEX/
-elif [ -e ./out/*.csv ]
+    cp ./*.txt $RESULT_DIR/$EXP_INDEX/
+elif [ -e ./out/*.txt ]
 then
-    cp ./out/*.csv $RESULT_DIR/$EXP_INDEX/
+    cp ./out/*.txt $RESULT_DIR/$EXP_INDEX/
 fi
 
 rm -rf out

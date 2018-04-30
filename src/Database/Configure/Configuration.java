@@ -69,7 +69,7 @@ public class Configuration {
     public static final String RESTURL_DOEQUALIZE = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/equalizing";
 
     // etc
-    public static final String FILE_NAME_PREFIX = "result_<timeindex>.csv";
+    public static final String FILE_NAME_PREFIX = "result_<timeindex>.txt";
 
     private ArrayList<ControllerBean> controllers;
     private ArrayList<PMBean> pms;
