@@ -98,8 +98,8 @@ class ThreadChangeSingleMastership implements Runnable {
     @Override
     public void run() {
 
+        changeMastership(dpid, controllerId);
         while (!verifyMastership(dpid, controllerId)) {
-            changeMastership(dpid, controllerId);
 //            try {
 //                Thread.sleep(100);
 //            } catch (InterruptedException e) {
