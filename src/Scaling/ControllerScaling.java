@@ -475,7 +475,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
-        
+
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();
