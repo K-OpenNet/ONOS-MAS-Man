@@ -209,7 +209,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
                     if (undersubControllerLoad + tmpCPULoadSwitch <= averageCPULoad &&
                             oversubControllerLoad - tmpCPULoadSwitch >= averageCPULoad &&
-                            dpidsOverSubControllers.get(highestOverSubController).size() > 0) {
+                            dpidsOverSubControllers.get(highestOverSubController).size() - changedSwitches.size() > 0) {
                         oversubControllerLoad -= tmpCPULoadSwitch;
                         undersubControllerLoad += tmpCPULoadSwitch;
                         //dpidsOverSubControllers.get(highestOverSubController).remove(dpid);

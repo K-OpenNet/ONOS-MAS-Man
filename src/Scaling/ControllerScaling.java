@@ -64,7 +64,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void runL1ONOSScaleOut(ControllerBean targetController, State state) {
         targetController.setActive(true);
-        distributeMastershipForScaleOut(targetController, state);
+        if (DECISIONMAKER_TYPE == DecisionMaker.decisionMakerType.SCALING_CPU) {
+            distributeMastershipForScaleOutElastiCon(targetController, state);
+        } else {
+            distributeMastershipForScaleOutAES(targetController, state);
+        }
     }
 
     public void runL2ONOSScaleOut(ControllerBean targetController, State state) {
@@ -114,31 +118,183 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         mastership.changeMultipleMastership(topology);
     }
 
-    public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
+
+//    public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
+//
+//        CPManMastership mastership = new CPManMastership();
+//        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+//        activeControllers.remove(targetController);
+//        int numSwitchesInTarget = state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().size();
+//        double cpuLoadForEachSwitch = state.getComputingResourceTuples().get(targetController.getBeanKey()).avgCpuUsage()/numSwitchesInTarget;
+//        ArrayList<String> masterSwitchListInTargetController = (ArrayList<String>) state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().clone();
+//
+//        HashMap<ControllerBean, Double> estimatedControllersCPULoad = new HashMap<>();
+//        for (ControllerBean controller : activeControllers) {
+//            estimatedControllersCPULoad.put(controller, state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage());
+//        }
+//
+//        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+//        for (ControllerBean controller : activeControllers) {
+//            topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
+//        }
+//
+//        for (int index = 0; index < numSwitchesInTarget; index++) {
+//            ControllerBean lowestCPULoadController = getLowestCPULoadController(estimatedControllersCPULoad);
+//            double tmpCPULoad = estimatedControllersCPULoad.get(lowestCPULoadController) + cpuLoadForEachSwitch;
+//            estimatedControllersCPULoad.replace(lowestCPULoadController, tmpCPULoad);
+//            System.out.println(masterSwitchListInTargetController.size());
+//            topology.get(lowestCPULoadController.getControllerId()).add(masterSwitchListInTargetController.get(index));
+//        }
+//
+//        mastership.changeMultipleMastership(topology);
+//    }
+
+
+    public double sumCPULoadAllControllers(State state) {
+        double result = 0.0;
 
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        activeControllers.remove(targetController);
-        int numSwitchesInTarget = state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().size();
-        double cpuLoadForEachSwitch = state.getComputingResourceTuples().get(targetController.getBeanKey()).avgCpuUsage()/numSwitchesInTarget;
-        ArrayList<String> masterSwitchListInTargetController = (ArrayList<String>) state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList().clone();
 
-        HashMap<ControllerBean, Double> estimatedControllersCPULoad = new HashMap<>();
         for (ControllerBean controller : activeControllers) {
-            estimatedControllersCPULoad.put(controller, state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage());
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+            result += tmpCPULoad;
         }
+
+            return result;
+    }
+
+    public double averageCPUloadWithoutTargetController(State state) {
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+        numActiveControllers--;
+
+        double result = sumCPULoadAllControllers(state);
+
+        return result/numActiveControllers;
+    }
+
+    public double averageCPUloadWithTargetController(State state) {
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+        numActiveControllers++;
+
+        double result = sumCPULoadAllControllers(state);
+
+        return result/numActiveControllers;
+    }
+
+    public ControllerBean getLowestCPULoadController (State state, ArrayList<ControllerBean> activeControllers, HashMap<ControllerBean, Double> additionalCPULoads) {
+
+        double minCPULoads = 0.0;
+        ControllerBean resultController = null;
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPUNormalizeFactor = 40/controller.getNumCPUs();
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getControllerId()).avgCpuUsage();
+            tmpCPULoad = tmpCPULoad * tmpCPUNormalizeFactor;
+            tmpCPULoad = tmpCPULoad + additionalCPULoads.get(controller);
+            if (resultController == null || minCPULoads > tmpCPULoad) {
+                resultController = controller;
+                minCPULoads = tmpCPULoad;
+            }
+        }
+
+        return resultController;
+    }
+
+    public ControllerBean getHighestCPULoadController (State state, ArrayList<ControllerBean> activeControllers, HashMap<ControllerBean, Double> removedCPULoads) {
+
+        double maxCPULoads = 0.0;
+        ControllerBean resultController = null;
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPUNormalizeFactor = 40/controller.getNumCPUs();
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getControllerId()).avgCpuUsage();
+            tmpCPULoad = tmpCPULoad * tmpCPUNormalizeFactor;
+            tmpCPULoad = tmpCPULoad - removedCPULoads.get(controller);
+            if (resultController == null || maxCPULoads < tmpCPULoad) {
+                resultController = controller;
+                maxCPULoads = tmpCPULoad;
+            }
+        }
+
+        return resultController;
+    }
+
+    public void distributeMastershipForScaleInElastiCon(ControllerBean targetController, State state) {
 
         HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        CPManMastership mastership = new CPManMastership();
+
+        HashMap<ControllerBean, Double> additionalCPULoads = new HashMap<>();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        activeControllers.remove(targetController);
+
+        // init topology
         for (ControllerBean controller : activeControllers) {
-            topology.putIfAbsent(controller.getControllerId(), new ArrayList<>());
+            topology.put(controller.getControllerId(), new ArrayList<>());
         }
 
-        for (int index = 0; index < numSwitchesInTarget; index++) {
-            ControllerBean lowestCPULoadController = getLowestCPULoadController(estimatedControllersCPULoad);
-            double tmpCPULoad = estimatedControllersCPULoad.get(lowestCPULoadController) + cpuLoadForEachSwitch;
-            estimatedControllersCPULoad.replace(lowestCPULoadController, tmpCPULoad);
-            System.out.println(masterSwitchListInTargetController.size());
-            topology.get(lowestCPULoadController.getControllerId()).add(masterSwitchListInTargetController.get(index));
+        double averageCPULoads = averageCPUloadWithoutTargetController(state);
+        double cpuLoadsTargetController = state.getComputingResourceTuples().get(targetController.getBeanKey()).avgCpuUsage();
+        double cpuNoarmalizeFactor = 40/targetController.getNumCPUs();
+        cpuLoadsTargetController = cpuLoadsTargetController * cpuNoarmalizeFactor;
+        ArrayList<String> dpids = state.getMastershipTuples().get(targetController.getBeanKey()).getSwitchList();
+        int numSwitches = dpids.size();
+        double cpuLoadEachSwitch = cpuLoadsTargetController/numSwitches;
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoads = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double tmpCPUNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoads = tmpCPUNormalizeFactor * tmpCPULoads;
+
+            if (dpids.size() == 0) {
+                break;
+            } else if (tmpCPULoads + cpuLoadEachSwitch > averageCPULoads ) {
+                break;
+            }
+
+            int maxNumSwitches = dpids.size();
+            ArrayList<String> changedSwitches = new ArrayList<>();
+            for (int index = 0; index < maxNumSwitches; index++) {
+                String dpid = dpids.get(index);
+
+                if (tmpCPULoads + cpuLoadEachSwitch <= averageCPULoads &&
+                        dpids.size() > changedSwitches.size()) {
+                    tmpCPULoads += cpuLoadEachSwitch;
+                    changedSwitches.add(dpid);
+                    topology.get(controller.getControllerId()).add(dpid);
+                }
+            }
+
+            additionalCPULoads.put(controller, cpuLoadEachSwitch*changedSwitches.size());
+
+            for (String dpid : changedSwitches) {
+                dpids.remove(dpid);
+            }
+        }
+
+        while (dpids.size() != 0) {
+            String dpid = dpids.get(0);
+            dpids.remove(dpid);
+            ControllerBean lowestController = getLowestCPULoadController(state, activeControllers, additionalCPULoads);
+            topology.get(lowestController.getControllerId()).add(dpid);
+            additionalCPULoads.replace(lowestController, additionalCPULoads.get(lowestController) + cpuLoadEachSwitch);
+        }
+
+        // debugging code
+        System.out.println("Topology");
+        for (String controllerId : topology.keySet()) {
+            System.out.print(controllerId + ": ");
+            for (String dpid : topology.get(controllerId)) {
+                System.out.print(dpid + " ");
+            }
+            System.out.println();
         }
 
         mastership.changeMultipleMastership(topology);
@@ -160,7 +316,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         return resultController;
     }
 
-    public void distributeMastershipForScaleOut(ControllerBean targetController, State state) {
+    public void distributeMastershipForScaleOutAES(ControllerBean targetController, State state) {
         if (!targetController.isOnosAlive()) {
             throw new L1TargetControllerSanityException();
         }
@@ -218,6 +374,73 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         mastership.changeMultipleMastership(topology);
 
+    }
+
+    public void distributeMastershipForScaleOutElastiCon(ControllerBean targetController, State state) {
+
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        // init topology
+        topology.put(targetController.getControllerId(), new ArrayList<>());
+        CPManMastership mastership = new CPManMastership();
+
+        HashMap<ControllerBean, Double> removedCPULoads = new HashMap<>();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        ArrayList<ControllerBean> tmpActiveControllers = mastership.getActiveControllers();
+
+        // init previous topology and removedCPULoad
+        for (ControllerBean controller : activeControllers) {
+            removedCPULoads.put(controller, 0.0);
+        }
+
+        ArrayList<String> sortedControllers = new ArrayList<>();
+        while (tmpActiveControllers.size() != 0) {
+            ControllerBean tmpController = getHighestCPULoadController(state, tmpActiveControllers, removedCPULoads);
+            sortedControllers.add(tmpController.getControllerId());
+        }
+
+        double targetAvgCPULoad = averageCPUloadWithTargetController(state);
+        double targetCPULoad = state.getComputingResourceTuples().get(targetController.getControllerId()).avgCpuUsage();
+        double targetCPUNormalizeFactor = 40/targetController.getNumCPUs();
+        targetCPULoad = targetCPUNormalizeFactor * targetCPULoad;
+
+        for (String controllerId : sortedControllers) {
+
+            ArrayList<String> dpids = state.getMastershipTuples().get(controllerId).getSwitchList();
+            double tmpCPULoad = state.getComputingResourceTuples().get(controllerId).avgCpuUsage();
+            double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBean(controllerId).getNumCPUs();
+            tmpCPULoad = tmpCPUNormalizeFactor * tmpCPULoad;
+            double tmpCPULoadEachSwitch = tmpCPULoad/dpids.size();
+
+            if (dpids.size() == 0) {
+                break;
+            } else if (targetCPULoad + tmpCPULoadEachSwitch > targetAvgCPULoad) {
+                break;
+            } else if (tmpCPULoad - tmpCPULoadEachSwitch <= targetAvgCPULoad) {
+                continue;
+            }
+
+            for (String dpid : dpids) {
+                if (tmpCPULoad - tmpCPULoadEachSwitch > targetAvgCPULoad &&
+                        targetCPULoad + tmpCPULoadEachSwitch <= targetAvgCPULoad) {
+                    targetCPULoad += tmpCPULoadEachSwitch;
+                    tmpCPULoad -= tmpCPULoadEachSwitch;
+                    topology.get(targetController.getControllerId()).add(dpid);
+                }
+            }
+
+        }
+
+        // debugging code
+        System.out.println("Topology");
+        for (String controllerId : topology.keySet()) {
+            System.out.print(controllerId + ": ");
+            for (String dpid : topology.get(controllerId)) {
+                System.out.print(dpid + " ");
+            }
+            System.out.println();
+        }
+
+        mastership.changeMultipleMastership(topology);
     }
 
     public void switchOffControllerForScaleIn(ControllerBean targetController, State state) {
