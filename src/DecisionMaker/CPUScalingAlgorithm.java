@@ -203,6 +203,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 }
 
                 int maxNumSwitches = dpidsOverSubControllers.get(highestOverSubController).size();
+                ArrayList<String> changedSwitches = new ArrayList<>();
                 for (int index1 = 0; index1 < maxNumSwitches; index1++) {
                     String dpid = dpidsOverSubControllers.get(highestOverSubController).get(index1);
 
@@ -211,7 +212,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                             dpidsOverSubControllers.get(highestOverSubController).size() > 0) {
                         oversubControllerLoad -= tmpCPULoadSwitch;
                         undersubControllerLoad += tmpCPULoadSwitch;
-                        dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                        //dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                        changedSwitches.add(dpid);
                         topology.get(undersubControllerId).add(dpid);
                         oversubControllers.replace(highestOverSubController, oversubControllerLoad);
                         undersubControllers.replace(undersubControllerId, undersubControllerLoad);
@@ -223,6 +225,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                         System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
 
                     }
+                }
+
+                for (String dpid : changedSwitches) {
+                    dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
                 }
             }
 
