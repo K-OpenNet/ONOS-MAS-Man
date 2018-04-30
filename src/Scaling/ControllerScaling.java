@@ -409,7 +409,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
             ArrayList<String> dpids = state.getMastershipTuples().get(controllerId).getSwitchList();
             double tmpCPULoad = state.getComputingResourceTuples().get(controllerId).avgCpuUsage();
-            double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBean(controllerId).getNumCPUs();
+            double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBeanWithId(controllerId).getNumCPUs();
             tmpCPULoad = tmpCPUNormalizeFactor * tmpCPULoad;
             double tmpCPULoadEachSwitch = tmpCPULoad/dpids.size();
 
