@@ -238,6 +238,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         // init topology
         for (ControllerBean controller : activeControllers) {
             topology.put(controller.getControllerId(), new ArrayList<>());
+            additionalCPULoads.put(controller, 0.0);
         }
 
         double averageCPULoads = averageCPUloadWithoutTargetController(state);
