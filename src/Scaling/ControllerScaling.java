@@ -475,9 +475,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
     }
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
-
-        // Add target controller from OVS
-        addControllerToOVS(targetController, state);
         
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
@@ -510,6 +507,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Add target controller from OVS
+        addControllerToOVS(targetController, state);
 
     }
 
@@ -599,7 +599,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String controllerLists = " ";
 
         for (ControllerBean controller : activeControllers) {
-            String tmpController = "tcp:" + controller.getControllerId() + "6653";
+            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
             controllerLists = controllerLists + tmpController + " ";
         }
 
