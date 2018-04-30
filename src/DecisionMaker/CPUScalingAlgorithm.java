@@ -215,9 +215,21 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                         topology.get(undersubControllerId).add(dpid);
                         oversubControllers.replace(highestOverSubController, oversubControllerLoad);
                         undersubControllers.replace(undersubControllerId, undersubControllerLoad);
+
+                        // debugging code
+                        System.out.println("Move switches");
+                        System.out.println(dpid + ": from " + highestOverSubController + " -> " + undersubControllerId);
+                        System.out.println("oversubLoad: " + oversubControllerLoad + " undersubLoad: " + undersubControllerLoad);
+                        System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
+
                     }
                 }
             }
+
+            //debugging code
+            System.out.println("Over subscriber controllers");
+            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+
             oversubControllers.remove(highestOverSubController);
         }
 
