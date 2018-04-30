@@ -100,11 +100,11 @@ class ThreadChangeSingleMastership implements Runnable {
 
         while (!verifyMastership(dpid, controllerId)) {
             changeMastership(dpid, controllerId);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
