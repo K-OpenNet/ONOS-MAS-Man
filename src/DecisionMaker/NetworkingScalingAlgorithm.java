@@ -33,9 +33,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         State state = mergeStates(targetStates);
 
-        // Balancing first
-        runBalancingOnly(state);
-
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
 
@@ -61,6 +58,9 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
             ControllerBean targetControllerScaleIn = getTargetControllerForScaleIn(state, activeControllers);
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
             runScaleIn(targetControllerScaleIn, state);
+        } else {
+            System.out.println("Balancing only");
+            runBalancingOnly(state);
         }
     }
 
