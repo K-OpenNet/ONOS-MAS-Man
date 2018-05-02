@@ -36,12 +36,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         // Balancing first
         runBalancingOnly(state);
 
-        boolean scaleInFlag = false;
-        boolean scaleOutFlag = false;
-
-        ControllerBean targetControllerScaleIn = null;
-        ControllerBean targetControllerScaleOut = null;
-
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
 
@@ -52,6 +46,56 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         double upperThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_UPPER;
         double lowerThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_LOWER;
+
+        if (maxNetLoad > upperThreshold) {
+
+            ControllerBean targetControllerScaleOut = getTargetControllerForScaleOut();
+            runScaleOut(targetControllerScaleOut, state);
+
+            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut).avgNet());
+
+        } else if (avgNetLoad < lowerThreshold) {
+
+            ControllerBean targetControllerScaleIn = getTargetControllerForScaleIn(state, activeControllers);
+            runScaleIn(targetControllerScaleIn, state);
+
+            System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn).avgNet());
+        }
+    }
+
+    public ControllerBean getTargetControllerForScaleIn(State state, ArrayList<ControllerBean> activeControllers) {
+
+        ControllerBean result = null;
+        double lowestNetLoad = Double.MAX_VALUE;
+
+        for (ControllerBean controller : activeControllers) {
+
+            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                continue;
+            }
+
+            double tmpNetLoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgNet();
+
+            if (lowestNetLoad > tmpNetLoad) {
+                result = controller;
+                lowestNetLoad = tmpNetLoad;
+            }
+        }
+
+        return result;
+    }
+
+    public ControllerBean getTargetControllerForScaleOut() {
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isActive() == false) {
+                return controller;
+            }
+        }
+
+        throw new NullPointerException();
     }
 
     public double getTotalNetworkLoad(State state, ArrayList<ControllerBean> activeControllers) {
