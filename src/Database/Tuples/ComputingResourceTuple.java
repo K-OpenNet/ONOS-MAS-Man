@@ -73,6 +73,10 @@ public class ComputingResourceTuple extends AbstractTuple implements Tuple {
         return ((double) sumNetTx)/((double) netTx.size());
     }
 
+    public double avgNet() {
+        return avgNetRx() + avgNetTx();
+    }
+
     public double avgNetBandwidth() {
         return avgNetRx() + avgNetTx();
     }
