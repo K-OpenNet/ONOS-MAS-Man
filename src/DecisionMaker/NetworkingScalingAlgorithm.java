@@ -47,6 +47,9 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         double upperThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_UPPER;
         double lowerThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_LOWER;
 
+        System.out.println("MAX Load: " + maxNetLoad + " / Avg Load: " + avgNetLoad);
+        System.out.println("Up Threshold: " + upperThreshold + " / Bottom Threshold: " + lowerThreshold);
+
         if (maxNetLoad > upperThreshold) {
 
             ControllerBean targetControllerScaleOut = getTargetControllerForScaleOut();
