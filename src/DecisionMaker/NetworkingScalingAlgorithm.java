@@ -8,7 +8,7 @@ import Scaling.ControllerScaling;
 
 import java.util.ArrayList;
 
-import static Database.Configure.Configuration.SCALING_LEVEL;
+import static Database.Configure.Configuration.*;
 
 public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
     public NetworkingScalingAlgorithm() {
@@ -44,9 +44,45 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        int numActiveControllers = activeControllers.size();
-        
 
+        double maxNetLoad = getMaxNetworkLoad(state, activeControllers) * 8;
+        double avgNetLoad = getAvgNetworkLoad(state, activeControllers) * 8;
+        maxNetLoad = maxNetLoad / 1000000;
+        avgNetLoad = avgNetLoad / 1000000;
+
+        double upperThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_UPPER;
+        double lowerThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_LOWER;
+    }
+
+    public double getTotalNetworkLoad(State state, ArrayList<ControllerBean> activeControllers) {
+
+        double result = 0.0;
+
+        for (ControllerBean controller : activeControllers) {
+            result += state.getComputingResourceTuples().get(controller.getBeanKey()).avgNet();
+        }
+
+        return result;
+    }
+
+    public double getAvgNetworkLoad(State state, ArrayList<ControllerBean> activeControllers) {
+        return getTotalNetworkLoad(state, activeControllers)/activeControllers.size();
+    }
+
+    public double getMaxNetworkLoad(State state, ArrayList<ControllerBean> activeControllers) {
+
+        double result = 0.0;
+
+        for (ControllerBean controller : activeControllers) {
+
+            double tmpNetLoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgNet();
+            if (tmpNetLoad > result) {
+
+                result = tmpNetLoad;
+            }
+        }
+
+        return result;
     }
 
     public void runCPManMastershipAlgorithm(State state) {
@@ -63,7 +99,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         ControllerScaling scaling = new ControllerScaling();
 
         if (mastership.getActiveControllers().size() == 3) {
-            runCPManMastershipAlgorithm(state);
             return;
         }
 
@@ -89,7 +124,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         // Maximum number of controllers
         if (mastership.getActiveControllers().size() == Configuration.getInstance().getControllers().size()) {
-            runCPManMastershipAlgorithm(state);
             return;
         }
 
