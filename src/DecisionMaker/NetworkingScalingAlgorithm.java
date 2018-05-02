@@ -44,8 +44,8 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         maxNetLoad = maxNetLoad / 1000000;
         avgNetLoad = avgNetLoad / 1000000;
 
-        double upperThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_UPPER;
-        double lowerThreshold = MAX_NET_BANDWIDTH * SCALING_THRESHOLD_LOWER;
+        double upperThreshold = MAX_NET_BANDWIDTH * (SCALING_THRESHOLD_UPPER/100);
+        double lowerThreshold = MAX_NET_BANDWIDTH * (SCALING_THRESHOLD_LOWER/100);
 
         System.out.println("MAX Load: " + maxNetLoad + " / Avg Load: " + avgNetLoad);
         System.out.println("Up Threshold: " + upperThreshold + " / Bottom Threshold: " + lowerThreshold);
@@ -53,16 +53,16 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         if (maxNetLoad > upperThreshold) {
 
             ControllerBean targetControllerScaleOut = getTargetControllerForScaleOut();
+            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut).avgNet());
             runScaleOut(targetControllerScaleOut, state);
 
-            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut).avgNet());
+
 
         } else if (avgNetLoad < lowerThreshold) {
 
             ControllerBean targetControllerScaleIn = getTargetControllerForScaleIn(state, activeControllers);
-            runScaleIn(targetControllerScaleIn, state);
-
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn).avgNet());
+            runScaleIn(targetControllerScaleIn, state);
         }
     }
 
