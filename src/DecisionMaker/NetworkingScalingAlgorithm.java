@@ -50,15 +50,13 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         System.out.println("MAX Load: " + maxNetLoad + " / Avg Load: " + avgNetLoad);
         System.out.println("Up Threshold: " + upperThreshold + " / Bottom Threshold: " + lowerThreshold);
 
-        if (maxNetLoad > upperThreshold) {
+        if (maxNetLoad > upperThreshold && activeControllers.size() < Configuration.getInstance().getControllers().size()) {
 
             ControllerBean targetControllerScaleOut = getTargetControllerForScaleOut();
             System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut).avgNet());
             runScaleOut(targetControllerScaleOut, state);
 
-
-
-        } else if (avgNetLoad < lowerThreshold) {
+        } else if (avgNetLoad < lowerThreshold && activeControllers.size() > MIN_NUM_CONTROLLERS) {
 
             ControllerBean targetControllerScaleIn = getTargetControllerForScaleIn(state, activeControllers);
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn).avgNet());
