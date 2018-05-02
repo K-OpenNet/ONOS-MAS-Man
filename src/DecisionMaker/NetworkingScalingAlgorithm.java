@@ -44,8 +44,8 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
         maxNetLoad = maxNetLoad / 1000000;
         avgNetLoad = avgNetLoad / 1000000;
 
-        double upperThreshold = MAX_NET_BANDWIDTH * (SCALING_THRESHOLD_UPPER/100);
-        double lowerThreshold = MAX_NET_BANDWIDTH * (SCALING_THRESHOLD_LOWER/100);
+        double upperThreshold = (double) MAX_NET_BANDWIDTH * ((double) SCALING_THRESHOLD_UPPER/100);
+        double lowerThreshold = (double) MAX_NET_BANDWIDTH * ((double) SCALING_THRESHOLD_LOWER/100);
 
         System.out.println("MAX Load: " + maxNetLoad + " / Avg Load: " + avgNetLoad);
         System.out.println("Up Threshold: " + upperThreshold + " / Bottom Threshold: " + lowerThreshold);

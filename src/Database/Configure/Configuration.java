@@ -39,7 +39,7 @@ public class Configuration {
     public static String FIXED_CONTROLLER_ID_1 = "192.168.200.107";
     public static String FIXED_CONTROLLER_ID_2 = "192.168.200.108";
     public static String FIXED_CONTROLLER_ID_3 = "192.168.200.109";
-    public static double MAX_NET_BANDWIDTH = 1000; // Unit: Mbps
+    public static int MAX_NET_BANDWIDTH = 1000; // Unit: Mbps
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
