@@ -33,11 +33,20 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         State state = mergeStates(targetStates);
 
+        // Balancing first
+        runBalancingOnly(state);
+
         boolean scaleInFlag = false;
         boolean scaleOutFlag = false;
 
         ControllerBean targetControllerScaleIn = null;
         ControllerBean targetControllerScaleOut = null;
+
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+        
+
     }
 
     public void runCPManMastershipAlgorithm(State state) {
@@ -99,4 +108,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
                 throw new WrongScalingLevelException();
         }
     }
+
+
 }
