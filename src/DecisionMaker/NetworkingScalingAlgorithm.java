@@ -79,6 +79,9 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
             double tmpNetLoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgNet();
 
+            // debugging code
+            System.out.println("ControllerId: " + controller.getControllerId() + " / net load: " + tmpNetLoad + " / lowestLoad: " + lowestNetLoad);
+
             if (lowestNetLoad > tmpNetLoad) {
                 result = controller;
                 lowestNetLoad = tmpNetLoad;
