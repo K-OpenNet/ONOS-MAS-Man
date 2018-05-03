@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static Database.Configure.Configuration.FILE_NAME_PREFIX;
-import static Database.Configure.Configuration.MONITORING_PERIOD;
+import static Database.Configure.Configuration.*;
+import static Database.Configure.Configuration.FIXED_CONTROLLER_ID_3;
 
 public class Controller {
 
@@ -99,8 +99,25 @@ public class Controller {
         System.out.println("** Initialization has been finished.");
     }
 
+    public static void initEnv() {
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                continue;
+            }
+        }
+
+    }
+
     // run Monitoring
     public static void runMonitoring() {
+
+        // init an experimental environment
+        // function: changeMasterControllerWithInitalState
+        // function: initEnv
+
         timeIndex = 0;
 
         ComputingResourceMonitor crMon = new ComputingResourceMonitor();
