@@ -23,6 +23,7 @@ import Utils.Parser.JsonParser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static Database.Configure.Configuration.*;
@@ -138,10 +139,20 @@ public class Controller {
     // run Monitoring
     public static void runMonitoring() {
 
-        // init an experimental environment
-        // function: changeMasterControllerWithInitalState
-        // function: initEnv
-        initEnv();
+        if (!FIN_INIT_ENV) {
+            // init an experimental environment
+            // function: changeMasterControllerWithInitalState
+            // function: initEnv
+            initEnv();
+            FIN_INIT_ENV = true;
+        }
+
+        System.out.print("Are you ready to experiment? (y/n): ");
+        Scanner sc1 = new Scanner(System.in);
+        char tmpInput = sc1.next().charAt(0);
+        if (tmpInput != 'y') {
+            return;
+        }
 
         timeIndex = 0;
 
