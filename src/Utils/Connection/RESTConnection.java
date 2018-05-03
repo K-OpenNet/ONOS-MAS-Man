@@ -20,15 +20,19 @@ public class RESTConnection extends AbstractConnection implements Connection {
 
     @Override
     public String sendCommandToUser(Bean targetMachine, String cmd) {
-        WebTarget target = connectREST(targetMachine, cmd.replace("<controllerIP>", targetMachine.getIpAddr())
-                .replace("<controllerPort>", ((ControllerBean) targetMachine).getRestPort())
-                .replace("<controllerID>", ((ControllerBean) targetMachine).getControllerId()));
-
-        Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
 
         //try catch: for debugging
         for (int index = 0; index < 5; index++) {
             try {
+
+                if (index > 0) {
+                    System.out.println("try again!");
+                }
+                WebTarget target = connectREST(targetMachine, cmd.replace("<controllerIP>", targetMachine.getIpAddr())
+                        .replace("<controllerPort>", ((ControllerBean) targetMachine).getRestPort())
+                        .replace("<controllerID>", ((ControllerBean) targetMachine).getControllerId()));
+
+                Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
                 return builder.get(String.class);
             } catch (Exception e) {
                 System.out.println("********");
