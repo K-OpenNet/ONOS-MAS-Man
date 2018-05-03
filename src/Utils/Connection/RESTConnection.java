@@ -27,14 +27,22 @@ public class RESTConnection extends AbstractConnection implements Connection {
         Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
 
         //try catch: for debugging
-        try {
-            return builder.get(String.class);
-        } catch (Exception e) {
-            System.out.println("********");
-            System.out.println(cmd);
-            System.out.println(((ControllerBean) targetMachine).getControllerId());
-            e.printStackTrace();
+        for (int index = 0; index < 5; index++) {
+            try {
+                return builder.get(String.class);
+            } catch (Exception e) {
+                System.out.println("********");
+                System.out.println(cmd);
+                System.out.println(((ControllerBean) targetMachine).getControllerId());
+                System.out.println("retry index: " + index);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
+
 
         return null;
     }
