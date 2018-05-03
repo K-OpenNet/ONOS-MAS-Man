@@ -477,8 +477,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
 
-        // Add target controller from OVS
-        addControllerToOVS(targetController, state);
+
 
         try {
             Thread.sleep(1000);
@@ -517,6 +516,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        // Add target controller from OVS
+        addControllerToOVS(targetController, state);
 
     }
 
