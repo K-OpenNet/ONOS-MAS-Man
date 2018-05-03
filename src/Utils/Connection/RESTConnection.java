@@ -29,7 +29,7 @@ public class RESTConnection extends AbstractConnection implements Connection {
         //try catch: for debugging
         try {
             return builder.get(String.class);
-        } catch (NotFoundException e) {
+        } catch (Exception e) {
             System.out.println("********");
             System.out.println(cmd);
             System.out.println(((ControllerBean) targetMachine).getControllerId());
