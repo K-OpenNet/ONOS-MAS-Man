@@ -143,6 +143,12 @@ public class Controller {
             // init an experimental environment
             // function: changeMasterControllerWithInitalState
             // function: initEnv
+            changeMasterControllerWithInitalState();
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             initEnv();
             FIN_INIT_ENV = true;
         }
