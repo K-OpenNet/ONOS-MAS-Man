@@ -107,6 +107,30 @@ public class Controller {
                     controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
                 continue;
             }
+
+            // L1 is unnecessary --> init an experimental environment will deal with it
+            State state = new State();
+            ControllerScaling scaling = new ControllerScaling();
+
+            switch (SCALING_LEVEL) {
+                case 1:
+                    break;
+                case 2:
+                    controller.setActive(false);
+                    controller.setOnosAlive(false);
+                    controller.setVmAlive(true);
+                    scaling.switchOffControllerForScaleIn(controller, state);
+                    break;
+                case 3:
+                    controller.setActive(false);
+                    controller.setOnosAlive(false);
+                    controller.setVmAlive(false);
+                    scaling.switchOffControllerForScaleIn(controller, state);
+                    scaling.switchOffVMForScaleIn(controller, state);
+                    break;
+                default:
+                    throw new InitException();
+            }
         }
 
     }
@@ -117,6 +141,7 @@ public class Controller {
         // init an experimental environment
         // function: changeMasterControllerWithInitalState
         // function: initEnv
+        initEnv();
 
         timeIndex = 0;
 
@@ -537,5 +562,14 @@ class ThreadControllerSSHSessionAssignment implements Runnable {
 
         System.out.println("The SSH sessions for the Controller, " + controller.getBeanKey() + ", has been set");
         mon.monitorCPUBitMap(controller);
+    }
+}
+
+class InitException extends RuntimeException {
+    public InitException() {
+    }
+
+    public InitException(String message) {
+        super(message);
     }
 }
