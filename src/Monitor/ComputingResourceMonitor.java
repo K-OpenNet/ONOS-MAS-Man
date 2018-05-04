@@ -101,7 +101,7 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
         HashMap<String, ComputingResourceTuple> results = new HashMap<>();
         SSHParser parser = new SSHParser();
-        
+
         for (int index = 0; index < 5; index++) {
             try {
 
@@ -147,6 +147,11 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
                 System.out.println("CR monitor exception happens: retry - " + index);
                 results.clear();
                 results = new HashMap<>();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
 
