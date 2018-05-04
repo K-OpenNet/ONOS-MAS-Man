@@ -99,43 +99,55 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
 
     public HashMap<String, ComputingResourceTuple> monitorComputingResource () {
 
-        SSHParser parser = new SSHParser();
-
         HashMap<String, ComputingResourceTuple> results = new HashMap<>();
-        ArrayList<Thread> threads = new ArrayList<>();
-        ArrayList<ThreadGetMonitoringResultForComputingResource> rawResults = new ArrayList<>();
-
-        // Initialize
-        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-
-            if(!controller.isVmAlive()) {
-                continue;
-            }
-
-            ComputingResourceTuple tmpTuple = new ComputingResourceTuple();
-            results.put(controller.getBeanKey(), tmpTuple);
-        }
-
-        for (PMBean pm : Configuration.getInstance().getPms()) {
-
-            ThreadGetMonitoringResultForComputingResource tmpRunnableObj = new ThreadGetMonitoringResultForComputingResource(pm);
-            Thread tmpThread = new Thread(tmpRunnableObj);
-            rawResults.add(tmpRunnableObj);
-            threads.add(tmpThread);
-            tmpThread.start();
-
-        }
-
-        for (Thread thread : threads) {
+        SSHParser parser = new SSHParser();
+        
+        for (int index = 0; index < 5; index++) {
             try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
-        for (ThreadGetMonitoringResultForComputingResource runnableObj : rawResults) {
-            parser.parseComputingResourceMonitoringResults(runnableObj.getResults(), runnableObj.getPm(), results);
+                ArrayList<Thread> threads = new ArrayList<>();
+                ArrayList<ThreadGetMonitoringResultForComputingResource> rawResults = new ArrayList<>();
+
+                // Initialize
+                for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+                    if(!controller.isVmAlive()) {
+                        continue;
+                    }
+
+                    ComputingResourceTuple tmpTuple = new ComputingResourceTuple();
+                    results.put(controller.getBeanKey(), tmpTuple);
+                }
+
+                for (PMBean pm : Configuration.getInstance().getPms()) {
+
+                    ThreadGetMonitoringResultForComputingResource tmpRunnableObj = new ThreadGetMonitoringResultForComputingResource(pm);
+                    Thread tmpThread = new Thread(tmpRunnableObj);
+                    rawResults.add(tmpRunnableObj);
+                    threads.add(tmpThread);
+                    tmpThread.start();
+
+                }
+
+                for (Thread thread : threads) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                for (ThreadGetMonitoringResultForComputingResource runnableObj : rawResults) {
+                    parser.parseComputingResourceMonitoringResults(runnableObj.getResults(), runnableObj.getPm(), results);
+                }
+
+                break;
+
+            } catch (Exception e) {
+                System.out.println("CR monitor exception happens: retry - " + index);
+                results.clear();
+                results = new HashMap<>();
+            }
         }
 
         return results;
