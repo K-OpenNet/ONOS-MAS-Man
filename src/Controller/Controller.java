@@ -115,6 +115,9 @@ public class Controller {
 
             switch (SCALING_LEVEL) {
                 case 1:
+                    controller.setActive(false);
+                    controller.setOnosAlive(true);
+                    controller.setVmAlive(true);
                     break;
                 case 2:
                     controller.setActive(false);
