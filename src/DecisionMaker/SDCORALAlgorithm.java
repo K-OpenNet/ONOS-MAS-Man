@@ -1,6 +1,7 @@
 package DecisionMaker;
 
 import Beans.ControllerBean;
+import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
 import Scaling.CPUScaling;
@@ -25,6 +26,35 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
 
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
+        if (currentTimeIndex == 0) {
+            return;
+        }
+
+        ArrayList<State> targetStates = new ArrayList<>();
+
+        int startPoint = currentTimeIndex - Configuration.NOSCALING_CPMAN_PERIOD + 1;
+        int endPoint = currentTimeIndex;
+
+        for (int index = startPoint; index <= endPoint; index++) {
+            targetStates.add(dbDump.get(index));
+        }
+
+        State state = mergeStates(targetStates);
+
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+
+            if (Configuration.SCALING_THRESHOLD_UPPER > tmpCPULoad) {
+                incVirtualCPUs(1, controller);
+            } else if (Configuration.SCALING_THRESHOLD_LOWER < tmpCPULoad) {
+                decVirtualCPUs(1, controller);
+            }
+        }
 
     }
 
