@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface DecisionMaker {
     enum decisionMakerType {
-        DCORAL, SCALING_CPU, SCALING_NETWORK, NOSCALING_CPMAN, NOSCALING;
+        SDCORAL, DCORAL, SCALING_CPU, SCALING_NETWORK, NOSCALING_CPMAN, NOSCALING;
     }
 
     void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump);

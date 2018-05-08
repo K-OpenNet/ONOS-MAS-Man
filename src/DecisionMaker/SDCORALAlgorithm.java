@@ -3,15 +3,14 @@ package DecisionMaker;
 import Beans.ControllerBean;
 import Database.Tables.State;
 import Mastership.CPManMastership;
-import Mastership.EqualizingMastership;
 import Scaling.CPUScaling;
 
 import java.util.ArrayList;
 
-public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
+public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
 
-    public DCORALAlgorithm() {
-        decisionMakerName = decisionMakerType.DCORAL;
+    public SDCORALAlgorithm() {
+        decisionMakerName = decisionMakerType.SDCORAL;
     }
 
     public void incVirtualCPUs (int numCPUs, ControllerBean controller) {
@@ -26,10 +25,6 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
 
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
-        if (currentTimeIndex == 0) {
-            return;
-        }
-
 
     }
 

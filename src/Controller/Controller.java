@@ -344,6 +344,9 @@ class ThreadDecisionMaker implements Runnable {
         DecisionMaker dmAlgorithm;
 
         switch(algorithmType) {
+            case SDCORAL:
+                dmAlgorithm = new SDCORALAlgorithm();
+                break;
             case DCORAL:
                 dmAlgorithm = new DCORALAlgorithm();
                 break;
