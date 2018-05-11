@@ -12,9 +12,9 @@ public class NoScalingEqualizingAlgorithm extends AbstractDecisionMaker implemen
 
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
-        EqualizingMastership mastership = new EqualizingMastership();
-        if (currentTimeIndex == 1) {
-            mastership.runMastershipAlgorithm(new State());
-        }
+//        EqualizingMastership mastership = new EqualizingMastership();
+//        if (currentTimeIndex == 1) {
+//            mastership.runMastershipAlgorithm(new State());
+//        }
     }
 }
