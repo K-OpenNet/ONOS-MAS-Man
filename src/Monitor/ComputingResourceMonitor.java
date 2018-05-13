@@ -183,7 +183,7 @@ class ThreadGetNumCPUs implements Runnable {
         SSHParser parser = new SSHParser();
 
         String rawResults = getCPUBitmapRawMonitoringResult(controller);
-        results = parser.parseCPUBitmap(rawResults, results, controller.getMaxCPUs());
+        results = parser.parseCPUBitmap(rawResults, results);
     }
 
     public String getCPUBitmapRawMonitoringResult (ControllerBean controller) {
