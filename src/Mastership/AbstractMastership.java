@@ -130,6 +130,7 @@ class ThreadChangeSingleMastership implements Runnable {
             // for retry
             try {
                 result = parser.parseMasterController(tmpResult);
+                break;
             } catch (Exception e) {
                 System.out.println("********");
                 System.out.println(url);
