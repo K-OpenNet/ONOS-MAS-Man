@@ -49,17 +49,17 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
-            if (((double) Configuration.SCALING_THRESHOLD_HIGHEST / 100) < tmpCPULoad) {
-                System.out.println(controller.getControllerId() + ": " + "scaling out 2 CPU -- " + tmpCPULoad + "%");
+            if (Configuration.SCALING_THRESHOLD_HIGHEST < tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling out 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                 incVirtualCPUs(2, controller);
-            } else if (((double) Configuration.SCALING_THRESHOLD_UPPER / 100) < tmpCPULoad) {
-                System.out.println(controller.getControllerId() + ": " + "scaling out 1 CPU -- " + tmpCPULoad + "%");
+            } else if (Configuration.SCALING_THRESHOLD_UPPER < tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling out 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                 incVirtualCPUs(1, controller);
-            } else if (((double) Configuration.SCALING_THRESHOLD_LOWER / 100) > tmpCPULoad) {
-                System.out.println(controller.getControllerId() + ": " + "scaling in 1 CPU -- " + tmpCPULoad + "%");
+            } else if (Configuration.SCALING_THRESHOLD_LOWER > tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling in 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER + " %");
                 decVirtualCPUs(1, controller);
-            } else if (((double) Configuration.SCALING_THRESHOL_LOWEST / 100) > tmpCPULoad) {
-                System.out.println(controller.getControllerId() + ": " + "scaling in 2 CPU -- " + tmpCPULoad + "%");
+            } else if (Configuration.SCALING_THRESHOL_LOWEST > tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling in 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER + " %");
                 decVirtualCPUs(2, controller);
             }
         }
