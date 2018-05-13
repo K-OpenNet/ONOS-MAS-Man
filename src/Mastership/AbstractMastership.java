@@ -107,7 +107,7 @@ class ThreadChangeSingleMastership implements Runnable {
             e.printStackTrace();
         }
 
-        for (int index = 0; index < 20; index++) {
+        for (int index = 0; index < 50; index++) {
             if (!verifyMastership(dpid, controllerId)) {
                 changeMastership(dpid, controllerId);
                 try {
@@ -117,7 +117,7 @@ class ThreadChangeSingleMastership implements Runnable {
                 }
             }
 
-            if (index == 19) {
+            if (index == 49) {
                 System.out.println("Fail to change mastership");
             }
         }
