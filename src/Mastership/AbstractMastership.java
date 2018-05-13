@@ -130,7 +130,11 @@ class ThreadChangeSingleMastership implements Runnable {
             // for retry
             try {
                 result = parser.parseMasterController(tmpResult);
-                break;
+                if (controllerId.equals(result)) {
+                    return true;
+                } else {
+                    return false;
+                }
             } catch (Exception e) {
                 System.out.println("********");
                 System.out.println(url);
@@ -144,14 +148,9 @@ class ThreadChangeSingleMastership implements Runnable {
             }
         }
 
+        return false;
 
         //System.out.println(controllerId + " -> " + result);
-
-        if (controllerId.equals(result)) {
-            return true;
-        } else {
-            return false;
-        }
-
+        
     }
 }
