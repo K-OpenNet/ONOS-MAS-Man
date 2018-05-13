@@ -49,7 +49,12 @@ public class JsonParser extends AbstractParser implements Parser {
             tmpControllerBean.setMaxCPUs(Integer.valueOf(tmpObj.get("numMaxCPU").asString()));
             tmpControllerBean.setMinCPUs(Integer.valueOf(tmpObj.get("numMinCPU").asString()));
             tmpControllerBean.setNumCPUs(Integer.valueOf(tmpObj.get("numMaxCPU").asString()));
-            tmpControllerBean.setCpuBitmap(new int[tmpControllerBean.getMaxCPUs()]);
+
+            int[] tmpControllerCPUBitMap = new int[tmpControllerBean.getMaxCPUs()];
+            for (int index1 = 0; index1 < tmpControllerBean.getMaxCPUs(); index1++) {
+                tmpControllerCPUBitMap[index1] = 0;
+            }
+            tmpControllerBean.setCpuBitmap(tmpControllerCPUBitMap);
 
             config.getControllers().add(tmpControllerBean);
         }
