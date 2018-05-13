@@ -112,7 +112,7 @@ class ThreadChangeSingleMastership implements Runnable {
                 System.out.println("Retry to change mastership");
                 changeMastership(dpid, controllerId);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
