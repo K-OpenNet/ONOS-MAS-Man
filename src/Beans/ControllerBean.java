@@ -148,7 +148,14 @@ public class ControllerBean extends AbstractBean implements Bean {
     }
 
     public int getNumCPUs() {
-        return numCPUs;
+
+        int minCPUs = 0;
+
+        for (int index = 0; index < cpuBitmap.length; index++) {
+            minCPUs++;
+        }
+
+        return minCPUs;
     }
 
     public void setNumCPUs(int numCPUs) {
