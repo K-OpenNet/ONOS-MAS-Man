@@ -91,7 +91,13 @@ public class SSHParser extends AbstractParser implements Parser {
         }
 
     }
-    public int[] parseCPUBitmap (String tmpRawResults, int[] results) {
+    public int[] parseCPUBitmap (String tmpRawResults, int[] results, int numMaxvCPUs) {
+
+        results = new int[numMaxvCPUs];
+
+        for (int index = 0; index < numMaxvCPUs; index++) {
+            results[index] = 0;
+        }
         
         String rawResults = tmpRawResults.split("\\s+")[3];
 
