@@ -51,6 +51,12 @@ public class CPUScaling extends AbstractScaling implements Scaling {
 
     public int getCPUIndexForInc (ControllerBean controller) {
 
+        System.out.print("Controller: " + controller.getControllerId() + " bitmap: ");
+        for (int index = 0; index < controller.getCpuBitmap().length; index++) {
+            System.out.print(String.valueOf(controller.getCpuBitmap()[index]) + " ");
+        }
+        System.out.println();
+
         for (int index = 0; index < controller.getCpuBitmap().length; index++) {
             if (controller.getCpuBitmap()[index] == 0) {
                 return index;
@@ -61,6 +67,12 @@ public class CPUScaling extends AbstractScaling implements Scaling {
     }
 
     public int getCPUIndexForDec (ControllerBean controller) {
+
+        System.out.print("Controller: " + controller.getControllerId() + " bitmap: ");
+        for (int index = 0; index < controller.getCpuBitmap().length; index++) {
+            System.out.print(String.valueOf(controller.getCpuBitmap()[index]) + " ");
+        }
+        System.out.println();
 
         for (int index = controller.getCpuBitmap().length - 1; index >= 0; index--) {
             if (controller.getCpuBitmap()[index] == 1) {
