@@ -169,8 +169,10 @@ class ThreadGetNumCPUs implements Runnable {
     public ThreadGetNumCPUs(ControllerBean controller) {
         this.controller = controller;
         // Initialize CPU bitmap before monitoring
+        results = new int[controller.getMaxCPUs()];
         for (int index = 0; index < controller.getMaxCPUs(); index++) {
             controller.getCpuBitmap()[index] = 0;
+            results[index] = 0;
         }
         this.results = controller.getCpuBitmap();
     }
