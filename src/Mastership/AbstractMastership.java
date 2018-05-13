@@ -108,19 +108,20 @@ class ThreadChangeSingleMastership implements Runnable {
         }
 
         for (int index = 0; index < 50; index++) {
-            if (!verifyMastership(dpid, controllerId)) {
+            boolean tmpVerify = verifyMastership(dpid, controllerId);
+            if (!tmpVerify) {
                 changeMastership(dpid, controllerId);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
-
-            if (index == 49) {
-                System.out.println("Fail to change mastership");
+            } else {
+                return;
             }
         }
+
+        System.out.println("Fail to change mastership");
     }
 
     public void changeMastership(String dpid, String controllerId) {
