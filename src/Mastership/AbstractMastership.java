@@ -36,6 +36,8 @@ abstract class AbstractMastership implements Mastership{
 
     public void changeMultipleMastership(HashMap<String, ArrayList<String>> topology) {
 
+        System.out.print("Change mastership: start --> ");
+
         ArrayList<Thread> threads = new ArrayList<>();
 
         for (String controllerId : topology.keySet()) {
@@ -52,6 +54,8 @@ abstract class AbstractMastership implements Mastership{
                 e.printStackTrace();
             }
         }
+
+        System.out.println("finished!");
     }
 }
 
@@ -151,6 +155,6 @@ class ThreadChangeSingleMastership implements Runnable {
         return false;
 
         //System.out.println(controllerId + " -> " + result);
-        
+
     }
 }
