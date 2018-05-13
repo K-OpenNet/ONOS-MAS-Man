@@ -135,6 +135,11 @@ class ThreadChangeSingleMastership implements Runnable {
                 System.out.println(url);
                 System.out.println(controllerId);
                 System.out.println("retry index: " + index);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
 
