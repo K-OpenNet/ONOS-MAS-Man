@@ -49,13 +49,13 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
-            if (Configuration.SCALING_THRESHOLD_HIGHEST > tmpCPULoad) {
+            if (((double) Configuration.SCALING_THRESHOLD_HIGHEST / 100) > tmpCPULoad) {
                 incVirtualCPUs(2, controller);
-            } else if (Configuration.SCALING_THRESHOLD_UPPER > tmpCPULoad) {
+            } else if (((double) Configuration.SCALING_THRESHOLD_UPPER / 100) > tmpCPULoad) {
                 incVirtualCPUs(1, controller);
-            } else if (Configuration.SCALING_THRESHOLD_LOWER < tmpCPULoad) {
+            } else if (((double) Configuration.SCALING_THRESHOLD_LOWER / 100) < tmpCPULoad) {
                 decVirtualCPUs(1, controller);
-            } else if (Configuration.SCALING_THRESHOL_LOWEST < tmpCPULoad) {
+            } else if (((double) Configuration.SCALING_THRESHOL_LOWEST / 100) < tmpCPULoad) {
                 decVirtualCPUs(2, controller);
             }
         }
