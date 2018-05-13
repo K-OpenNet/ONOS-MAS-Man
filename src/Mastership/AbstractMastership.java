@@ -36,7 +36,7 @@ abstract class AbstractMastership implements Mastership{
 
     public void changeMultipleMastership(HashMap<String, ArrayList<String>> topology) {
 
-        System.out.print("Change mastership: start --> ");
+        System.out.println("Change mastership: start");
 
         ArrayList<Thread> threads = new ArrayList<>();
 
@@ -55,7 +55,7 @@ abstract class AbstractMastership implements Mastership{
             }
         }
 
-        System.out.println("finished!");
+        System.out.println("Change mastership: finished");
     }
 }
 
