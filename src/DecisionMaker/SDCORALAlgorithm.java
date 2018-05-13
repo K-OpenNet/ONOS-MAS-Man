@@ -50,8 +50,11 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
             if (((double) Configuration.SCALING_THRESHOLD_UPPER / 100) > tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling out -- " + tmpCPULoad + "%");
                 incVirtualCPUs(1, controller);
             } else if (((double) Configuration.SCALING_THRESHOLD_LOWER / 100) < tmpCPULoad) {
+                System.out.println(controller.getControllerId() + ": " + "scaling in -- " + tmpCPULoad + "%");
+
                 decVirtualCPUs(1, controller);
             }
         }
