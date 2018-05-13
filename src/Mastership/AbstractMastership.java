@@ -125,7 +125,19 @@ class ThreadChangeSingleMastership implements Runnable {
         RESTConnection restConn = new RESTConnection();
         String tmpResult = restConn.sendCommandToUser(tmpControllerBean, url);
         JsonParser parser = new JsonParser();
-        String result = parser.parseMasterController(tmpResult);
+        String result = null;
+        for (int index = 0; index < 5; index++) {
+            // for retry
+            try {
+                result = parser.parseMasterController(tmpResult);
+            } catch (Exception e) {
+                System.out.println("********");
+                System.out.println(url);
+                System.out.println(controllerId);
+                System.out.println("retry index: " + index);
+            }
+        }
+
 
         //System.out.println(controllerId + " -> " + result);
 
