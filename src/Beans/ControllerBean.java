@@ -152,7 +152,11 @@ public class ControllerBean extends AbstractBean implements Bean {
         int minCPUs = 0;
 
         for (int index = 0; index < cpuBitmap.length; index++) {
-            minCPUs++;
+
+            if (cpuBitmap[index] == 1) {
+                minCPUs++;
+            }
+            
         }
 
         return minCPUs;
