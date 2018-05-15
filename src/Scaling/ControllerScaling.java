@@ -435,10 +435,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             System.out.println("CPU/Switches : " + tmpCPULoadEachSwitch + " for " + controllerId);
 
             if (dpids.size() == 0) {
-                break;
-            } else if (targetCPULoad + tmpCPULoadEachSwitch > targetAvgCPULoad) {
-                break;
-            } else if (tmpCPULoad - tmpCPULoadEachSwitch <= targetAvgCPULoad) {
                 continue;
             }
 
