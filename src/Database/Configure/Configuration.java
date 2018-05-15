@@ -66,6 +66,7 @@ public class Configuration {
     public static final String RESTURL_PREFIX = "http://<controllerIP>:<controllerPort>";
     public static final String RESTURL_GETMASTERSHIPINFO =  RESTURL_PREFIX + "/onos/v1/mastership/<controllerID>/device";
     public static final String RESTURL_DOMASTERSHIP = RESTURL_PREFIX + "/onos/v1/mastership";
+    public static final String RESTURL_DOMULTIPLEMASTERSHIP = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/mastership";
     public static final String RESTURL_CHECKMASTERSHIP = RESTURL_PREFIX + "/onos/v1/mastership/<deviceID>/role";
     public static final String RESTURL_CPMESSAGES = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/messages";
     public static final String RESTURL_DOSCALEOUT = RESTURL_PREFIX + "/onos/cpmanrt/controlmessages/scaleout/<controllerID>";

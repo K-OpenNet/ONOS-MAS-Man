@@ -1,5 +1,7 @@
 package Beans;
 
+import Database.Configure.Configuration;
+import DecisionMaker.DecisionMaker;
 import com.jcraft.jsch.Session;
 
 public class ControllerBean extends AbstractBean implements Bean {
@@ -149,17 +151,26 @@ public class ControllerBean extends AbstractBean implements Bean {
 
     public int getNumCPUs() {
 
-        int minCPUs = 0;
+        if (Configuration.DECISIONMAKER_TYPE.equals(DecisionMaker.decisionMakerType.DCORAL) ||
+                Configuration.DECISIONMAKER_TYPE.equals(DecisionMaker.decisionMakerType.SDCORAL)) {
 
-        for (int index = 0; index < cpuBitmap.length; index++) {
+            int minCPUs = 0;
 
-            if (cpuBitmap[index] == 1) {
-                minCPUs++;
+            for (int index = 0; index < cpuBitmap.length; index++) {
+
+                if (cpuBitmap[index] == 1) {
+                    minCPUs++;
+                }
+
             }
-            
+
+            return minCPUs;
+
+        } else {
+            return getMinCPUs();
         }
 
-        return minCPUs;
+
     }
 
     public void setNumCPUs(int numCPUs) {

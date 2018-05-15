@@ -2,15 +2,21 @@ package Mastership;
 
 import Beans.ControllerBean;
 import Database.Configure.Configuration;
+import Database.Tuples.MastershipTuple;
+import Monitor.MastershipMonitor;
 import Utils.Connection.RESTConnection;
 import Utils.Parser.JsonParser;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static Database.Configure.Configuration.RESTURL_CHECKMASTERSHIP;
 import static Database.Configure.Configuration.RESTURL_DOMASTERSHIP;
+import static Database.Configure.Configuration.RESTURL_DOMULTIPLEMASTERSHIP;
 
 abstract class AbstractMastership implements Mastership{
     protected mastershipType mastershipName;
@@ -36,21 +42,43 @@ abstract class AbstractMastership implements Mastership{
 
     public void changeMultipleMastership(HashMap<String, ArrayList<String>> topology) {
 
-        ArrayList<Thread> threads = new ArrayList<>();
+//        ArrayList<Thread> threads = new ArrayList<>();
+//
+//        for (String controllerId : topology.keySet()) {
+//            ThreadChangeMultipleMastership runnableObj = new ThreadChangeMultipleMastership(controllerId, topology.get(controllerId));
+//            Thread thread = new Thread(runnableObj);
+//            threads.add(thread);
+//            thread.start();
+//        }
+//
+//        for (Thread thread : threads) {
+//            try {
+//                thread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
-        for (String controllerId : topology.keySet()) {
-            ThreadChangeMultipleMastership runnableObj = new ThreadChangeMultipleMastership(controllerId, topology.get(controllerId));
-            Thread thread = new Thread(runnableObj);
-            threads.add(thread);
-            thread.start();
-        }
+//        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
+//        JsonObject rootObj = new JsonObject();
+//        rootObj.add("deviceId", dpid);
+//        rootObj.add("nodeId", tmpControllerBean.getControllerId());
+//        rootObj.add("role", "MASTER");
+//
+//        RESTConnection restConn = new RESTConnection();
+//        restConn.putCommandToUser(tmpControllerBean, RESTURL_DOMASTERSHIP, rootObj);
 
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        for (String nodeId : topology.keySet()) {
+
+            JsonObject root = new JsonObject();
+            root.add("nodeId", nodeId);
+            JsonArray dpids = new JsonArray();
+
+            for (String dpid : topology.get(nodeId)) {
+                dpids.add(dpid);
             }
+
+            root.add("dpids", dpids);
         }
 
     }
@@ -169,4 +197,56 @@ class ThreadChangeSingleMastership implements Runnable {
         //System.out.println(controllerId + " -> " + result);
 
     }
+}
+
+class ThreadMultipleMastershipChange implements Runnable {
+
+    private String nodeId;
+    private JsonObject topology;
+    private MastershipMonitor monitor;
+    private JsonParser parser;
+
+
+    public ThreadMultipleMastershipChange(String nodeId, JsonObject topology) {
+        this.nodeId = nodeId;
+        this.topology = topology;
+        monitor = new MastershipMonitor();
+        parser = new JsonParser();
+    }
+
+    @Override
+    public void run() {
+        JsonArray topologyResults = topology.get("dpids").asArray();
+        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(nodeId);
+        RESTConnection restConn = new RESTConnection();
+        restConn.putCommandToUser(tmpControllerBean, RESTURL_DOMULTIPLEMASTERSHIP, topology);
+
+        for (int retryIndex = 0; retryIndex < 5; retryIndex++) {
+            MastershipTuple mastershipResult = parser.parseMastershipMonitoringResults(monitor.monitorRawMastership(tmpControllerBean));
+
+            for (int index = 0; index < topologyResults.size(); index++) {
+                String dpid = topologyResults.get(index).asString();
+
+                if (!mastershipResult.getSwitchList().contains(dpid)) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (retryIndex == 4) {
+                        System.out.println("Failed to change mastership");
+                    }
+
+                    break;
+                }
+
+            }
+
+            break;
+
+        }
+
+    }
+
 }
