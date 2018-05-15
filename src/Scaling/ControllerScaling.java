@@ -387,9 +387,16 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 if (index == (switches.size() - 1)) {
                     otherControllers.remove(mostController);
                     estimatedOtherControllerOFMsgs.remove(mostController);
+
+                    // debugging
+                    System.out.println("Estimated OFMsgs: " + estimatedOtherControllerOFMsgs.get(mostController) + " for " + mostController.getControllerId());
                 }
             }
         }
+
+        // debugging
+        System.out.println("Estimated OFMsgs: " + targetControllerOFMsgs + " for targetController " + targetController.getControllerId());
+        System.out.println("Average target OFMsgs: " + avgOFMsgs);
 
         mastership.changeMultipleMastership(topology);
 
