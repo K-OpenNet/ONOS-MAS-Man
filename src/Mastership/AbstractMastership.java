@@ -228,6 +228,23 @@ class ThreadMultipleMastershipChangeNew implements Runnable {
         ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(nodeId);
         RESTConnection restConn = new RESTConnection();
         restConn.postCommandToUser(tmpControllerBean, RESTURL_DOMULTIPLEMASTERSHIP, topology);
+
+        for (int retryIndex = 0; retryIndex < 20; retryIndex++) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            MastershipTuple mastershipResult = parser.parseMastershipMonitoringResults(monitor.monitorRawMastership(tmpControllerBean));
+
+                for (int index = 0; index < topologyResults.size(); index++) {
+                    String dpid = topologyResults.get(index).asString();
+
+                    if (!mastershipResult.getSwitchList().contains(dpid)) {
+                        break;
+                    }
+                }
+        }
 //
 //        for (int retryIndex = 0; retryIndex < 5; retryIndex++) {
 //            MastershipTuple mastershipResult = parser.parseMastershipMonitoringResults(monitor.monitorRawMastership(tmpControllerBean));
