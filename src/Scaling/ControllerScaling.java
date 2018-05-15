@@ -418,6 +418,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             tmpActiveControllers.remove(tmpController);
         }
 
+        sortedControllers.remove(targetController);
+
         double targetAvgCPULoad = averageCPUloadWithTargetController(state, targetController);
         double targetCPULoad = state.getComputingResourceTuples().get(targetController.getControllerId()).avgCpuUsage();
         double targetCPUNormalizeFactor = 40/targetController.getNumCPUs();
@@ -447,7 +449,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 }
             }
 
+            // debugging
+            System.out.println("Estimated CPU Load: " + tmpCPULoad + " for " + controllerId);
+
         }
+
+        // debugging
+        System.out.println("Estimated CPU Load: " + targetCPULoad + " for targetController, " + targetController.getControllerId());
+        System.out.println("Average target CPU Load: " + targetAvgCPULoad);
 
         // debugging code
         System.out.println("Topology");
