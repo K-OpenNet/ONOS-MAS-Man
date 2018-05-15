@@ -418,7 +418,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             tmpActiveControllers.remove(tmpController);
         }
 
-        sortedControllers.remove(targetController);
+        sortedControllers.remove(targetController.getControllerId());
 
         double targetAvgCPULoad = averageCPUloadWithTargetController(state, targetController);
         double targetCPULoad = state.getComputingResourceTuples().get(targetController.getControllerId()).avgCpuUsage();
