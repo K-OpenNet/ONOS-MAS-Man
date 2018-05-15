@@ -150,11 +150,20 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 //    }
 
 
-    public double sumCPULoadAllControllers(State state) {
+    public double sumCPULoadAllControllers(State state, ArrayList<ControllerBean> activeControllers) {
         double result = 0.0;
 
+//        CPManMastership mastership = new CPManMastership();
+//        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+//
+//        for (ControllerBean controller : activeControllers) {
+//            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+//            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+//            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+//            result += tmpCPULoad;
+//        }
+
         CPManMastership mastership = new CPManMastership();
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
 
         for (ControllerBean controller : activeControllers) {
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
@@ -163,29 +172,37 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             result += tmpCPULoad;
         }
 
-            return result;
+
+        return result;
     }
 
-    public double averageCPUloadWithoutTargetController(State state) {
+    public double averageCPUloadWithoutTargetController(State state, ControllerBean targetController) {
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        int numActiveControllers = activeControllers.size();
-        numActiveControllers--;
+        ControllerBean tmpTargetController = null;
+        for (ControllerBean controller : activeControllers) {
+            if (controller.getControllerId().equals(targetController)) {
+                tmpTargetController = controller;
+            }
+        }
 
-        double result = sumCPULoadAllControllers(state);
+        if (tmpTargetController != null) {
+            activeControllers.remove(tmpTargetController);
+        }
 
-        return result/numActiveControllers;
+        double result = sumCPULoadAllControllers(state, activeControllers);
+
+        return result/activeControllers.size();
     }
 
-    public double averageCPUloadWithTargetController(State state) {
+    public double averageCPUloadWithTargetController(State state, ControllerBean targetController) {
         CPManMastership mastership = new CPManMastership();
         ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        int numActiveControllers = activeControllers.size();
-        numActiveControllers++;
+        activeControllers.add(targetController);
 
-        double result = sumCPULoadAllControllers(state);
+        double result = sumCPULoadAllControllers(state, activeControllers);
 
-        return result/numActiveControllers;
+        return result/activeControllers.size();
     }
 
     public ControllerBean getLowestCPULoadController (State state, ArrayList<ControllerBean> activeControllers, HashMap<ControllerBean, Double> additionalCPULoads) {
@@ -241,7 +258,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             additionalCPULoads.put(controller, 0.0);
         }
 
-        double averageCPULoads = averageCPUloadWithoutTargetController(state);
+        double averageCPULoads = averageCPUloadWithoutTargetController(state, targetController);
         double cpuLoadsTargetController = state.getComputingResourceTuples().get(targetController.getBeanKey()).avgCpuUsage();
         double cpuNoarmalizeFactor = 40/targetController.getNumCPUs();
         cpuLoadsTargetController = cpuLoadsTargetController * cpuNoarmalizeFactor;
@@ -400,7 +417,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             tmpActiveControllers.remove(tmpController);
         }
 
-        double targetAvgCPULoad = averageCPUloadWithTargetController(state);
+        double targetAvgCPULoad = averageCPUloadWithTargetController(state, targetController);
         double targetCPULoad = state.getComputingResourceTuples().get(targetController.getControllerId()).avgCpuUsage();
         double targetCPUNormalizeFactor = 40/targetController.getNumCPUs();
         targetCPULoad = targetCPUNormalizeFactor * targetCPULoad;
