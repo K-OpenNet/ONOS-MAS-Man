@@ -59,14 +59,7 @@ abstract class AbstractMastership implements Mastership{
 //            }
 //        }
 
-//        ControllerBean tmpControllerBean = Configuration.getInstance().getControllerBeanWithId(controllerId);
-//        JsonObject rootObj = new JsonObject();
-//        rootObj.add("deviceId", dpid);
-//        rootObj.add("nodeId", tmpControllerBean.getControllerId());
-//        rootObj.add("role", "MASTER");
-//
-//        RESTConnection restConn = new RESTConnection();
-//        restConn.putCommandToUser(tmpControllerBean, RESTURL_DOMASTERSHIP, rootObj);
+        ArrayList<Thread> threads = new ArrayList<>();
 
         for (String nodeId : topology.keySet()) {
 
@@ -79,7 +72,22 @@ abstract class AbstractMastership implements Mastership{
             }
 
             root.add("dpids", dpids);
+
+            ThreadMultipleMastershipChangeNew runnableObj = new ThreadMultipleMastershipChangeNew(nodeId, root);
+            Thread thread = new Thread(runnableObj);
+            threads.add(thread);
+            thread.start();
         }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
 
     }
 }
@@ -199,7 +207,7 @@ class ThreadChangeSingleMastership implements Runnable {
     }
 }
 
-class ThreadMultipleMastershipChange implements Runnable {
+class ThreadMultipleMastershipChangeNew implements Runnable {
 
     private String nodeId;
     private JsonObject topology;
@@ -207,7 +215,7 @@ class ThreadMultipleMastershipChange implements Runnable {
     private JsonParser parser;
 
 
-    public ThreadMultipleMastershipChange(String nodeId, JsonObject topology) {
+    public ThreadMultipleMastershipChangeNew(String nodeId, JsonObject topology) {
         this.nodeId = nodeId;
         this.topology = topology;
         monitor = new MastershipMonitor();
