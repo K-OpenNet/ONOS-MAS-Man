@@ -61,6 +61,16 @@ public class RESTConnection extends AbstractConnection implements Connection {
         Response response = builder.put(Entity.entity(json.toString(), MediaType.APPLICATION_JSON));
     }
 
+    public void postCommandToUser(Bean targetMachine, String cmd, JsonObject json) {
+        WebTarget target = connectREST(targetMachine, cmd.replace("<controllerIP>", targetMachine.getIpAddr())
+                .replace("<controllerPort>", ((ControllerBean) targetMachine).getRestPort())
+                .replace("<controllerID>", ((ControllerBean) targetMachine).getControllerId()));
+
+        Invocation.Builder builder = target.request(MediaType.APPLICATION_JSON);
+
+        Response response = builder.post(Entity.entity(json.toString(), MediaType.APPLICATION_JSON));
+    }
+
     @Override
     public String sendCommandToRoot(Bean targetMachine, String cmd) {
         System.out.println("Warning: sendCommandToUser and sendCommandToRoot are the same function. Please use the former one");
