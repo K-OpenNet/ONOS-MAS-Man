@@ -306,6 +306,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
 
         // debugging code
+        System.out.println("CPU/switches: " + cpuLoadEachSwitch);
         System.out.println("Topology");
         for (String controllerId : topology.keySet()) {
             System.out.print(controllerId + ": ");
@@ -429,6 +430,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBeanWithId(controllerId).getNumCPUs();
             tmpCPULoad = tmpCPUNormalizeFactor * tmpCPULoad;
             double tmpCPULoadEachSwitch = tmpCPULoad/dpids.size();
+
+            // debugging
+            System.out.println("CPU/Switches : " + tmpCPULoadEachSwitch + " for " + controllerId);
 
             if (dpids.size() == 0) {
                 break;
