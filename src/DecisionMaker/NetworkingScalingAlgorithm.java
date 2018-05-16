@@ -93,13 +93,28 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
     public ControllerBean getTargetControllerForScaleOut() {
 
+        ControllerBean lastController = null;
+
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEOUT_CONTROLLER)) {
+                if (controller.isActive() == false) {
+                    lastController = controller;
+                }
+                continue;
+            }
+
             if (controller.isActive() == false) {
+                LAST_SCALEOUT_CONTROLLER = controller.getControllerId();
                 return controller;
             }
         }
 
-        throw new NullPointerException();
+        if (lastController == null) {
+            throw new WrongScalingNumberControllers();
+        }
+
+        return lastController;
     }
 
     public double getTotalNetworkLoad(State state, ArrayList<ControllerBean> activeControllers) {
