@@ -88,6 +88,7 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
             }
         }
 
+        LAST_SCALEIN_CONTROLLER = result.getControllerId();
         return result;
     }
 
@@ -97,7 +98,7 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
-            if (controller.getControllerId().equals(Configuration.LAST_SCALEOUT_CONTROLLER)) {
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
                 if (controller.isActive() == false) {
                     lastController = controller;
                 }
@@ -105,7 +106,6 @@ public class NetworkingScalingAlgorithm extends AbstractDecisionMaker implements
             }
 
             if (controller.isActive() == false) {
-                LAST_SCALEOUT_CONTROLLER = controller.getControllerId();
                 return controller;
             }
         }

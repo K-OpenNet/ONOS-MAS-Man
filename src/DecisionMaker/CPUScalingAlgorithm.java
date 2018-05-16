@@ -114,6 +114,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         } else if (scaleInFlag) {
             // decision making: does it need to scale in?
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
+            LAST_SCALEIN_CONTROLLER = targetControllerScaleIn.getControllerId();
             runScaleIn(targetControllerScaleIn, state);
         } else {
             // decision making: does it need to balance switch, only?
@@ -297,7 +298,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
-            if (controller.getControllerId().equals(Configuration.LAST_SCALEOUT_CONTROLLER)) {
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
                 if (controller.isActive() == false) {
                     lastController = controller;
                 }
@@ -305,7 +306,6 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
 
             if (controller.isActive() == false) {
-                LAST_SCALEOUT_CONTROLLER = controller.getControllerId();
                 return controller;
             }
         }
