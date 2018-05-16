@@ -109,12 +109,15 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         if (scaleOutFlag) {
             // decision making: does it need to scale out?
+            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
             runScaleOut(targetControllerScaleOut, state);
         } else if (scaleInFlag) {
             // decision making: does it need to scale in?
+            System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId() + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
             runScaleIn(targetControllerScaleIn, state);
         } else {
             // decision making: does it need to balance switch, only?
+            System.out.println("Balancing only");
             runBalancingOnly(state);
         }
 
