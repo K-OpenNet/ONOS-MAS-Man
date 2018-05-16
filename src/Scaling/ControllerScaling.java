@@ -385,11 +385,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
                 }
 
                 if (index == (switches.size() - 1)) {
-                    otherControllers.remove(mostController);
-                    estimatedOtherControllerOFMsgs.remove(mostController);
-
                     // debugging
                     System.out.println("Estimated OFMsgs: " + estimatedOtherControllerOFMsgs.get(mostController) + " for " + mostController.getControllerId());
+
+                    otherControllers.remove(mostController);
+                    estimatedOtherControllerOFMsgs.remove(mostController);
                 }
             }
         }
