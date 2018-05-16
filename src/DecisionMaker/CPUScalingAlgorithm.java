@@ -293,9 +293,14 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
     public ControllerBean getTargetControllerForScaleOut() {
 
+        ControllerBean lastController = null;
+
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
             if (controller.getControllerId().equals(Configuration.LAST_SCALEOUT_CONTROLLER)) {
+                if (controller.isActive() == false) {
+                    lastController = controller;
+                }
                 continue;
             }
 
@@ -305,7 +310,11 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
         }
 
-        throw new WrongScalingNumberControllers();
+        if (lastController == null) {
+            throw new WrongScalingNumberControllers();
+        }
+
+        return lastController;
     }
 
     public void runScaleOut(ControllerBean targetController, State state) {
