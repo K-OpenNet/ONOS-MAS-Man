@@ -434,20 +434,27 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         for (String controllerId : sortedControllers) {
 
-            ArrayList<String> dpids = state.getMastershipTuples().get(controllerId).getSwitchList();
+            //ArrayList<String> dpids = state.getMastershipTuples().get(controllerId).getSwitchList();
+            ArrayList<String> dpids = mastership.getSortedSwitchList(Configuration.getInstance().getControllerBeanWithId(controllerId), state);
             double tmpCPULoad = state.getComputingResourceTuples().get(controllerId).avgCpuUsage();
             double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBeanWithId(controllerId).getNumCPUs();
             tmpCPULoad = tmpCPUNormalizeFactor * tmpCPULoad;
-            double tmpCPULoadEachSwitch = tmpCPULoad/dpids.size();
 
             // debugging
-            System.out.println("CPU/Switches : " + tmpCPULoadEachSwitch + " for " + controllerId);
+            //System.out.println("CPU/Switches : " + tmpCPULoadEachSwitch + " for " + controllerId);
 
             if (dpids.size() == 0) {
                 continue;
             }
 
+            double tmpTotalControllerOFMsgs = (double) mastership.getNumOFMsgsForSingleController(Configuration.getInstance().getControllerBeanWithId(controllerId), state);
+
             for (String dpid : dpids) {
+
+                double tmpSwitchOFMsgs = (double) mastership.getNumOFMsgsForSingleSwitchInMasterController(Configuration.getInstance().getControllerBeanWithId(controllerId), dpid, state);
+                double tmpFraction = tmpSwitchOFMsgs / tmpTotalControllerOFMsgs;
+                double tmpCPULoadEachSwitch = tmpCPULoad * tmpFraction;
+
                 if (tmpCPULoad - tmpCPULoadEachSwitch > targetAvgCPULoad &&
                         targetCPULoad + tmpCPULoadEachSwitch <= targetAvgCPULoad) {
                     targetCPULoad += tmpCPULoadEachSwitch;
