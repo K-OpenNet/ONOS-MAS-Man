@@ -294,7 +294,13 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
     public ControllerBean getTargetControllerForScaleOut() {
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEOUT_CONTROLLER)) {
+                continue;
+            }
+
             if (controller.isActive() == false) {
+                LAST_SCALEOUT_CONTROLLER = controller.getControllerId();
                 return controller;
             }
         }
