@@ -52,6 +52,7 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
             if (!controller.isVmAlive()) {
+                results.put(controller.getBeanKey(), controller.getMinCPUs());
                 continue;
             }
 
