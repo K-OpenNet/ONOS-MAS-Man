@@ -111,9 +111,9 @@ public class ComputingResourceMonitor extends AbstractMonitor implements Monitor
                 // Initialize
                 for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
-                    if(!controller.isVmAlive()) {
-                        continue;
-                    }
+//                    if(!controller.isVmAlive()) {
+//                        continue;
+//                    }
 
                     ComputingResourceTuple tmpTuple = new ComputingResourceTuple();
                     results.put(controller.getBeanKey(), tmpTuple);
