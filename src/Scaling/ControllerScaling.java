@@ -550,11 +550,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 //            e.printStackTrace();
 //        }
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         // Add target controller from OVS
         addControllerToOVS(targetController, state);
@@ -584,103 +584,103 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         sshConn.sendCommandToUser(pm, cmd);
 
         try {
-            Thread.sleep(6000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void removeControllerToOVS(ControllerBean targetController, State state) {
-        ArrayList<PMBean> mininetMachines = new ArrayList<>();
-        CPManMastership mastership = new CPManMastership();
-        SSHConnection sshConn = new SSHConnection();
-
-        for (int index = 1; index <= NUM_MININET_MACHINE; index++) {
-            String tmpIp = "192.168.200.20" + String.valueOf(index);
-            mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
-        }
-
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        activeControllers.remove(targetController);
-        String controllerLists = " ";
-
-        for (ControllerBean controller : activeControllers) {
-            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
-            controllerLists = controllerLists + tmpController + " ";
-        }
-
-        String cmd = CMD_SET_CONTROLLER.replace("<controllerIDs>", controllerLists);
-        ArrayList<Thread> threads = new ArrayList<>();
-
-
-        for (PMBean mininetPM : mininetMachines) {
-            String totalCmd = " ";
-            ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
-            for (MininetBean sw : swes) {
-                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
-            }
-            totalCmd = totalCmd + "echo end";
-
-            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
-            Thread thread = new Thread(runObj);
-            threads.add(thread);
-            thread.start();
-        }
-
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        ArrayList<PMBean> mininetMachines = new ArrayList<>();
+//        CPManMastership mastership = new CPManMastership();
+//        SSHConnection sshConn = new SSHConnection();
+//
+//        for (int index = 1; index <= NUM_MININET_MACHINE; index++) {
+//            String tmpIp = "192.168.200.20" + String.valueOf(index);
+//            mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
+//        }
+//
+//        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+//        activeControllers.remove(targetController);
+//        String controllerLists = " ";
+//
+//        for (ControllerBean controller : activeControllers) {
+//            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
+//            controllerLists = controllerLists + tmpController + " ";
+//        }
+//
+//        String cmd = CMD_SET_CONTROLLER.replace("<controllerIDs>", controllerLists);
+//        ArrayList<Thread> threads = new ArrayList<>();
+//
+//
+//        for (PMBean mininetPM : mininetMachines) {
+//            String totalCmd = " ";
+//            ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
+//            for (MininetBean sw : swes) {
+//                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
+//            }
+//            totalCmd = totalCmd + "echo end";
+//
+//            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
+//            Thread thread = new Thread(runObj);
+//            threads.add(thread);
+//            thread.start();
+//        }
+//
+//        for (Thread thread : threads) {
+//            try {
+//                thread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
 
     }
 
     public void addControllerToOVS(ControllerBean targetController, State state) {
-        ArrayList<PMBean> mininetMachines = new ArrayList<>();
-        CPManMastership mastership = new CPManMastership();
-        SSHConnection sshConn = new SSHConnection();
-
-        for (int index = 1; index <= NUM_MININET_MACHINE; index++) {
-            String tmpIp = "192.168.200.20" + String.valueOf(index);
-            mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
-        }
-
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
-        activeControllers.add(targetController);
-        String controllerLists = " ";
-
-        for (ControllerBean controller : activeControllers) {
-            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
-            controllerLists = controllerLists + tmpController + " ";
-        }
-
-        String cmd = CMD_SET_CONTROLLER.replace("<controllerIDs>", controllerLists);
-        ArrayList<Thread> threads = new ArrayList<>();
-
-        for (PMBean mininetPM : mininetMachines) {
-            String totalCmd = " ";
-            ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
-            for (MininetBean sw : swes) {
-                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
-            }
-            totalCmd = totalCmd + "echo end";
-
-            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
-            Thread thread = new Thread(runObj);
-            threads.add(thread);
-            thread.start();
-        }
-
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        ArrayList<PMBean> mininetMachines = new ArrayList<>();
+//        CPManMastership mastership = new CPManMastership();
+//        SSHConnection sshConn = new SSHConnection();
+//
+//        for (int index = 1; index <= NUM_MININET_MACHINE; index++) {
+//            String tmpIp = "192.168.200.20" + String.valueOf(index);
+//            mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
+//        }
+//
+//        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+//        activeControllers.add(targetController);
+//        String controllerLists = " ";
+//
+//        for (ControllerBean controller : activeControllers) {
+//            String tmpController = "tcp:" + controller.getControllerId() + ":6653";
+//            controllerLists = controllerLists + tmpController + " ";
+//        }
+//
+//        String cmd = CMD_SET_CONTROLLER.replace("<controllerIDs>", controllerLists);
+//        ArrayList<Thread> threads = new ArrayList<>();
+//
+//        for (PMBean mininetPM : mininetMachines) {
+//            String totalCmd = " ";
+//            ArrayList<MininetBean> swes = Configuration.getInstance().getMininets().get(mininetPM.getIpAddr());
+//            for (MininetBean sw : swes) {
+//                totalCmd = totalCmd + cmd.replace("<switchID>", sw.getId()) + "&&";
+//            }
+//            totalCmd = totalCmd + "echo end";
+//
+//            ThreadRunRootSSH runObj = new ThreadRunRootSSH(totalCmd, mininetPM);
+//            Thread thread = new Thread(runObj);
+//            threads.add(thread);
+//            thread.start();
+//        }
+//
+//        for (Thread thread : threads) {
+//            try {
+//                thread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
 
     }
