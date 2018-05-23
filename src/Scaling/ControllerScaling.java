@@ -551,7 +551,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 //        }
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -560,7 +560,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         addControllerToOVS(targetController, state);
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
