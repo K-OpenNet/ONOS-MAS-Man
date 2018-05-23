@@ -523,14 +523,6 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
     public void switchOnControllerForScaleOut(ControllerBean targetController, State state) {
 
-
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         PMBean pm = Configuration.getInstance().getPMBean(DEV_MACHINE_IP_ADDR);
 
         RESTConnection restConn = new RESTConnection();
@@ -539,7 +531,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String serviceStartCMD = CMD_ONOS_SERVICE_START.replace("<controllerID>", targetController.getControllerId());
         String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStartCMD);
-        System.out.println(sshConn.sendCommandToUser(pm, checkServiceCMD));
+        sshConn.sendCommandToUser(pm, checkServiceCMD);
+        System.out.println("ON!");
 
 //        String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
 //        try {
@@ -557,14 +550,14 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 //            e.printStackTrace();
 //        }
 
+        // Add target controller from OVS
+        addControllerToOVS(targetController, state);
+
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        // Add target controller from OVS
-        addControllerToOVS(targetController, state);
 
     }
 
