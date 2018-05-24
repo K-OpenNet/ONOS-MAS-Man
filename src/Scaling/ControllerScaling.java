@@ -169,6 +169,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
             result += tmpCPULoad;
         }
 
@@ -215,6 +220,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getControllerId()).avgCpuUsage();
             tmpCPULoad = tmpCPULoad * tmpCPUNormalizeFactor;
             tmpCPULoad = tmpCPULoad + additionalCPULoads.get(controller);
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
             if (resultController == null || minCPULoads > tmpCPULoad) {
                 resultController = controller;
                 minCPULoads = tmpCPULoad;
@@ -233,6 +241,9 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPUNormalizeFactor = 40/controller.getNumCPUs();
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getControllerId()).avgCpuUsage();
             tmpCPULoad = tmpCPULoad * tmpCPUNormalizeFactor;
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
             tmpCPULoad = tmpCPULoad - removedCPULoads.get(controller);
             if (resultController == null || maxCPULoads < tmpCPULoad) {
                 resultController = controller;
@@ -270,6 +281,10 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPULoads = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double tmpCPUNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoads = tmpCPUNormalizeFactor * tmpCPULoads;
+
+            if (tmpCPULoads > 100.0) {
+                tmpCPULoads = 100;
+            }
 
             if (dpids.size() == 0) {
                 break;
@@ -438,6 +453,10 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         double targetCPUNormalizeFactor = 40/targetController.getNumCPUs();
         targetCPULoad = targetCPUNormalizeFactor * targetCPULoad;
 
+        if (targetCPULoad > 100.0) {
+            targetCPULoad = 100;
+        }
+
         for (String controllerId : sortedControllers) {
 
             //ArrayList<String> dpids = state.getMastershipTuples().get(controllerId).getSwitchList();
@@ -445,6 +464,10 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             double tmpCPULoad = state.getComputingResourceTuples().get(controllerId).avgCpuUsage();
             double tmpCPUNormalizeFactor = 40/Configuration.getInstance().getControllerBeanWithId(controllerId).getNumCPUs();
             tmpCPULoad = tmpCPUNormalizeFactor * tmpCPULoad;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
 
             // debugging
             //System.out.println("CPU/Switches : " + tmpCPULoadEachSwitch + " for " + controllerId);

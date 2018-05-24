@@ -49,6 +49,10 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
             if (Configuration.SCALING_THRESHOLD_UPPER < tmpCPULoad) {
 
                 if (controller.getNumCPUs() < 18) {

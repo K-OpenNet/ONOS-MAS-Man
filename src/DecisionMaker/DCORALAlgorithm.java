@@ -49,6 +49,10 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
             if (Configuration.SCALING_THRESHOLD_HIGHEST < tmpCPULoad) {
                 if (controller.getNumCPUs() < 17) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");

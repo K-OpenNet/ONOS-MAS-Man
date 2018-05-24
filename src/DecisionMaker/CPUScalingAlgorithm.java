@@ -55,6 +55,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
 
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
             //debugging code
             System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
 
@@ -76,6 +80,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
 
             //debugging code
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
@@ -146,6 +154,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
             int numSwitches = state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
 
             double tmpCPULoadEachSwitch = 0;
             if (numSwitches != 0) {
@@ -286,6 +298,11 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
             result += tmpCPULoad;
         }
 
