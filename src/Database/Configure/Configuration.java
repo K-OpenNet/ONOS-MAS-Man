@@ -21,6 +21,7 @@ public class Configuration {
         relationships = new HashMap<>();
         mininets = new HashMap<>();
         mininetMachines = new HashMap<>();
+        switches = new ArrayList<>();
     }
 
     // System variables
@@ -82,6 +83,7 @@ public class Configuration {
     private HashMap<PMBean, ArrayList<ControllerBean>> relationships;
     private HashMap<String, ArrayList<MininetBean>> mininets;
     private HashMap<String, PMBean> mininetMachines;
+    private ArrayList<String> switches;
 
     public ControllerBean getControllerBean (String name) {
         for (int index = 0; index < controllers.size(); index++) {
@@ -211,5 +213,13 @@ public class Configuration {
 
     public void setRelationships(HashMap<PMBean, ArrayList<ControllerBean>> relationships) {
         this.relationships = relationships;
+    }
+
+    public ArrayList<String> getSwitches() {
+        return switches;
+    }
+
+    public void setSwitches(ArrayList<String> switches) {
+        this.switches = switches;
     }
 }

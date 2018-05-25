@@ -107,6 +107,7 @@ public class JsonParser extends AbstractParser implements Parser {
                 String dpid = switches.get(index2).asObject().get("dpid").asString();
                 String id = switches.get(index2).asObject().get("id").asString();
                 config.getMininets().get(mininetIp).add(new MininetBean(dpid, id));
+                config.getSwitches().add(dpid);
             }
 
             PMBean pm = new PMBean(mininetIp);
