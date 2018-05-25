@@ -578,20 +578,20 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         // Add target controller from OVS
         addControllerToOVS(targetController, state);
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -611,11 +611,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String cmd = CMD_RESUME_VM.replace("<controllerName>", targetController.getName());
         sshConn.sendCommandToUser(pm, cmd);
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void removeControllerToOVS(ControllerBean targetController, State state) {
