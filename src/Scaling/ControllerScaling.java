@@ -587,11 +587,11 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         // Add target controller from OVS
         addControllerToOVS(targetController, state);
 
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
