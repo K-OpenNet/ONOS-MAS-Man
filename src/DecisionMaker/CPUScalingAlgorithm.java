@@ -76,6 +76,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         // check scaling in next
+        int numTargetScaleInControllers = 0;
         for (ControllerBean controller : activeControllers) {
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizingFactor = 40 / controller.getNumCPUs();
@@ -96,9 +97,14 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
             if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
                 targetControllerScaleIn = controller;
-                scaleInFlag = true;
-                break;
+                numTargetScaleInControllers++;
+                //scaleInFlag = true;
+                //break;
             }
+        }
+
+        if (numTargetScaleInControllers > 1) {
+            scaleInFlag = true;
         }
 
 
