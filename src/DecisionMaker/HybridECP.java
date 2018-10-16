@@ -6,6 +6,11 @@ import Database.Tables.State;
 import java.util.ArrayList;
 
 public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
+
+    public HybridECP() {
+        decisionMakerName = decisionMakerType.HECP;
+    }
+
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
 

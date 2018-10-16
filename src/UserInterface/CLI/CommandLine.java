@@ -301,6 +301,7 @@ public class CommandLine {
         System.out.println("3: Scaling considering with Networking");
         System.out.println("4: No Scaling with CPMan");
         System.out.println("5: SDCORAL");
+        System.out.println("6: HECP");
         System.out.print("Choose one of algorithms: ");
         int algorithm = sc1.nextInt();
         switch(algorithm) {
@@ -321,6 +322,9 @@ public class CommandLine {
                 break;
             case 5:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.SDCORAL;
+                break;
+            case 6:
+                DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.HECP;
                 break;
             default:
                 DECISIONMAKER_TYPE = DecisionMaker.decisionMakerType.NOSCALING_CPMAN;
