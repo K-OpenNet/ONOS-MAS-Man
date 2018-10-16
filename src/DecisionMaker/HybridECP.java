@@ -28,5 +28,8 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         }
 
         State state = mergeStates(targetStates);
+
+        // debug code
+        System.out.println("Run H-ECP");
     }
 }
