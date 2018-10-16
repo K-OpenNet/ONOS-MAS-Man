@@ -45,6 +45,7 @@ public class Configuration {
     public static int MAX_NET_BANDWIDTH = 70; // Unit: Mbps
     public static boolean FIN_INIT_ENV = false;
     public static String LAST_SCALEIN_CONTROLLER = "192.168.200.102";
+    public static int NUM_STANDBY_CONTROLLER = 0;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";

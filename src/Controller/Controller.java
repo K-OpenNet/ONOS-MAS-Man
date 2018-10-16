@@ -102,10 +102,19 @@ public class Controller {
 
     public static void initEnv() {
 
+        int numStandbyControllersBeingUsed = 0;
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
             if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
                     controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
                     controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                continue;
+            }
+
+            if (DECISIONMAKER_TYPE == DecisionMaker.decisionMakerType.HECP && numStandbyControllersBeingUsed < NUM_STANDBY_CONTROLLER) {
+                numStandbyControllersBeingUsed++;
+                controller.setActive(false);
+                controller.setOnosAlive(true);
+                controller.setVmAlive(true);
                 continue;
             }
 
@@ -362,6 +371,8 @@ class ThreadDecisionMaker implements Runnable {
             case NOSCALING:
                 dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
+            case HECP:
+                dmAlgorithm = new HybridECP();
             default:
                 dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
