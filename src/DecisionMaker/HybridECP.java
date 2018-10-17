@@ -29,7 +29,19 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         }
 
         State state = mergeStates(targetStates);
-        
+
+    }
+
+    public void runLane1Algorithm() {
+
+    }
+
+    public void runLane2Algorithm() {
+
+    }
+
+    public void runCPULoadMastershipAlgorithm(State state) {
+
     }
 
     public ArrayList<ControllerBean> getActiveControllers() {
