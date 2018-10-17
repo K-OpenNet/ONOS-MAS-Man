@@ -34,6 +34,9 @@ public class Controller {
     private static int timeIndex;
     public static ReentrantLock lock = new ReentrantLock();
 
+    public static ReentrantLock hecpL1Lock = new ReentrantLock();
+    public static ReentrantLock hecpL2Lock = new ReentrantLock();
+
     private static Controller ourInstance = new Controller();
 
     public static Controller getInstance() {
