@@ -50,18 +50,80 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
     }
 
     public void runLane1Algorithm(State state) {
-        System.out.println("Start L1 algorithm");
+        System.out.println("*** Start L1 algorithm");
+
+        System.out.println("*** End L1 algorithm");
     }
 
     public void runLane2Algorithm(State state) {
-        System.out.println("Start L2 algorithm");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        System.out.println("*** Start L2 algorithm");
+        int currentNumStandbyControllers = getNumStandbyControllers();
+        int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
+        if (diffNumStandbyControllers > 0) {
+            System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
+            switchOnMultipleControllers(diffNumStandbyControllers);
+        } else if (diffNumStandbyControllers < 0) {
+            System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
+            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers));
+        } else {
+            System.out.println("*** L2: No need to power on/off controllers");
         }
-        System.out.println("End L2 algorithm");
+
+        System.out.println("*** End L2 algorithm");
     }
+
+    public void switchOnMultipleControllers(int numTargetControllers) {
+        ArrayList<ControllerBean> targetControllersSwitchOn = getTargetControllerSwitchOn(numTargetControllers);
+    }
+
+    public void switchOffMultipleControllers(int numTargetControllers) {
+        ArrayList<ControllerBean> targetControllersSwitchOff = getTargetControllerSwitchOff(numTargetControllers);
+    }
+
+    public ArrayList<ControllerBean> getTargetControllerSwitchOn (int numTargetControllers) {
+        ArrayList<ControllerBean> targetControllers = new ArrayList<>();
+
+        int maxNumber = Configuration.getInstance().getControllers().size();
+        int numActiveControllers = getNumActiveControllers();
+        int numStandbyControllers = getNumStandbyControllers();
+
+        if (maxNumber >= numActiveControllers + numStandbyControllers + numTargetControllers) {
+            for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+                if (!controller.isVmAlive()) {
+                    targetControllers.add(controller);
+                }
+            }
+        } else {
+            int tmpNumTargetController = 0;
+            for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+                if (!controller.isVmAlive()) {
+                    targetControllers.add(controller);
+                    tmpNumTargetController++;
+                    if (tmpNumTargetController == numTargetControllers) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return targetControllers;
+    }
+
+    public ArrayList<ControllerBean> getTargetControllerSwitchOff (int numTargetControllers) {
+        ArrayList<ControllerBean> targetControllers = new ArrayList<>();
+
+        int tmpNumTargetController = 0;
+        for (ControllerBean controller : getStandByControllers()) {
+            targetControllers.add(controller);
+            tmpNumTargetController++;
+            if (tmpNumTargetController == numTargetControllers) {
+                break;
+            }
+        }
+
+        return targetControllers;
+    }
+
 
     public void runCPULoadMastershipAlgorithm(State state) {
         CPUScalingAlgorithm scaling = new CPUScalingAlgorithm();
