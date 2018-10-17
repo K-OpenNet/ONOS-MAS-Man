@@ -373,6 +373,7 @@ class ThreadDecisionMaker implements Runnable {
                 break;
             case HECP:
                 dmAlgorithm = new HybridECP();
+                break;
             default:
                 dmAlgorithm = new NoScalingEqualizingAlgorithm();
                 break;
