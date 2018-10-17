@@ -58,7 +58,8 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
     public void runLane2Algorithm(State state) {
         System.out.println("*** Start L2 algorithm");
         int currentNumStandbyControllers = getNumStandbyControllers();
-        int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
+        //int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
+        int diffNumStandbyControllers = 2 - currentNumStandbyControllers;
         if (diffNumStandbyControllers > 0) {
             System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
             switchOnMultipleControllers(diffNumStandbyControllers);
@@ -74,10 +75,29 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
     public void switchOnMultipleControllers(int numTargetControllers) {
         ArrayList<ControllerBean> targetControllersSwitchOn = getTargetControllerSwitchOn(numTargetControllers);
+
+        System.out.println("*!*!* WKIM: switched on controllers");
+        for (ControllerBean controller : targetControllersSwitchOn) {
+            System.out.println(controller.getControllerId());
+        }
+        System.out.println("*!*!* WKIM: total controllers");
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            System.out.println(controller.getControllerId() + ": " + controller.isActive() + "/" + controller.isOnosAlive() + "/" + controller.isVmAlive());
+        }
+
     }
 
     public void switchOffMultipleControllers(int numTargetControllers) {
         ArrayList<ControllerBean> targetControllersSwitchOff = getTargetControllerSwitchOff(numTargetControllers);
+
+        System.out.println("*!*!* WKIM: switched off controllers");
+        for (ControllerBean controller : targetControllersSwitchOff) {
+            System.out.println(controller.getControllerId());
+        }
+        System.out.println("*!*!* WKIM: total controllers");
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            System.out.println(controller.getControllerId() + ": " + controller.isActive() + "/" + controller.isOnosAlive() + "/" + controller.isVmAlive());
+        }
     }
 
     public ArrayList<ControllerBean> getTargetControllerSwitchOn (int numTargetControllers) {
