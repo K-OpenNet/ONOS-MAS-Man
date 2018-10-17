@@ -41,7 +41,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         threadL1.start();
         threadL2.start();
         try {
-            threadL1.join();
+            threadL1.join(); //not for L2 --> independent algorithm which has an independent lock
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -50,11 +50,17 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
     }
 
     public void runLane1Algorithm(State state) {
-
+        System.out.println("Start L1 algorithm");
     }
 
     public void runLane2Algorithm(State state) {
-
+        System.out.println("Start L2 algorithm");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End L2 algorithm");
     }
 
     public void runCPULoadMastershipAlgorithm(State state) {
