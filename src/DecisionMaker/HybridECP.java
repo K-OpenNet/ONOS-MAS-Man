@@ -1,10 +1,14 @@
 package DecisionMaker;
 
 import Beans.ControllerBean;
+import Controller.Controller;
 import Database.Configure.Configuration;
 import Database.Tables.State;
+import Mastership.CPManMastership;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
@@ -30,18 +34,32 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
         State state = mergeStates(targetStates);
 
+        ThreadLane1Algorithm runnableThreadLane1Algorithm = new ThreadLane1Algorithm(this, state, currentTimeIndex);
+        ThreadLane2Algorithm runnableThreadLane2Algorithm = new ThreadLane2Algorithm(this, state, currentTimeIndex);
+        Thread threadL1 = new Thread(runnableThreadLane1Algorithm);
+        Thread threadL2 = new Thread(runnableThreadLane2Algorithm);
+        threadL1.start();
+        threadL2.start();
+        try {
+            threadL1.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
-    public void runLane1Algorithm() {
+    public void runLane1Algorithm(State state) {
 
     }
 
-    public void runLane2Algorithm() {
+    public void runLane2Algorithm(State state) {
 
     }
 
     public void runCPULoadMastershipAlgorithm(State state) {
-
+        CPUScalingAlgorithm scaling = new CPUScalingAlgorithm();
+        scaling.runBalancingOnly(state);
     }
 
     public ArrayList<ControllerBean> getActiveControllers() {
@@ -90,5 +108,66 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         }
 
         return numStandbyControllers;
+    }
+}
+
+class ThreadLane1Algorithm implements Runnable {
+
+    HybridECP ecp;
+    State state;
+    int startTimeIndex;
+
+    public ThreadLane1Algorithm(HybridECP ecp, State state, int startTimeIndex) {
+        this.ecp = ecp;
+        this.state = state;
+        this.startTimeIndex = startTimeIndex;
+    }
+
+    @Override
+    public void run() {
+        if (Controller.hecpL1Lock.isLocked()) {
+            System.out.println("*** L1Algorithm is not finished yet (timeslot: " + startTimeIndex + ")");
+            return;
+        }
+        Controller.hecpL1Lock.lock();
+
+        Date dt = new Date();
+        long startTime = dt.getTime();
+        ecp.runLane1Algorithm(state);
+        dt = new Date();
+        System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + startTimeIndex + ", Algorithm: " + "HECP" + ")");
+
+        Controller.hecpL1Lock.unlock();
+    }
+}
+
+class ThreadLane2Algorithm implements Runnable {
+
+    HybridECP ecp;
+    State state;
+    int startTimeIndex;
+
+    public ThreadLane2Algorithm(HybridECP ecp, State state, int startTimeIndex) {
+        this.ecp = ecp;
+        this.state = state;
+        this.startTimeIndex = startTimeIndex;
+    }
+
+    @Override
+    public void run() {
+        if (Controller.hecpL2Lock.isLocked()) {
+            System.out.println("*** L2Algorithm is not finished yet (timeslot: " + startTimeIndex + ")");
+            return;
+        }
+        Controller.hecpL2Lock.lock();
+
+        System.out.println();
+        Date dt = new Date();
+        long startTime = dt.getTime();
+        ecp.runLane2Algorithm(state);
+        dt = new Date();
+        System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + startTimeIndex + ", Algorithm: " + "HECP" + ")");
+
+        Controller.hecpL2Lock.unlock();
     }
 }
