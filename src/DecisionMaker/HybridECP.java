@@ -1,5 +1,6 @@
 package DecisionMaker;
 
+import Beans.ControllerBean;
 import Database.Configure.Configuration;
 import Database.Tables.State;
 
@@ -31,5 +32,53 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
         // debug code
         System.out.println("Run H-ECP");
+    }
+
+    public ArrayList<ControllerBean> getActiveControllers() {
+        ArrayList<ControllerBean> activeControllers = new ArrayList<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isActive()) {
+                activeControllers.add(controller);
+            }
+        }
+
+        return activeControllers;
+    }
+
+    public int getNumActiveControllers() {
+        int numActiveControllers = 0;
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isActive()) {
+                numActiveControllers++;
+            }
+        }
+
+        return numActiveControllers;
+    }
+
+    public ArrayList<ControllerBean> getStandByControllers() {
+        ArrayList<ControllerBean> standbyControllers = new ArrayList<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (!controller.isActive() && controller.isOnosAlive() && controller.isVmAlive()) {
+                standbyControllers.add(controller);
+            }
+        }
+
+        return standbyControllers;
+    }
+
+    public int getNumStandbyControllers() {
+        int numStandbyControllers = 0;
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (!controller.isActive() && controller.isOnosAlive() && controller.isVmAlive()) {
+                numStandbyControllers++;
+            }
+        }
+
+        return numStandbyControllers;
     }
 }
