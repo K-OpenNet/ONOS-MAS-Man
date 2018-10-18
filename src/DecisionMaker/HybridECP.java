@@ -313,6 +313,7 @@ class ThreadSwitchOnOff implements Runnable {
     State state;
 
     public ThreadSwitchOnOff(ControllerBean targetController, SWITCH_ON_OFF switchOnOff, State state) {
+        this.scaling = new ControllerScaling();
         this.targetController = targetController;
         this.switchOnOff = switchOnOff;
         this.state = state;
