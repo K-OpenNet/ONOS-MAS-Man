@@ -345,10 +345,10 @@ class ThreadSwitchOnOff implements Runnable {
                 targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
             throw new SwitchOffException();
         }
-        targetController.setOnosAlive(false);
         scaling.switchOffControllerForScaleIn(targetController, state);
-        targetController.setVmAlive(false);
+        targetController.setOnosAlive(false);
         scaling.switchOffVMForScaleIn(targetController, state);
+        targetController.setVmAlive(false);
         System.out.println("*** Finish to switch off " + targetController.getControllerId());
     }
 }
