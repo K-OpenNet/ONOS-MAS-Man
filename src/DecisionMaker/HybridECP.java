@@ -70,7 +70,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             switchOnMultipleControllers(diffNumStandbyControllers, state);
         } else if (diffNumStandbyControllers < 0) {
             System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
-            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers, state));
+            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers), state);
         } else {
             System.out.println("*** L2: No need to power on/off controllers");
         }
