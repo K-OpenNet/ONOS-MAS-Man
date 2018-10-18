@@ -362,10 +362,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         }
 
         //debugging code
-//        System.out.println("Under subscriber controllers");
-//        for (String underControllerId : undersubControllers.keySet()) {
-//            System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
-//        }
+        System.out.println("Under subscriber controllers");
+        for (String underControllerId : undersubControllers.keySet()) {
+            System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
+        }
 
         // make topology
         while (oversubControllers.size() != 0) {
@@ -377,8 +377,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double tmpMinCPULoadSwitch = getMinCPULoadSwitch(estimatedSwitchCPULoadEachController);
 
             //debugging code
-//            System.out.println("Over subscriber controllers");
-//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+            System.out.println("Over subscriber controllers");
+            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
 
             for (String undersubControllerId : undersubControllers.keySet()) {
                 double undersubControllerLoad = undersubControllers.get(undersubControllerId);
@@ -413,10 +413,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                         undersubControllers.replace(undersubControllerId, undersubControllerLoad);
 
                         // debugging code
-//                        System.out.println("Move switches");
-//                        System.out.println(dpid + ": from " + highestOverSubController + " -> " + undersubControllerId);
-//                        System.out.println("oversubLoad: " + oversubControllerLoad + " undersubLoad: " + undersubControllerLoad);
-//                        System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
+                        System.out.println("Move switches");
+                        System.out.println(dpid + ": from " + highestOverSubController + " -> " + undersubControllerId);
+                        System.out.println("oversubLoad: " + oversubControllerLoad + " undersubLoad: " + undersubControllerLoad);
+                        System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
 
                     }
                 }
@@ -427,21 +427,21 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
 
             //debugging code
-//            System.out.println("Over subscriber controllers");
-//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+            System.out.println("Over subscriber controllers");
+            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
 
             oversubControllers.remove(highestOverSubController);
         }
 
         // debugging code
-//        System.out.println("Topology");
-//        for (String controllerId : topology.keySet()) {
-//            System.out.print(controllerId + ": ");
-//            for (String dpid : topology.get(controllerId)) {
-//                System.out.print(dpid + " ");
-//            }
-//            System.out.println();
-//        }
+        System.out.println("Topology");
+        for (String controllerId : topology.keySet()) {
+            System.out.print(controllerId + ": ");
+            for (String dpid : topology.get(controllerId)) {
+                System.out.print(dpid + " ");
+            }
+            System.out.println();
+        }
 
         mastership.changeMultipleMastership(topology);
     }
