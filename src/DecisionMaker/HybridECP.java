@@ -57,11 +57,21 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
     public void runLane1Algorithm(State state) {
         System.out.println("*** Start L1 algorithm");
 
+        Date dt = new Date();
+        long startTime = dt.getTime();
+
+
+        dt = new Date();
+        System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
+
         System.out.println("*** End L1 algorithm");
     }
 
     public void runLane2Algorithm(State state) {
         System.out.println("*** Start L2 algorithm");
+        Date dt = new Date();
+        long startTime = dt.getTime();
+
         int currentNumStandbyControllers = getNumStandbyControllers();
         int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
         //int diffNumStandbyControllers = 2 - currentNumStandbyControllers;
@@ -75,6 +85,8 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             System.out.println("*** L2: No need to power on/off controllers");
         }
 
+        dt = new Date();
+        System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
         System.out.println("*** End L2 algorithm");
     }
 
@@ -264,11 +276,7 @@ class ThreadLane1Algorithm implements Runnable {
         }
         Controller.hecpL1Lock.lock();
 
-        Date dt = new Date();
-        long startTime = dt.getTime();
         ecp.runLane1Algorithm(state);
-        dt = new Date();
-        System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + startTimeIndex + ", Algorithm: " + "HECP" + ")");
 
         Controller.hecpL1Lock.unlock();
     }
@@ -294,12 +302,7 @@ class ThreadLane2Algorithm implements Runnable {
         }
         Controller.hecpL2Lock.lock();
 
-        System.out.println();
-        Date dt = new Date();
-        long startTime = dt.getTime();
         ecp.runLane2Algorithm(state);
-        dt = new Date();
-        System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + startTimeIndex + ", Algorithm: " + "HECP" + ")");
 
         Controller.hecpL2Lock.unlock();
     }
