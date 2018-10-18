@@ -168,6 +168,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
                 runCPULoadMastershipAlgorithm(state);
             }
             scaling.distributeMastershipForScaleInElastiCon(targetControllerScaleIn, state);
+            targetControllerScaleIn.setActive(false);
         } else {
             System.out.println("Balancing only");
             runCPULoadMastershipAlgorithm(state);
@@ -231,13 +232,13 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
             if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
-                if (controller.isActive() == false) {
+                if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
                     lastController = controller;
                 }
                 continue;
             }
 
-            if (controller.isActive() == false) {
+            if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
                 return controller;
             }
         }
