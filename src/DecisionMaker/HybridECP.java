@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static Database.Configure.Configuration.*;
+
 enum SWITCH_ON_OFF {
     SWITCH_ON, SWITCH_OFF;
 }
@@ -60,11 +62,121 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         Date dt = new Date();
         long startTime = dt.getTime();
 
+        ElastiConAwareL1Algorithm(state);
+        //EASAwareL1Algorithm(state);
 
         dt = new Date();
         System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
 
         System.out.println("*** End L1 algorithm");
+    }
+
+    public void ElastiConAwareL1Algorithm (State state) {
+        boolean scaleInFlag = false;
+        boolean scaleOutFlag = false;
+        ControllerBean targetControllerScaleIn = null;
+        ControllerBean targetControllerScaleOut = null;
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = getActiveControllers();
+        int numActiveControllers = getNumActiveControllers();
+        double averageCPULoad = averageCPULoadAllControllers(state);
+
+        System.out.println("Scaling -- average CPU load: " + averageCPULoad);
+
+        // check scaling out first
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
+            //debugging code
+            System.out.println("Scale-Out: " + controller.getControllerId() + " / " + tmpCPULoad);
+
+            if (averageCPULoad > SCALING_THRESHOLD_UPPER && tmpCPULoad > SCALING_THRESHOLD_UPPER) {
+
+                try {
+                    targetControllerScaleOut = getTargetControllerForScaleOut();
+                } catch (WrongScalingNumberControllers e) {
+                    scaleOutFlag = false;
+                    break;
+                }
+                scaleOutFlag = true;
+                break;
+            }
+        }
+
+        // check scaling in next
+        int numTargetScaleInControllers = 0;
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
+            //debugging code
+            System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
+
+            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                continue;
+            }
+
+            if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
+                targetControllerScaleIn = controller;
+                numTargetScaleInControllers++;
+                //scaleInFlag = true;
+                //break;
+            }
+        }
+
+        if (numTargetScaleInControllers > 1) {
+            scaleInFlag = true;
+        }
+
+        if ((scaleOutFlag == true) && (numActiveControllers == Configuration.getInstance().getControllers().size())) {
+            scaleInFlag = false;
+            scaleOutFlag = false;
+        } else if ((scaleInFlag == true) && (numActiveControllers == MIN_NUM_CONTROLLERS)) {
+            scaleInFlag = false;
+            scaleOutFlag = false;
+        }
+
+        System.out.println("ScaleIn: " + scaleInFlag);
+        System.out.println("Scaleout: " + scaleOutFlag);
+
+        ControllerScaling scaling = new ControllerScaling();
+
+        if (scaleOutFlag) {
+            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
+            if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
+                runCPULoadMastershipAlgorithm(state);
+            }
+            targetControllerScaleOut.setActive(true);
+            scaling.distributeMastershipForScaleOutElastiCon(targetControllerScaleOut, state);
+        } else if (scaleInFlag) {
+            System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
+            LAST_SCALEIN_CONTROLLER = targetControllerScaleIn.getControllerId();
+            if (numActiveControllers == 3) {
+                runCPULoadMastershipAlgorithm(state);
+            }
+            scaling.distributeMastershipForScaleInElastiCon(targetControllerScaleIn, state);
+        } else {
+            System.out.println("Balancing only");
+            runCPULoadMastershipAlgorithm(state);
+        }
+
+    }
+
+    public void EASAwareL1Algorithm (State state) {
+
     }
 
     public void runLane2Algorithm(State state) {
@@ -88,6 +200,53 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         dt = new Date();
         System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
         System.out.println("*** End L2 algorithm");
+    }
+
+    public double averageCPULoadAllControllers(State state) {
+        double result = 0.0;
+
+        CPManMastership mastership = new CPManMastership();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
+
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
+            result += tmpCPULoad;
+        }
+
+        return result / numActiveControllers;
+    }
+
+    public ControllerBean getTargetControllerForScaleOut() {
+
+        ControllerBean lastController = null;
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
+                if (controller.isActive() == false) {
+                    lastController = controller;
+                }
+                continue;
+            }
+
+            if (controller.isActive() == false) {
+                return controller;
+            }
+        }
+
+        if (lastController == null) {
+            throw new WrongScalingNumberControllers();
+        }
+
+        return lastController;
     }
 
     public void switchOnMultipleControllers(int numTargetControllers, State state) {
