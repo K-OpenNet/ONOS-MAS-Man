@@ -5,10 +5,15 @@ import Controller.Controller;
 import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
+import Scaling.ControllerScaling;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
+enum SWITCH_ON_OFF {
+    SWITCH_ON, SWITCH_OFF;
+}
 
 public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
@@ -76,7 +81,25 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
     public void switchOnMultipleControllers(int numTargetControllers) {
         ArrayList<ControllerBean> targetControllersSwitchOn = getTargetControllerSwitchOn(numTargetControllers);
 
-        /*debugging code
+        ArrayList<Runnable> runnables = new ArrayList<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (ControllerBean controller : targetControllersSwitchOn) {
+            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_ON);
+            Thread thread = new Thread(runnable);
+            runnables.add(runnable);
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        /* debugging code
         System.out.println("*!*!* WKIM: switched on controllers");
         for (ControllerBean controller : targetControllersSwitchOn) {
             System.out.println(controller.getControllerId());
@@ -91,6 +114,24 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
     public void switchOffMultipleControllers(int numTargetControllers) {
         ArrayList<ControllerBean> targetControllersSwitchOff = getTargetControllerSwitchOff(numTargetControllers);
+
+        ArrayList<Runnable> runnables = new ArrayList<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (ControllerBean controller : targetControllersSwitchOff) {
+            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_OFF);
+            Thread thread = new Thread(runnable);
+            runnables.add(runnable);
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         /* debugging code
         System.out.println("*!*!* WKIM: switched off controllers");
@@ -261,5 +302,35 @@ class ThreadLane2Algorithm implements Runnable {
         System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + startTimeIndex + ", Algorithm: " + "HECP" + ")");
 
         Controller.hecpL2Lock.unlock();
+    }
+}
+
+class ThreadSwitchOnOff implements Runnable {
+
+    ControllerScaling scaling;
+    ControllerBean targetController;
+    SWITCH_ON_OFF switchOnOff;
+
+    public ThreadSwitchOnOff(ControllerBean targetController, SWITCH_ON_OFF switchOnOff) {
+        this.targetController = targetController;
+        this.switchOnOff = switchOnOff;
+    }
+
+    @Override
+    public void run() {
+        if (switchOnOff == SWITCH_ON_OFF.SWITCH_ON) {
+            doStandbySwitchOn();
+        } else if (switchOnOff == SWITCH_ON_OFF.SWITCH_OFF) {
+            doStandbySwitchOff();
+        }
+    }
+
+    public void doStandbySwitchOn() {
+
+    }
+
+
+    public void doStandbySwitchOff() {
+
     }
 }
