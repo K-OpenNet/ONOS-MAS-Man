@@ -67,10 +67,10 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         //int diffNumStandbyControllers = 2 - currentNumStandbyControllers;
         if (diffNumStandbyControllers > 0) {
             System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
-            switchOnMultipleControllers(diffNumStandbyControllers);
+            switchOnMultipleControllers(diffNumStandbyControllers, state);
         } else if (diffNumStandbyControllers < 0) {
             System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
-            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers));
+            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers, state));
         } else {
             System.out.println("*** L2: No need to power on/off controllers");
         }
@@ -78,13 +78,13 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         System.out.println("*** End L2 algorithm");
     }
 
-    public void switchOnMultipleControllers(int numTargetControllers) {
+    public void switchOnMultipleControllers(int numTargetControllers, State state) {
         ArrayList<ControllerBean> targetControllersSwitchOn = getTargetControllerSwitchOn(numTargetControllers);
 
         ArrayList<Runnable> runnables = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         for (ControllerBean controller : targetControllersSwitchOn) {
-            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_ON);
+            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_ON, state);
             Thread thread = new Thread(runnable);
             runnables.add(runnable);
             threads.add(thread);
@@ -112,13 +112,13 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
     }
 
-    public void switchOffMultipleControllers(int numTargetControllers) {
+    public void switchOffMultipleControllers(int numTargetControllers, State state) {
         ArrayList<ControllerBean> targetControllersSwitchOff = getTargetControllerSwitchOff(numTargetControllers);
 
         ArrayList<Runnable> runnables = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         for (ControllerBean controller : targetControllersSwitchOff) {
-            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_OFF);
+            ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_OFF, state);
             Thread thread = new Thread(runnable);
             runnables.add(runnable);
             threads.add(thread);
@@ -310,10 +310,12 @@ class ThreadSwitchOnOff implements Runnable {
     ControllerScaling scaling;
     ControllerBean targetController;
     SWITCH_ON_OFF switchOnOff;
+    State state;
 
-    public ThreadSwitchOnOff(ControllerBean targetController, SWITCH_ON_OFF switchOnOff) {
+    public ThreadSwitchOnOff(ControllerBean targetController, SWITCH_ON_OFF switchOnOff, State state) {
         this.targetController = targetController;
         this.switchOnOff = switchOnOff;
+        this.state = state;
     }
 
     @Override
@@ -326,11 +328,26 @@ class ThreadSwitchOnOff implements Runnable {
     }
 
     public void doStandbySwitchOn() {
+        System.out.println("*** Start to switch on " + targetController.getControllerId());
 
     }
 
 
     public void doStandbySwitchOff() {
+        System.out.println("*** Start to switch off " + targetController.getControllerId());
+        if (targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_1) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_2) ||
+                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
+            throw new SwitchOffException();
+        }
+    }
+}
 
+class SwitchOffException extends RuntimeException {
+    public SwitchOffException() {
+    }
+
+    public SwitchOffException(String message) {
+        super(message);
     }
 }
