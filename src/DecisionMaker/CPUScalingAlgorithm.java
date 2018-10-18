@@ -377,8 +377,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             double tmpMinCPULoadSwitch = getMinCPULoadSwitch(estimatedSwitchCPULoadEachController);
 
             //debugging code
-            System.out.println("Over subscriber controllers");
-            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+            //System.out.println("Over subscriber controllers");
+            //System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
 
             for (String undersubControllerId : undersubControllers.keySet()) {
                 double undersubControllerLoad = undersubControllers.get(undersubControllerId);
@@ -427,8 +427,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
 
             //debugging code
-            System.out.println("Over subscriber controllers");
-            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+            //System.out.println("Over subscriber controllers");
+            //System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
 
             oversubControllers.remove(highestOverSubController);
         }
