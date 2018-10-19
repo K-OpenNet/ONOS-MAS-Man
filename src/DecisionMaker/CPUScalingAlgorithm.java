@@ -336,6 +336,12 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 continue;
             }
 
+            if (tmpCPULoad < averageCPULoad) {
+                undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            } else if (tmpCPULoad > averageCPULoad) {
+                oversubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            }
+
             double tmpTotalControllerOFMsgs = (double) mastership.getNumOFMsgsForSingleController(Configuration.getInstance().getControllerBeanWithId(controller.getControllerId()), state);
             HashMap<String, Double> estimatedSwitchCPULoadEachController = new HashMap<>();
 
