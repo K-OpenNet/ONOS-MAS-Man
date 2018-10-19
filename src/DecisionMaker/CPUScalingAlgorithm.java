@@ -372,6 +372,10 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         for (String underControllerId : undersubControllers.keySet()) {
             System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
         }
+        System.out.println("Over subscriber controllers");
+        for (String overControllerId : oversubControllers.keySet()) {
+            System.out.println(oversubControllers + ": " + oversubControllers.get(overControllerId));
+        }
 
         // make topology
         while (oversubControllers.size() != 0) {
