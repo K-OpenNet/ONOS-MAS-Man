@@ -336,6 +336,8 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 continue;
             }
 
+            System.out.println("********** Comp CPU load" + controller.getBeanKey() + ": cpuLoad - " + tmpCPULoad + " / avg cpuLoad: " + averageCPULoad);
+
             if (tmpCPULoad < averageCPULoad) {
                 undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
             } else if (tmpCPULoad > averageCPULoad) {
