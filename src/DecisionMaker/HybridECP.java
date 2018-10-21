@@ -101,6 +101,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
                 try {
                     targetControllerScaleOut = getTargetControllerForScaleOut();
                 } catch (WrongScalingNumberControllers e) {
+                    System.out.println("**********Wrong Scaling Number Controllers Exception**********");
                     scaleOutFlag = false;
                     break;
                 }
