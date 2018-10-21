@@ -370,7 +370,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         //debugging code
         System.out.println("Active  controllers");
         for (ControllerBean tmpControllerBean : Configuration.getInstance().getControllers()) {
-            System.out.println("****************" + tmpControllerBean.getControllerId());
+            System.out.println("****************" + tmpControllerBean.getControllerId() + ": " + tmpControllerBean.isActive() + " / " + tmpControllerBean.isOnosAlive() + " / " + tmpControllerBean.isVmAlive());
         }
         System.out.println("Under subscriber controllers");
         for (String underControllerId : undersubControllers.keySet()) {
