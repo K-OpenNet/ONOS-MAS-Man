@@ -316,13 +316,14 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         CPManMastership mastership = new CPManMastership();
         double averageCPULoad = averageCPULoadAllControllers(state);
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
         HashMap<String, Double> oversubControllers = new HashMap<>();
         HashMap<String, Double> undersubControllers = new HashMap<>();
 
         // Key: Controller Id, Inner key: dpid, value: cpuload/net portion.
         HashMap<String, HashMap<String, Double>> estimatedSwitchCPULoad = new HashMap<>();
-        for (ControllerBean controller : activeControllers) {
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (!controller.isActive()) continue;
+
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
             double cpuNormalizeFactor = 40 / controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
