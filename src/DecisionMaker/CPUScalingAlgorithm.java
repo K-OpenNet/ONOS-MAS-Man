@@ -278,7 +278,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         double result = 0;
 
-        if (tmp.size() == 0) {
+        if (tmp.size() == 0 || tmp == null) {
             return result;
         }
 
@@ -294,7 +294,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
     public double getMinCPULoadSwitch (HashMap<String, Double> tmp) {
 
-        if (tmp.size() == 0) {
+        if (tmp.size() == 0 || tmp == null) {
             return 0;
         }
 
@@ -390,7 +390,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
             HashMap<String, Double> estimatedSwitchCPULoadEachController = estimatedSwitchCPULoad.get(highestOverSubController);
 
-            double tmpMaxCPULoadSwitch = getMaxCPULoadSwitch(estimatedSwitchCPULoadEachController);
+            //double tmpMaxCPULoadSwitch = getMaxCPULoadSwitch(estimatedSwitchCPULoadEachController);
             double tmpMinCPULoadSwitch = getMinCPULoadSwitch(estimatedSwitchCPULoadEachController);
 
             //debugging code
