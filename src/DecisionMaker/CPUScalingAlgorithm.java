@@ -333,16 +333,16 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 tmpCPULoad = 100;
             }
 
-            if (dpids.size() == 0) {
-                continue;
-            }
-
             System.out.println("********** Comp CPU load" + controller.getBeanKey() + ": cpuLoad - " + tmpCPULoad + " / avg cpuLoad: " + averageCPULoad);
 
             if (tmpCPULoad < averageCPULoad) {
                 undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
             } else if (tmpCPULoad > averageCPULoad) {
                 oversubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            }
+
+            if (dpids.size() == 0) {
+                continue;
             }
 
             double tmpTotalControllerOFMsgs = (double) mastership.getNumOFMsgsForSingleController(Configuration.getInstance().getControllerBeanWithId(controller.getControllerId()), state);
