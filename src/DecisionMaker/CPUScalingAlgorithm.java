@@ -278,7 +278,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
         double result = 0;
 
-        if (tmp.size() == 0 || tmp == null) {
+        if (tmp == null || tmp.size() == 0 ) {
             return result;
         }
 
@@ -294,7 +294,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
 
     public double getMinCPULoadSwitch (HashMap<String, Double> tmp) {
 
-        if (tmp.size() == 0 || tmp == null) {
+        if (tmp == null || tmp.size() == 0 ) {
             return 0;
         }
 
