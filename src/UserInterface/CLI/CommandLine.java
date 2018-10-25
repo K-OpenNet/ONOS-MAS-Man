@@ -348,7 +348,7 @@ public class CommandLine {
         NUM_MININET_MACHINE = sc1.nextInt();
         System.out.print("Number of Standby controllers:");
         NUM_STANDBY_CONTROLLER = sc1.nextInt();
-        System.out.println("Number of Bubbles");
+        System.out.print("Number of Bubbles");
         NUM_BUBBLE = sc1.nextInt();
     }
 }
