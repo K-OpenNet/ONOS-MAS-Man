@@ -290,6 +290,7 @@ public class CommandLine {
         System.out.println("Minimum number of controllers: " + MIN_NUM_CONTROLLERS);
         System.out.println("Number of Mininet machines: " + NUM_MININET_MACHINE);
         System.out.println("Number of Standby controllers: " + NUM_STANDBY_CONTROLLER);
+        System.out.println("Number of Bubbles: " + NUM_BUBBLE);
     }
 
     public void changeExperimentalParams() {
@@ -347,5 +348,7 @@ public class CommandLine {
         NUM_MININET_MACHINE = sc1.nextInt();
         System.out.print("Number of Standby controllers:");
         NUM_STANDBY_CONTROLLER = sc1.nextInt();
+        System.out.println("Number of Bubbles");
+        NUM_BUBBLE = sc1.nextInt();
     }
 }

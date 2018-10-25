@@ -46,6 +46,7 @@ public class Configuration {
     public static boolean FIN_INIT_ENV = false;
     public static String LAST_SCALEIN_CONTROLLER = "192.168.200.102";
     public static int NUM_STANDBY_CONTROLLER = 0;
+    public static int NUM_BUBBLE = 0;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
