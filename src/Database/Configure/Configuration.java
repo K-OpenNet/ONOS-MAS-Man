@@ -47,6 +47,8 @@ public class Configuration {
     public static String LAST_SCALEIN_CONTROLLER = "192.168.200.102";
     public static int NUM_STANDBY_CONTROLLER = 0;
     public static int NUM_BUBBLE = 0;
+    public static int LAST_SCALEOUT_TIME_INDEX = -1;
+    public static int LAST_SCALEIN_TIME_INDEX = -1;
 
     // CMDs
     public static final String CMD_CPU_BITMAP_TEMPLATE = "lscpu | grep On-line";
