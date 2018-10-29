@@ -34,8 +34,8 @@ public class Configuration {
     public static final String DEV_MACHINE_IP_ADDR = "192.168.200.31";
     public static int SCALING_THRESHOLD_UPPER = 80;
     public static int SCALING_THRESHOLD_LOWER = 20;
-    public static int SCALING_THRESHOLD_HIGHEST = 90;
-    public static int SCALING_THRESHOL_LOWEST = 10;
+    public static int SCALING_THRESHOLD_HIGHEST = 80;
+    public static int SCALING_THRESHOL_LOWEST = 20;
     public static int SCALING_LEVEL = 1;
     public static int MIN_NUM_CONTROLLERS = 3;
     public static int NUM_MININET_MACHINE = 1;
