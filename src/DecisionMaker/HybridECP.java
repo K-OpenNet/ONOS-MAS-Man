@@ -163,6 +163,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             scaling.addControllerToOVS(targetControllerScaleOut, state);
             targetControllerScaleOut.setActive(true);
             scaling.distributeMastershipForScaleOutElastiCon(targetControllerScaleOut, state);
+            LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
         } else if (scaleInFlag) {
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
             LAST_SCALEIN_CONTROLLER = targetControllerScaleIn.getControllerId();
@@ -172,9 +173,14 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             scaling.distributeMastershipForScaleInElastiCon(targetControllerScaleIn, state);
             scaling.removeControllerToOVS(targetControllerScaleIn, state);
             targetControllerScaleIn.setActive(false);
+            LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
         } else {
             System.out.println("Balancing only");
-            runCPULoadMastershipAlgorithm(state);
+            if (LAST_SCALEOUT_TIME_INDEX == -1) {
+                runCPULoadMastershipAlgorithm(state);
+            } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE) {
+                runCPULoadMastershipAlgorithm(state);
+            }
         }
 
     }
