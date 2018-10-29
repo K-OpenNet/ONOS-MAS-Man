@@ -1,12 +1,17 @@
 package DecisionMaker;
 
 import Beans.ControllerBean;
+import Controller.Controller;
 import Database.Configure.Configuration;
 import Database.Tables.State;
 import Mastership.CPManMastership;
 import Scaling.CPUScaling;
 
 import java.util.ArrayList;
+
+import static Database.Configure.Configuration.LAST_SCALEIN_TIME_INDEX;
+import static Database.Configure.Configuration.LAST_SCALEOUT_TIME_INDEX;
+import static Database.Configure.Configuration.NUM_BUBBLE;
 
 public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMaker {
 
@@ -54,30 +59,44 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             }
 
             if (Configuration.SCALING_THRESHOLD_HIGHEST < tmpCPULoad) {
-                if (controller.getNumCPUs() < 17) {
+                if (Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEIN_TIME_INDEX != -1) {
+
+                } else if (controller.getNumCPUs() < 17) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(2, controller);
+                    LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
                 } else if (controller.getNumCPUs() < 18) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(1, controller);
+                    LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
                 }
             } else if (Configuration.SCALING_THRESHOLD_UPPER < tmpCPULoad) {
-                if (controller.getNumCPUs() < 18) {
+                if (Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEIN_TIME_INDEX != -1) {
+
+                } else if (controller.getNumCPUs() < 18) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(1, controller);
+                    LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
                 }
             } else if (Configuration.SCALING_THRESHOLD_LOWER > tmpCPULoad) {
-                if (controller.getNumCPUs() > 2) {
-                    System.out.println(controller.getControllerId() + ": " + "scaling in 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
-                    decVirtualCPUs(1, controller);
-                }
-            } else if (Configuration.SCALING_THRESHOL_LOWEST > tmpCPULoad) {
-                if (controller.getNumCPUs() > 3) {
-                    System.out.println(controller.getControllerId() + ": " + "scaling in 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
-                    decVirtualCPUs(2, controller);
+                if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEOUT_TIME_INDEX != -1) {
+
                 } else if (controller.getNumCPUs() > 2) {
                     System.out.println(controller.getControllerId() + ": " + "scaling in 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
                     decVirtualCPUs(1, controller);
+                    LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
+                }
+            } else if (Configuration.SCALING_THRESHOL_LOWEST > tmpCPULoad) {
+                if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEOUT_TIME_INDEX != -1) {
+
+                } else if (controller.getNumCPUs() > 3) {
+                    System.out.println(controller.getControllerId() + ": " + "scaling in 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
+                    decVirtualCPUs(2, controller);
+                    LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
+                } else if (controller.getNumCPUs() > 2) {
+                    System.out.println(controller.getControllerId() + ": " + "scaling in 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
+                    decVirtualCPUs(1, controller);
+                    LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
                 }
             }
         }
