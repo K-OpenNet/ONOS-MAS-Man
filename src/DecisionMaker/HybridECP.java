@@ -176,7 +176,9 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
         } else {
             System.out.println("Balancing only");
-            if (LAST_SCALEOUT_TIME_INDEX == -1) {
+            if (Controller.getTimeIndex() < 2) {
+
+            } else if (LAST_SCALEOUT_TIME_INDEX == -1) {
                 runCPULoadMastershipAlgorithm(state);
             } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE) {
                 runCPULoadMastershipAlgorithm(state);
