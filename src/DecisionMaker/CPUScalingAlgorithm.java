@@ -309,7 +309,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
         return result;
 
     }
-
+/*
     public void runCPULoadMastershipAlgorithm(State state) {
         HashMap<String, ArrayList<String>> topology = new HashMap<>();
         HashMap<String, ArrayList<String>> dpidsOverSubControllers = new HashMap<>();
@@ -459,6 +459,138 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
             System.out.println();
         }
+
+        mastership.changeMultipleMastership(topology);
+    }
+*/
+
+    public void runCPULoadMastershipAlgorithm(State state) {
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        HashMap<String, ArrayList<String>> dpidsOverSubControllers = new HashMap<>();
+
+        CPManMastership mastership = new CPManMastership();
+        double averageCPULoad = averageCPULoadAllControllers(state);
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        HashMap<String, Double> oversubControllers = new HashMap<>();
+        HashMap<String, Double> undersubControllers = new HashMap<>();
+
+        // Key: Controller Id, Value: CPU usage / switch
+        HashMap<String, Double> estimatedSwitchCPULoad = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+            int numSwitches = state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
+            double tmpCPULoadEachSwitch = 0;
+            if (numSwitches != 0) {
+                tmpCPULoadEachSwitch = tmpCPULoad / numSwitches;
+            }
+
+
+            if (tmpCPULoad < averageCPULoad) {
+                undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            } else if (tmpCPULoad > averageCPULoad) {
+                oversubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            }
+
+            estimatedSwitchCPULoad.put(controller.getBeanKey(), tmpCPULoadEachSwitch);
+        }
+
+        // initialize topology
+        for (String controllerId : undersubControllers.keySet()) {
+            topology.put(controllerId, new ArrayList<>());
+        }
+
+        // cloning mastership monitoring result
+        for (String controllerId : oversubControllers.keySet()) {
+            ArrayList<String> dpids = new ArrayList<>();
+            for (String dpid : state.getMastershipTuples().get(controllerId).getSwitchList()) {
+                dpids.add(dpid);
+            }
+            dpidsOverSubControllers.put(controllerId, dpids);
+        }
+
+        //debugging code
+//        System.out.println("Under subscriber controllers");
+//        for (String underControllerId : undersubControllers.keySet()) {
+//            System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
+//        }
+
+
+        // make topology
+        while (oversubControllers.size() != 0) {
+            String highestOverSubController = getHighestCPULoadController(oversubControllers);
+            int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
+            double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(highestOverSubController);
+
+            //debugging code
+//            System.out.println("Over subscriber controllers");
+//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+
+            for (String undersubControllerId : undersubControllers.keySet()) {
+                double undersubControllerLoad = undersubControllers.get(undersubControllerId);
+                double oversubControllerLoad = oversubControllers.get(highestOverSubController);
+
+                if (numSwitches < 1) {
+                    break;
+                } else if (oversubControllerLoad <= averageCPULoad) {
+                    break;
+                } else if (undersubControllerLoad + tmpCPULoadSwitch > averageCPULoad) {
+                    continue;
+                } else if (oversubControllerLoad - tmpCPULoadSwitch < averageCPULoad) {
+                    break;
+                }
+
+                int maxNumSwitches = dpidsOverSubControllers.get(highestOverSubController).size();
+                ArrayList<String> changedSwitches = new ArrayList<>();
+                for (int index1 = 0; index1 < maxNumSwitches; index1++) {
+                    String dpid = dpidsOverSubControllers.get(highestOverSubController).get(index1);
+
+                    if (undersubControllerLoad + tmpCPULoadSwitch <= averageCPULoad &&
+                            oversubControllerLoad - tmpCPULoadSwitch >= averageCPULoad &&
+                            dpidsOverSubControllers.get(highestOverSubController).size() - changedSwitches.size() > 0) {
+                        oversubControllerLoad -= tmpCPULoadSwitch;
+                        undersubControllerLoad += tmpCPULoadSwitch;
+                        //dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                        changedSwitches.add(dpid);
+                        topology.get(undersubControllerId).add(dpid);
+                        oversubControllers.replace(highestOverSubController, oversubControllerLoad);
+                        undersubControllers.replace(undersubControllerId, undersubControllerLoad);
+
+                        // debugging code
+//                        System.out.println("Move switches");
+//                        System.out.println(dpid + ": from " + highestOverSubController + " -> " + undersubControllerId);
+//                        System.out.println("oversubLoad: " + oversubControllerLoad + " undersubLoad: " + undersubControllerLoad);
+//                        System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
+
+                    }
+                }
+
+                for (String dpid : changedSwitches) {
+                    dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                }
+            }
+            //debugging code
+//            System.out.println("Over subscriber controllers");
+//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+
+            oversubControllers.remove(highestOverSubController);
+        }
+
+        // debugging code
+//        System.out.println("Topology");
+//        for (String controllerId : topology.keySet()) {
+//            System.out.print(controllerId + ": ");
+//            for (String dpid : topology.get(controllerId)) {
+//                System.out.print(dpid + " ");
+//            }
+//            System.out.println();
+//        }
 
         mastership.changeMultipleMastership(topology);
     }
