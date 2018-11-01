@@ -555,7 +555,7 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         String checkServiceCMD = CMD_CHECK_ONOS_SERVICE.replace("<controllerID>", targetController.getControllerId());
         sshConn.sendCommandToUser(pm, serviceStartCMD);
         sshConn.sendCommandToUser(pm, checkServiceCMD);
-        System.out.println("ON!");
+        System.out.println("ON!: " + targetController.getControllerId());
 
 //        String url = RESTURL_DOSCALEOUT.replace("<controllerID>", targetController.getControllerId());
 //        try {
