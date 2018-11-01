@@ -524,6 +524,12 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         // Remove target controller from OVS
         removeControllerToOVS(targetController, state);
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 //        String url = RESTURL_DOSCALEIN.replace("<controllerID>", targetController.getControllerId());
 //
 //        try {
@@ -601,6 +607,12 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
 
         String cmd = CMD_PAUSE_VM.replace("<controllerName>", targetController.getName());
         sshConn.sendCommandToUser(pm, cmd);
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
