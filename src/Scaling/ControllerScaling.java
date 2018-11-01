@@ -618,6 +618,18 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
         }
     }
 
+    public ArrayList<ControllerBean> getONOSAliveControllers() {
+        ArrayList<ControllerBean> results = new ArrayList<>();
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+            if (controller.isOnosAlive()) {
+                results.add(controller);
+            }
+        }
+
+        return results;
+    }
+
     public void removeControllerToOVS(ControllerBean targetController, State state) {
         ArrayList<PMBean> mininetMachines = new ArrayList<>();
         CPManMastership mastership = new CPManMastership();
@@ -628,7 +640,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
         }
 
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        //ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        ArrayList<ControllerBean> activeControllers = getONOSAliveControllers();
         activeControllers.remove(targetController);
         String controllerLists = " ";
 
@@ -676,7 +689,8 @@ public class ControllerScaling extends AbstractScaling implements Scaling {
             mininetMachines.add(Configuration.getInstance().getMininetMachines().get(tmpIp));
         }
 
-        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        //ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        ArrayList<ControllerBean> activeControllers = getONOSAliveControllers();
         activeControllers.add(targetController);
         String controllerLists = " ";
 
