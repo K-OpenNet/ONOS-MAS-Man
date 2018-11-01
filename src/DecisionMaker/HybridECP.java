@@ -585,6 +585,11 @@ class ThreadSwitchOnOff implements Runnable {
         targetController.setVmAlive(true);
         scaling.switchOnControllerForScaleOut(targetController, state);
         targetController.setOnosAlive(true);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("*** Finish to switch on " + targetController.getControllerId());
     }
 
@@ -594,6 +599,11 @@ class ThreadSwitchOnOff implements Runnable {
         scaling.switchOffControllerForScaleIn(targetController, state);
         targetController.setVmAlive(false);
         scaling.switchOffVMForScaleIn(targetController, state);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("*** Finish to switch off " + targetController.getControllerId());
     }
 }
