@@ -430,7 +430,7 @@ class ThreadLane2Algorithm implements Runnable {
                 System.out.println("*** L2: Cannot switch on " + diffNumStandbyControllers + " controllers");
             }
 
-        } else if (currentNumStandbyControllers < Configuration.getInstance().NUM_STANDBY_CONTROLLER) {
+        } else if (currentNumStandbyControllers > Configuration.getInstance().NUM_STANDBY_CONTROLLER) {
             if (currentNumActiveControllers == 3) {
                 System.out.println("*** L2: Cannot switch off " + diffNumStandbyControllers + " controllers");
             } else if (currentNumActiveControllers + diffNumStandbyControllers < 3) {
