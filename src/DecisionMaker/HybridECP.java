@@ -437,6 +437,7 @@ class ThreadLane2Algorithm implements Runnable {
         ArrayList<Runnable> runnables = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         for (ControllerBean controller : targetControllersSwitchOn) {
+            System.out.println("SWITCH-ON: " + controller.getControllerId());
             ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_ON, state);
             Thread thread = new Thread(runnable);
             runnables.add(runnable);
@@ -459,6 +460,7 @@ class ThreadLane2Algorithm implements Runnable {
         ArrayList<Runnable> runnables = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<>();
         for (ControllerBean controller : targetControllersSwitchOff) {
+            System.out.println("SWITCH-OFF: " + controller.getControllerId());
             ThreadSwitchOnOff runnable = new ThreadSwitchOnOff(controller, SWITCH_ON_OFF.SWITCH_OFF, state);
             Thread thread = new Thread(runnable);
             runnables.add(runnable);
