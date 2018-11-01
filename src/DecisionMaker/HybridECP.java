@@ -413,9 +413,37 @@ class ThreadLane2Algorithm implements Runnable {
         Date dt = new Date();
         long startTime = dt.getTime();
 
+        int currentNumActiveControllers = getNumActiveControllers();
         int currentNumStandbyControllers = getNumStandbyControllers();
         int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
+        int currentNumInactiveControllers = Configuration.getInstance().getControllers().size() - currentNumActiveControllers - currentNumStandbyControllers;
 
+        if (currentNumStandbyControllers < Configuration.getInstance().NUM_STANDBY_CONTROLLER) {
+
+            if (currentNumInactiveControllers != 0 && currentNumInactiveControllers < diffNumStandbyControllers) {
+                System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers -> " + currentNumInactiveControllers + " controllers");
+                switchOnMultipleControllers(currentNumInactiveControllers, state);
+            } else if (currentNumInactiveControllers != 0 && currentNumInactiveControllers >= diffNumStandbyControllers) {
+                System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
+                switchOnMultipleControllers(diffNumStandbyControllers, state);
+            } else {
+                System.out.println("*** L2: Cannot switch on " + diffNumStandbyControllers + " controllers");
+            }
+
+        } else if (currentNumStandbyControllers < Configuration.getInstance().NUM_STANDBY_CONTROLLER) {
+            if (currentNumActiveControllers == 3) {
+                System.out.println("*** L2: Cannot switch off " + diffNumStandbyControllers + " controllers");
+            } else if (currentNumActiveControllers + diffNumStandbyControllers < 3) {
+                System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers -> " + (currentNumActiveControllers - 3) + " controllers");
+                switchOffMultipleControllers((currentNumActiveControllers-3), state);
+            } else {
+                System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
+                switchOffMultipleControllers(Math.abs(diffNumStandbyControllers), state);
+            }
+        } else {
+            System.out.println("*** L2: No need to power on/off controllers");
+        }
+/*
         if (diffNumStandbyControllers > 0) {
             System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
             switchOnMultipleControllers(diffNumStandbyControllers, state);
@@ -425,7 +453,7 @@ class ThreadLane2Algorithm implements Runnable {
         } else {
             System.out.println("*** L2: No need to power on/off controllers");
         }
-
+*/
         dt = new Date();
         System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
         System.out.println("*** End L2 algorithm");
