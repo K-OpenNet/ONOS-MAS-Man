@@ -23,10 +23,10 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         decisionMakerName = decisionMakerType.HECP;
     }
 
+
     @Override
     public void runDecisionMakerAlgorithm(int currentTimeIndex, ArrayList<State> dbDump) {
-
-        if (currentTimeIndex == 0) {
+        if (currentTimeIndex == 0 ) {
             return;
         }
 
@@ -41,44 +41,24 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
         State state = mergeStates(targetStates);
 
-        ThreadLane1Algorithm runnableThreadLane1Algorithm = new ThreadLane1Algorithm(this, state, currentTimeIndex);
-        ThreadLane2Algorithm runnableThreadLane2Algorithm = new ThreadLane2Algorithm(this, state, currentTimeIndex);
-        Thread threadL1 = new Thread(runnableThreadLane1Algorithm);
-        Thread threadL2 = new Thread(runnableThreadLane2Algorithm);
-        threadL1.start();
-        threadL2.start();
-        try {
-            threadL1.join(); //not for L2 --> independent algorithm which has an independent lock
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        ThreadLane2Algorithm runnableLane2 = new ThreadLane2Algorithm(state, currentTimeIndex);
+        Thread threadLane2 = new Thread(runnableLane2);
+        threadLane2.start();
 
-
-    }
-
-    public void runLane1Algorithm(State state) {
         System.out.println("*** Start L1 algorithm");
 
         Date dt = new Date();
         long startTime = dt.getTime();
 
-        ElastiConAwareL1Algorithm(state);
-        //EASAwareL1Algorithm(state);
-
-        dt = new Date();
-        System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
-
-        System.out.println("*** End L1 algorithm");
-    }
-
-    public void ElastiConAwareL1Algorithm (State state) {
         boolean scaleInFlag = false;
         boolean scaleOutFlag = false;
+
         ControllerBean targetControllerScaleIn = null;
         ControllerBean targetControllerScaleOut = null;
+
         CPManMastership mastership = new CPManMastership();
-        ArrayList<ControllerBean> activeControllers = getActiveControllers();
-        int numActiveControllers = getNumActiveControllers();
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        int numActiveControllers = activeControllers.size();
         double averageCPULoad = averageCPULoadAllControllers(state);
 
         System.out.println("Scaling -- average CPU load: " + averageCPULoad);
@@ -101,7 +81,6 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
                 try {
                     targetControllerScaleOut = getTargetControllerForScaleOut();
                 } catch (WrongScalingNumberControllers e) {
-                    System.out.println("**********Wrong Scaling Number Controllers Exception**********");
                     scaleOutFlag = false;
                     break;
                 }
@@ -150,30 +129,16 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             scaleOutFlag = false;
         }
 
+        //debugging code
         System.out.println("ScaleIn: " + scaleInFlag);
         System.out.println("Scaleout: " + scaleOutFlag);
 
-        ControllerScaling scaling = new ControllerScaling();
-
         if (scaleOutFlag) {
             System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
-            if (numActiveControllers == Configuration.getInstance().getControllers().size()) {
-                runCPULoadMastershipAlgorithm(state);
-            }
-            scaling.addControllerToOVS(targetControllerScaleOut, state);
-            targetControllerScaleOut.setActive(true);
-            scaling.distributeMastershipForScaleOutElastiCon(targetControllerScaleOut, state);
-            LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
+            runScaleOut(targetControllerScaleOut, state);
         } else if (scaleInFlag) {
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
-            LAST_SCALEIN_CONTROLLER = targetControllerScaleIn.getControllerId();
-            if (numActiveControllers == 3) {
-                runCPULoadMastershipAlgorithm(state);
-            }
-            scaling.distributeMastershipForScaleInElastiCon(targetControllerScaleIn, state);
-            scaling.removeControllerToOVS(targetControllerScaleIn, state);
-            targetControllerScaleIn.setActive(false);
-            LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
+            runScaleIn(targetControllerScaleIn, state);
         } else {
             System.out.println("Balancing only");
             if (Controller.getTimeIndex() < 2) {
@@ -185,33 +150,217 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             }
         }
 
+        dt = new Date();
+        System.out.println("** L1 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
+
+        System.out.println("*** End L1 algorithm");
     }
 
-    public void EASAwareL1Algorithm (State state) {
+    public void runScaleOut(ControllerBean targetController, State state) {
+        CPManMastership mastership = new CPManMastership();
+        ControllerScaling scaling = new ControllerScaling();
 
-    }
-
-    public void runLane2Algorithm(State state) {
-        System.out.println("*** Start L2 algorithm");
-        Date dt = new Date();
-        long startTime = dt.getTime();
-
-        int currentNumStandbyControllers = getNumStandbyControllers();
-        int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
-        //int diffNumStandbyControllers = 2 - currentNumStandbyControllers;
-        if (diffNumStandbyControllers > 0) {
-            System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
-            switchOnMultipleControllers(diffNumStandbyControllers, state);
-        } else if (diffNumStandbyControllers < 0) {
-            System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
-            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers), state);
-        } else {
-            System.out.println("*** L2: No need to power on/off controllers");
+        // Maximum number of controllers
+        if (mastership.getActiveControllers().size() == Configuration.getInstance().getControllers().size()) {
+            //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+            runCPULoadMastershipAlgorithm(state);
+            return;
         }
 
-        dt = new Date();
-        System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
-        System.out.println("*** End L2 algorithm");
+        scaling.runL1ONOSScaleOut(targetController, state);
+    }
+
+    public void runScaleIn(ControllerBean targetController, State state) {
+        CPManMastership mastership = new CPManMastership();
+        ControllerScaling scaling = new ControllerScaling();
+
+        if (mastership.getActiveControllers().size() == 3) {
+            //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+            runCPULoadMastershipAlgorithm(state);
+            return;
+        }
+
+        scaling.runL1ONOSScaleIn(targetController, state);
+    }
+
+    public void runBalancingOnly(State state) {
+        //runCPManMastershipAlgorithm(state); // change mastership --> considering CPU load
+        runCPULoadMastershipAlgorithm(state);
+    }
+
+    public void runCPULoadMastershipAlgorithm(State state) {
+        HashMap<String, ArrayList<String>> topology = new HashMap<>();
+        HashMap<String, ArrayList<String>> dpidsOverSubControllers = new HashMap<>();
+
+        CPManMastership mastership = new CPManMastership();
+        double averageCPULoad = averageCPULoadAllControllers(state);
+        ArrayList<ControllerBean> activeControllers = mastership.getActiveControllers();
+        HashMap<String, Double> oversubControllers = new HashMap<>();
+        HashMap<String, Double> undersubControllers = new HashMap<>();
+
+        // Key: Controller Id, Value: CPU usage / switch
+        HashMap<String, Double> estimatedSwitchCPULoad = new HashMap<>();
+        for (ControllerBean controller : activeControllers) {
+            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double cpuNormalizeFactor = 40/controller.getNumCPUs();
+            tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
+            int numSwitches = state.getMastershipTuples().get(controller.getBeanKey()).getSwitchList().size();
+
+            if (tmpCPULoad > 100.0) {
+                tmpCPULoad = 100;
+            }
+
+            double tmpCPULoadEachSwitch = 0;
+            if (numSwitches != 0) {
+                tmpCPULoadEachSwitch = tmpCPULoad / numSwitches;
+            }
+
+
+            if (tmpCPULoad < averageCPULoad) {
+                undersubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            } else if (tmpCPULoad > averageCPULoad) {
+                oversubControllers.put(controller.getBeanKey(), tmpCPULoad);
+            }
+
+            estimatedSwitchCPULoad.put(controller.getBeanKey(), tmpCPULoadEachSwitch);
+        }
+
+        // initialize topology
+        for (String controllerId : undersubControllers.keySet()) {
+            topology.put(controllerId, new ArrayList<>());
+        }
+
+        // cloning mastership monitoring result
+        for (String controllerId : oversubControllers.keySet()) {
+            ArrayList<String> dpids = new ArrayList<>();
+            for (String dpid : state.getMastershipTuples().get(controllerId).getSwitchList()) {
+                dpids.add(dpid);
+            }
+            dpidsOverSubControllers.put(controllerId, dpids);
+        }
+
+        //debugging code
+//        System.out.println("Under subscriber controllers");
+//        for (String underControllerId : undersubControllers.keySet()) {
+//            System.out.println(underControllerId + ": " + undersubControllers.get(underControllerId));
+//        }
+
+
+        // make topology
+        while (oversubControllers.size() != 0) {
+            String highestOverSubController = getHighestCPULoadController(oversubControllers);
+            int numSwitches = state.getMastershipTuples().get(highestOverSubController).getSwitchList().size();
+            double tmpCPULoadSwitch = estimatedSwitchCPULoad.get(highestOverSubController);
+
+            //debugging code
+//            System.out.println("Over subscriber controllers");
+//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+
+            for (String undersubControllerId : undersubControllers.keySet()) {
+                double undersubControllerLoad = undersubControllers.get(undersubControllerId);
+                double oversubControllerLoad = oversubControllers.get(highestOverSubController);
+
+                if (numSwitches < 1) {
+                    break;
+                } else if (oversubControllerLoad <= averageCPULoad) {
+                    break;
+                } else if (undersubControllerLoad + tmpCPULoadSwitch > averageCPULoad) {
+                    continue;
+                } else if (oversubControllerLoad - tmpCPULoadSwitch < averageCPULoad) {
+                    break;
+                }
+
+                int maxNumSwitches = dpidsOverSubControllers.get(highestOverSubController).size();
+                ArrayList<String> changedSwitches = new ArrayList<>();
+                for (int index1 = 0; index1 < maxNumSwitches; index1++) {
+                    String dpid = dpidsOverSubControllers.get(highestOverSubController).get(index1);
+
+                    if (undersubControllerLoad + tmpCPULoadSwitch <= averageCPULoad &&
+                            oversubControllerLoad - tmpCPULoadSwitch >= averageCPULoad &&
+                            dpidsOverSubControllers.get(highestOverSubController).size() - changedSwitches.size() > 0) {
+                        oversubControllerLoad -= tmpCPULoadSwitch;
+                        undersubControllerLoad += tmpCPULoadSwitch;
+                        //dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                        changedSwitches.add(dpid);
+                        topology.get(undersubControllerId).add(dpid);
+                        oversubControllers.replace(highestOverSubController, oversubControllerLoad);
+                        undersubControllers.replace(undersubControllerId, undersubControllerLoad);
+
+                        // debugging code
+//                        System.out.println("Move switches");
+//                        System.out.println(dpid + ": from " + highestOverSubController + " -> " + undersubControllerId);
+//                        System.out.println("oversubLoad: " + oversubControllerLoad + " undersubLoad: " + undersubControllerLoad);
+//                        System.out.println("numSwitches: " + dpidsOverSubControllers.get(highestOverSubController).size());
+
+                    }
+                }
+
+                for (String dpid : changedSwitches) {
+                    dpidsOverSubControllers.get(highestOverSubController).remove(dpid);
+                }
+            }
+            //debugging code
+//            System.out.println("Over subscriber controllers");
+//            System.out.println(highestOverSubController + ": " + oversubControllers.get(highestOverSubController) + " / " + numSwitches + " = " + tmpCPULoadSwitch);
+
+            oversubControllers.remove(highestOverSubController);
+        }
+
+        // debugging code
+//        System.out.println("Topology");
+//        for (String controllerId : topology.keySet()) {
+//            System.out.print(controllerId + ": ");
+//            for (String dpid : topology.get(controllerId)) {
+//                System.out.print(dpid + " ");
+//            }
+//            System.out.println();
+//        }
+
+        mastership.changeMultipleMastership(topology);
+    }
+
+    public String getHighestCPULoadController(HashMap<String, Double> rawResult) {
+
+        String result = null;
+        double highestCPULoad = 0;
+
+        for (String controllerId :rawResult.keySet()) {
+
+            if (result == null) {
+                result = controllerId;
+                highestCPULoad = rawResult.get(controllerId);
+            } else if (highestCPULoad < rawResult.get(controllerId)) {
+                result = controllerId;
+                highestCPULoad = rawResult.get(controllerId);
+            }
+        }
+
+        return result;
+    }
+
+    public ControllerBean getTargetControllerForScaleOut() {
+
+        ControllerBean lastController = null;
+
+        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+
+            if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
+                if (controller.isActive() == false) {
+                    lastController = controller;
+                }
+                continue;
+            }
+
+            if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
+                return controller;
+            }
+        }
+
+        if (lastController == null) {
+            throw new WrongScalingNumberControllers();
+        }
+
+        return lastController;
     }
 
     public double averageCPULoadAllControllers(State state) {
@@ -235,30 +384,51 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
         return result / numActiveControllers;
     }
+}
 
-    public ControllerBean getTargetControllerForScaleOut() {
+class ThreadLane2Algorithm implements Runnable {
 
-        ControllerBean lastController = null;
+    State state;
+    int startTimeIndex;
 
-        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
+    public ThreadLane2Algorithm(State state, int startTimeIndex) {
+        this.state = state;
+        this.startTimeIndex = startTimeIndex;
+    }
 
-//            if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
-//                if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
-//                    lastController = controller;
-//                }
-//                continue;
-//            }
-
-            if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
-                return controller;
-            }
+    @Override
+    public void run() {
+        if (Controller.hecpL2Lock.isLocked()) {
+            System.out.println("*** L2Algorithm is not finished yet (timeslot: " + startTimeIndex + ")");
+            return;
         }
 
-        if (lastController == null) {
-            throw new WrongScalingNumberControllers();
+        Controller.hecpL2Lock.lock();
+        runLane2Algorithm();
+        Controller.hecpL2Lock.unlock();
+    }
+
+    public void runLane2Algorithm() {
+        System.out.println("*** Start L2 algorithm");
+        Date dt = new Date();
+        long startTime = dt.getTime();
+
+        int currentNumStandbyControllers = getNumStandbyControllers();
+        int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
+
+        if (diffNumStandbyControllers > 0) {
+            System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
+            switchOnMultipleControllers(diffNumStandbyControllers, state);
+        } else if (diffNumStandbyControllers < 0) {
+            System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
+            switchOffMultipleControllers(Math.abs(diffNumStandbyControllers), state);
+        } else {
+            System.out.println("*** L2: No need to power on/off controllers");
         }
 
-        return lastController;
+        dt = new Date();
+        System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
+        System.out.println("*** End L2 algorithm");
     }
 
     public void switchOnMultipleControllers(int numTargetControllers, State state) {
@@ -281,18 +451,6 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
                 e.printStackTrace();
             }
         }
-
-        /* debugging code
-        System.out.println("*!*!* WKIM: switched on controllers");
-        for (ControllerBean controller : targetControllersSwitchOn) {
-            System.out.println(controller.getControllerId());
-        }
-        System.out.println("*!*!* WKIM: total controllers");
-        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            System.out.println(controller.getControllerId() + ": " + controller.isActive() + "/" + controller.isOnosAlive() + "/" + controller.isVmAlive());
-        }
-        */
-
     }
 
     public void switchOffMultipleControllers(int numTargetControllers, State state) {
@@ -315,17 +473,6 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
                 e.printStackTrace();
             }
         }
-
-        /* debugging code
-        System.out.println("*!*!* WKIM: switched off controllers");
-        for (ControllerBean controller : targetControllersSwitchOff) {
-            System.out.println(controller.getControllerId());
-        }
-        System.out.println("*!*!* WKIM: total controllers");
-        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            System.out.println(controller.getControllerId() + ": " + controller.isActive() + "/" + controller.isOnosAlive() + "/" + controller.isVmAlive());
-        }
-        */
     }
 
     public ArrayList<ControllerBean> getTargetControllerSwitchOn (int numTargetControllers) {
@@ -372,22 +519,16 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         return targetControllers;
     }
 
-
-    public void runCPULoadMastershipAlgorithm(State state) {
-        CPUScalingAlgorithm scaling = new CPUScalingAlgorithm();
-        scaling.runBalancingOnly(state);
-    }
-
-    public ArrayList<ControllerBean> getActiveControllers() {
-        ArrayList<ControllerBean> activeControllers = new ArrayList<>();
+    public int getNumStandbyControllers() {
+        int numStandbyControllers = 0;
 
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            if (controller.isActive()) {
-                activeControllers.add(controller);
+            if (!controller.isActive() && controller.isOnosAlive() && controller.isVmAlive()) {
+                numStandbyControllers++;
             }
         }
 
-        return activeControllers;
+        return numStandbyControllers;
     }
 
     public int getNumActiveControllers() {
@@ -413,70 +554,6 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
 
         return standbyControllers;
     }
-
-    public int getNumStandbyControllers() {
-        int numStandbyControllers = 0;
-
-        for (ControllerBean controller : Configuration.getInstance().getControllers()) {
-            if (!controller.isActive() && controller.isOnosAlive() && controller.isVmAlive()) {
-                numStandbyControllers++;
-            }
-        }
-
-        return numStandbyControllers;
-    }
-}
-
-class ThreadLane1Algorithm implements Runnable {
-
-    HybridECP ecp;
-    State state;
-    int startTimeIndex;
-
-    public ThreadLane1Algorithm(HybridECP ecp, State state, int startTimeIndex) {
-        this.ecp = ecp;
-        this.state = state;
-        this.startTimeIndex = startTimeIndex;
-    }
-
-    @Override
-    public void run() {
-        if (Controller.hecpL1Lock.isLocked()) {
-            System.out.println("*** L1Algorithm is not finished yet (timeslot: " + startTimeIndex + ")");
-            return;
-        }
-        Controller.hecpL1Lock.lock();
-
-        ecp.runLane1Algorithm(state);
-
-        Controller.hecpL1Lock.unlock();
-    }
-}
-
-class ThreadLane2Algorithm implements Runnable {
-
-    HybridECP ecp;
-    State state;
-    int startTimeIndex;
-
-    public ThreadLane2Algorithm(HybridECP ecp, State state, int startTimeIndex) {
-        this.ecp = ecp;
-        this.state = state;
-        this.startTimeIndex = startTimeIndex;
-    }
-
-    @Override
-    public void run() {
-        if (Controller.hecpL2Lock.isLocked()) {
-            System.out.println("*** L2Algorithm is not finished yet (timeslot: " + startTimeIndex + ")");
-            return;
-        }
-        Controller.hecpL2Lock.lock();
-
-        ecp.runLane2Algorithm(state);
-
-        Controller.hecpL2Lock.unlock();
-    }
 }
 
 class ThreadSwitchOnOff implements Runnable {
@@ -496,13 +573,13 @@ class ThreadSwitchOnOff implements Runnable {
     @Override
     public void run() {
         if (switchOnOff == SWITCH_ON_OFF.SWITCH_ON) {
-            doStandbySwitchOn();
-        } else if (switchOnOff == SWITCH_ON_OFF.SWITCH_OFF) {
-            doStandbySwitchOff();
+            doSwitchOn();
+        } else {
+            doSwitchOff();
         }
     }
 
-    public void doStandbySwitchOn() {
+    public void doSwitchOn() {
         System.out.println("*** Start to switch on " + targetController.getControllerId());
         scaling.switchOnVMForScaleOut(targetController, state);
         targetController.setVmAlive(true);
@@ -511,14 +588,8 @@ class ThreadSwitchOnOff implements Runnable {
         System.out.println("*** Finish to switch on " + targetController.getControllerId());
     }
 
-
-    public void doStandbySwitchOff() {
+    public void doSwitchOff() {
         System.out.println("*** Start to switch off " + targetController.getControllerId());
-        if (targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_1) ||
-                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_2) ||
-                targetController.getControllerId().equals(Configuration.FIXED_CONTROLLER_ID_3)) {
-            throw new SwitchOffException();
-        }
         targetController.setOnosAlive(false);
         scaling.switchOffControllerForScaleIn(targetController, state);
         targetController.setVmAlive(false);
@@ -526,6 +597,7 @@ class ThreadSwitchOnOff implements Runnable {
         System.out.println("*** Finish to switch off " + targetController.getControllerId());
     }
 }
+
 
 class SwitchOffException extends RuntimeException {
     public SwitchOffException() {
