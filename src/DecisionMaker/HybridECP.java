@@ -345,7 +345,7 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         for (ControllerBean controller : Configuration.getInstance().getControllers()) {
 
             if (controller.getControllerId().equals(Configuration.LAST_SCALEIN_CONTROLLER)) {
-                if (controller.isActive() == false) {
+                if (controller.isActive() == false && controller.isVmAlive() && controller.isOnosAlive()) {
                     lastController = controller;
                 }
                 continue;
