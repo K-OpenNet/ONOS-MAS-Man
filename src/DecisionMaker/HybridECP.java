@@ -140,12 +140,13 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
             runScaleIn(targetControllerScaleIn, state);
         } else {
+            System.out.println("!!!!!!!!!!! Current Timeindex: " + Controller.getTimeIndex() + ", Last scaleout time: " + LAST_SCALEOUT_TIME_INDEX + ", Last scalein time: " + LAST_SCALEIN_TIME_INDEX);
             if (Controller.getTimeIndex() < 2) {
 
-            } else if (LAST_SCALEOUT_TIME_INDEX == -1) {
+            } else if (LAST_SCALEOUT_TIME_INDEX == -1 && LAST_SCALEIN_TIME_INDEX == -1) {
                 System.out.println("Balancing only");
                 runCPULoadMastershipAlgorithm(state);
-            } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE) {
+            } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE && Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX > NUM_BUBBLE) {
                 System.out.println("Balancing only");
                 runCPULoadMastershipAlgorithm(state);
             } else {
@@ -420,15 +421,19 @@ class ThreadLane2Algorithm implements Runnable {
         int currentNumStandbyControllers = getNumStandbyControllers();
         int diffNumStandbyControllers = Configuration.getInstance().NUM_STANDBY_CONTROLLER - currentNumStandbyControllers;
         int currentNumInactiveControllers = Configuration.getInstance().getControllers().size() - currentNumActiveControllers - currentNumStandbyControllers;
+        boolean switchOnFlag = false;
+        boolean switchOffFlag = false;
 
         if (currentNumStandbyControllers < Configuration.getInstance().NUM_STANDBY_CONTROLLER) {
 
             if (currentNumInactiveControllers != 0 && currentNumInactiveControllers < diffNumStandbyControllers) {
                 System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers -> " + currentNumInactiveControllers + " controllers");
                 switchOnMultipleControllers(currentNumInactiveControllers, state);
+                switchOnFlag = true;
             } else if (currentNumInactiveControllers != 0 && currentNumInactiveControllers >= diffNumStandbyControllers) {
                 System.out.println("*** L2: Need to switch on " + diffNumStandbyControllers + " controllers");
                 switchOnMultipleControllers(diffNumStandbyControllers, state);
+                switchOnFlag = true;
             } else {
                 System.out.println("*** L2: Cannot switch on " + diffNumStandbyControllers + " controllers");
             }
@@ -460,6 +465,11 @@ class ThreadLane2Algorithm implements Runnable {
         dt = new Date();
         System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
         System.out.println("*** End L2 algorithm");
+        if (switchOnFlag) {
+            LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
+        } else if (switchOffFlag) {
+            LAST_SCALEIN_TIME_INDEX = Controller.getTimeIndex();
+        }
     }
 
     public void switchOnMultipleControllers(int numTargetControllers, State state) {
@@ -483,7 +493,6 @@ class ThreadLane2Algorithm implements Runnable {
                 e.printStackTrace();
             }
         }
-        LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
     }
 
     public void switchOffMultipleControllers(int numTargetControllers, State state) {
