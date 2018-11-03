@@ -457,6 +457,7 @@ class ThreadLane2Algorithm implements Runnable {
         dt = new Date();
         System.out.println("** L2 Scaling time: " + (dt.getTime() - startTime) + " (timeslot: " + Controller.getTimeIndex() + ", Algorithm: " + "HECP" + ")");
         System.out.println("*** End L2 algorithm");
+        LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
     }
 
     public void switchOnMultipleControllers(int numTargetControllers, State state) {
