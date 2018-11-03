@@ -140,13 +140,16 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
             System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
             runScaleIn(targetControllerScaleIn, state);
         } else {
-            System.out.println("Balancing only");
             if (Controller.getTimeIndex() < 2) {
 
             } else if (LAST_SCALEOUT_TIME_INDEX == -1) {
+                System.out.println("Balancing only");
                 runCPULoadMastershipAlgorithm(state);
             } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE) {
+                System.out.println("Balancing only");
                 runCPULoadMastershipAlgorithm(state);
+            } else {
+                System.out.println("No need to rebalance!");
             }
         }
 
