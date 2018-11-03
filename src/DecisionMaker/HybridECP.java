@@ -134,11 +134,37 @@ public class HybridECP extends AbstractDecisionMaker implements DecisionMaker {
         System.out.println("Scaleout: " + scaleOutFlag);
 
         if (scaleOutFlag) {
-            System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
-            runScaleOut(targetControllerScaleOut, state);
+            System.out.println("!!!!!!!!!!! Current Timeindex: " + Controller.getTimeIndex() + ", Last scaleout time: " + LAST_SCALEOUT_TIME_INDEX + ", Last scalein time: " + LAST_SCALEIN_TIME_INDEX);
+            if (Controller.getTimeIndex() < 2) {
+
+            } else if (LAST_SCALEOUT_TIME_INDEX == -1 && LAST_SCALEIN_TIME_INDEX == -1) {
+                System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
+                runScaleOut(targetControllerScaleOut, state);
+            } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE && Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX > NUM_BUBBLE) {
+                System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
+                runScaleOut(targetControllerScaleOut, state);
+            } else {
+                System.out.println("No need to scale-out!");
+            }
+
+            //System.out.println("Scale-Out: " + targetControllerScaleOut.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleOut.getBeanKey()).avgNet());
+            //runScaleOut(targetControllerScaleOut, state);
         } else if (scaleInFlag) {
-            System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
-            runScaleIn(targetControllerScaleIn, state);
+            System.out.println("!!!!!!!!!!! Current Timeindex: " + Controller.getTimeIndex() + ", Last scaleout time: " + LAST_SCALEOUT_TIME_INDEX + ", Last scalein time: " + LAST_SCALEIN_TIME_INDEX);
+            if (Controller.getTimeIndex() < 2) {
+
+            } else if (LAST_SCALEOUT_TIME_INDEX == -1 && LAST_SCALEIN_TIME_INDEX == -1) {
+                System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
+                runScaleIn(targetControllerScaleIn, state);
+            } else if (Controller.getTimeIndex() - LAST_SCALEOUT_TIME_INDEX > NUM_BUBBLE && Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX > NUM_BUBBLE) {
+                System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
+                runScaleIn(targetControllerScaleIn, state);
+            } else {
+                System.out.println("No need to scale-in!");
+            }
+
+            //System.out.println("Scale-In: " + targetControllerScaleIn.getControllerId());// + " / " + state.getComputingResourceTuples().get(targetControllerScaleIn.getBeanKey()).avgNet());
+            //runScaleIn(targetControllerScaleIn, state);
         } else {
             System.out.println("!!!!!!!!!!! Current Timeindex: " + Controller.getTimeIndex() + ", Last scaleout time: " + LAST_SCALEOUT_TIME_INDEX + ", Last scalein time: " + LAST_SCALEIN_TIME_INDEX);
             if (Controller.getTimeIndex() < 2) {
