@@ -96,7 +96,7 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             }
         }
 
-        if (numTargetScaleInControllers <= 1) {
+        if (numTargetScaleInControllers <= 1 || activeControllers.size() == MIN_NUM_CONTROLLERS) {
             scaleInFlag = false;
         } else {
             double lowCPULoad = 100.0;
