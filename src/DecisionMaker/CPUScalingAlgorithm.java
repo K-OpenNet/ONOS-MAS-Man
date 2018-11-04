@@ -118,9 +118,11 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
                 if (targetControllerScaleIn == null) {
                     targetControllerScaleIn = controller;
                     lowCPULoad = tmpCPULoad;
+                    scaleInFlag = true;
                 } else if (tmpCPULoad < lowCPULoad) {
                     targetControllerScaleIn = controller;
                     lowCPULoad = tmpCPULoad;
+                    scaleInFlag = true;
                 }
             }
         }
