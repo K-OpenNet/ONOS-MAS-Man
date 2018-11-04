@@ -89,23 +89,71 @@ public class CPUScalingAlgorithm extends AbstractDecisionMaker implements Decisi
             //debugging code
             System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
 
-            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
-                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
-                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
-                continue;
-            }
-
             if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
-                targetControllerScaleIn = controller;
                 numTargetScaleInControllers++;
                 //scaleInFlag = true;
                 //break;
             }
         }
 
-        if (numTargetScaleInControllers > 1) {
-            scaleInFlag = true;
+        if (numTargetScaleInControllers <= 1) {
+            scaleInFlag = false;
+        } else {
+            double lowCPULoad = 100.0;
+            for (ControllerBean controller : activeControllers) {
+                double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+                double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+                tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+
+                if (tmpCPULoad > 100.0) {
+                    tmpCPULoad = 100;
+                }
+
+                if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+                        controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+                        controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+                    continue;
+                }
+
+                if (targetControllerScaleIn == null) {
+                    targetControllerScaleIn = controller;
+                    lowCPULoad = tmpCPULoad;
+                } else if (tmpCPULoad < lowCPULoad) {
+                    targetControllerScaleIn = controller;
+                    lowCPULoad = tmpCPULoad;
+                }
+            }
         }
+
+//        for (ControllerBean controller : activeControllers) {
+//            double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+//            double cpuNormalizingFactor = 40 / controller.getNumCPUs();
+//            tmpCPULoad = tmpCPULoad * cpuNormalizingFactor;
+//
+//            if (tmpCPULoad > 100.0) {
+//                tmpCPULoad = 100;
+//            }
+//
+//            //debugging code
+//            System.out.println("Scale-In: " + controller.getControllerId() + " / " + tmpCPULoad);
+//
+//            if (controller.getControllerId().equals(FIXED_CONTROLLER_ID_1) ||
+//                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_2) ||
+//                    controller.getControllerId().equals(FIXED_CONTROLLER_ID_3)) {
+//                continue;
+//            }
+//
+//            if (averageCPULoad < SCALING_THRESHOLD_LOWER && tmpCPULoad < SCALING_THRESHOLD_LOWER) {
+//                targetControllerScaleIn = controller;
+//                numTargetScaleInControllers++;
+//                //scaleInFlag = true;
+//                //break;
+//            }
+//        }
+//
+//        if (numTargetScaleInControllers > 1) {
+//            scaleInFlag = true;
+//        }
 
 
 
