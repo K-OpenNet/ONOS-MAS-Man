@@ -490,9 +490,11 @@ class ThreadLane2Algorithm implements Runnable {
             } else if (currentNumActiveControllers + diffNumStandbyControllers < 3) {
                 System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers -> " + (currentNumActiveControllers - 3) + " controllers");
                 switchOffMultipleControllers((currentNumActiveControllers-3), state);
+                switchOffFlag = true;
             } else {
                 System.out.println("*** L2: Need to switch off " + Math.abs(diffNumStandbyControllers) + " controllers");
                 switchOffMultipleControllers(Math.abs(diffNumStandbyControllers), state);
+                switchOffFlag = true;
             }
         } else {
             System.out.println("*** L2: No need to power on/off controllers");
