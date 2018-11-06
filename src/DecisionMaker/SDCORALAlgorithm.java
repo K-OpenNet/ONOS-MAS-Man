@@ -55,7 +55,7 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
 
             if (Configuration.SCALING_THRESHOLD_UPPER < tmpCPULoad) {
 
-                if (controller.getNumCPUs() < 18) {
+                if (controller.getNumCPUs() < 5) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out -- " + tmpCPULoad + " % / " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(1, controller);
                 }
