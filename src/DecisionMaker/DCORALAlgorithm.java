@@ -61,11 +61,11 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             if (Configuration.SCALING_THRESHOLD_HIGHEST < tmpCPULoad) {
                 if (Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEIN_TIME_INDEX != -1) {
 
-                } else if (controller.getNumCPUs() < 4) {
+                } else if (controller.getNumCPUs() < 17) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 2 cpus -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(2, controller);
                     LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
-                } else if (controller.getNumCPUs() < 5) {
+                } else if (controller.getNumCPUs() < 18) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(1, controller);
                     LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
@@ -73,7 +73,7 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
             } else if (Configuration.SCALING_THRESHOLD_UPPER < tmpCPULoad) {
                 if (Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEIN_TIME_INDEX != -1) {
 
-                } else if (controller.getNumCPUs() < 5) {
+                } else if (controller.getNumCPUs() < 18) {
                     System.out.println(controller.getControllerId() + ": " + "scaling out 1 cpu -- " + tmpCPULoad + " % / Thr: " + (Configuration.SCALING_THRESHOLD_UPPER) + "%");
                     incVirtualCPUs(1, controller);
                     LAST_SCALEOUT_TIME_INDEX = Controller.getTimeIndex();
