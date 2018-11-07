@@ -46,6 +46,7 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
 
         for (ControllerBean controller : activeControllers) {
             double tmpCPULoad = state.getComputingResourceTuples().get(controller.getBeanKey()).avgCpuUsage();
+            double rawTmpCPULoad = tmpCPULoad;
             double cpuNormalizeFactor = 40/controller.getNumCPUs();
             tmpCPULoad = tmpCPULoad * cpuNormalizeFactor;
 
@@ -61,10 +62,14 @@ public class SDCORALAlgorithm extends AbstractDecisionMaker implements DecisionM
                 }
 
             } else if (Configuration.SCALING_THRESHOLD_LOWER > tmpCPULoad) {
-
                 if (controller.getNumCPUs() > 2) {
-                    System.out.println(controller.getControllerId() + ": " + "scaling in -- " + tmpCPULoad + " % / " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
-                    decVirtualCPUs(1, controller);
+                    int numElemCPUs = 1;
+                    cpuNormalizeFactor = 40/(controller.getNumCPUs()-numElemCPUs);
+                    rawTmpCPULoad = rawTmpCPULoad * cpuNormalizeFactor;
+                    if (rawTmpCPULoad < Configuration.SCALING_THRESHOLD_UPPER) {
+                        System.out.println(controller.getControllerId() + ": " + "scaling in -- " + tmpCPULoad + " % / " + (Configuration.SCALING_THRESHOLD_LOWER) + " %");
+                        decVirtualCPUs(numElemCPUs, controller);
+                    }
                 }
             }
         }
