@@ -59,6 +59,8 @@ public class DCORALAlgorithm extends AbstractDecisionMaker implements DecisionMa
                 tmpCPULoad = 100;
             }
 
+            System.out.println("***** Controller ID: " + controller.getControllerId() + " - " + tmpCPULoad + " (" + controller.getNumCPUs() + ")");
+
             if (Configuration.SCALING_THRESHOLD_HIGHEST < tmpCPULoad) {
                 if (Controller.getTimeIndex() - LAST_SCALEIN_TIME_INDEX <= NUM_BUBBLE && LAST_SCALEIN_TIME_INDEX != -1) {
 
