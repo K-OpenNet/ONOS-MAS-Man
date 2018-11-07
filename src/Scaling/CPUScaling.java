@@ -41,12 +41,14 @@ public class CPUScaling extends AbstractScaling implements Scaling {
         SSHConnection sshConn = new SSHConnection();
         System.out.println("inc vCPU: " + Configuration.CMD_ENABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
         sshConn.sendCommandToRoot(controller, Configuration.CMD_ENABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
+        controller.getCpuBitmap()[cpuNumber] = 1;
     }
 
     public void disableSpecificVirtualCPU (ControllerBean controller, int cpuNumber) {
         SSHConnection sshConn = new SSHConnection();
         System.out.println("dec vCPU: " + Configuration.CMD_DISABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
         sshConn.sendCommandToRoot(controller, Configuration.CMD_DISABLE_CPU.replace("<index>", String.valueOf(cpuNumber)));
+        controller.getCpuBitmap()[cpuNumber] = 0;
     }
 
     public int getCPUIndexForInc (ControllerBean controller) {
